@@ -1,0 +1,271 @@
+/* Variables globales de color y diseño */
+:root {
+    --color-principal: #7c2323;
+    --color-secundario: #5e0a1a;
+    --color-fondo: #fafafa;
+    --color-blanco: #fff;
+    --color-boton: #740906;
+    --color-borde-boton: #993f51;
+    --color-card-header: #7c2323;
+    --color-table-border: #ddd;
+}
+
+/* Caja de bienvenida */
+.bienvenido-box {
+    background: rgba(255,255,255,0.85);
+    border-radius: 12px;
+    padding: 16px 28px;
+    font-size: 2rem;
+    font-weight: bold; /* 🔹 Negritas */
+    color: var(--color-principal); /* 🔹 Color principal */
+    box-shadow: 0 2px 12px rgba(90,18,33,0.07);
+    margin-top: 24px;
+    max-width: 80vw;
+    letter-spacing: 0.5px;
+}
+
+
+/* Estilos base del body */
+body {
+    font-family: 'Century Gothic', Arial, sans-serif;
+    background: var(--color-fondo);
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    margin: 0;
+}
+
+/* Botones generales y personalizados */
+.btn {
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s;
+}
+.btn-buscar, .btn-inicio, .btn-abrir {
+    background-color: var(--color-boton);
+    border-color: var(--color-borde-boton);
+    color: var(--color-blanco);
+}
+.btn-nuevos, .btn-area, .btn-revisados {
+    background: #685e04;
+    color: #fff;
+    border: 1px solid #eee;
+    font-size: 1.5em;
+}
+.btn-logout {
+    white-space: nowrap;
+}
+
+/* Sidebar fija y elementos internos */
+.sidebar-logo {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    width: 230px;
+    height: calc(100vh - 56px);
+    font-size: 1em;
+    box-sizing: border-box;
+    padding: 16px 2rem;
+    background: var(--color-blanco);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 1px solid #eee;
+    z-index: 100;
+}
+.logo { max-width: 140px; margin-bottom: 8px; }
+.user-name { font-size: 1em; margin: 0 0 8px 0; }
+.busqueda-informes { display: flex; flex-direction: column; margin-top: 0.3rem; }
+.busqueda-informes .d-flex.w-100.gap-2.mt-2.justify-content-center {
+    flex-direction: column !important;
+    gap: 0.3rem !important;
+}
+
+/* Navbar superior fija */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background-color: var(--color-principal);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.navbar-brand {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--color-blanco);
+    margin-left: 16px;
+    text-decoration: none;
+}
+.navbar-nav {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+.navbar-nav .nav-link {
+    color: var(--color-blanco);
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+}
+.navbar-nav .nav-link:hover {
+    background-color: var(--color-secundario);
+    border-radius: 4px;
+}
+
+/* Dropdowns */
+.dropdown-menu {
+    min-width: unset;
+    width: auto;
+    max-width: 220px;
+    box-sizing: border-box;
+    white-space: normal;
+}
+
+/* Layout principal y estructura base */
+.layout-row {
+    height: calc(100vh - 56px);
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+}
+
+/* Ajuste del contenido para dejar espacio a la sidebar fija */
+.layout-section {
+    margin-left: 230px;
+    margin-top: 24px;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    background: url('/Img/Fondo_Inicio.jpg') center center no-repeat;
+    background-size: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.layout-section.no-bg { background: none !important; }
+
+/* Contenido principal */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+    flex: 1;
+    padding-bottom: 10px; /* Espacio para el footer fijo */
+}
+
+/* Tabla y contenedores */
+.table-responsive {
+    width: auto;
+    max-width: 1400px;
+    border: 1px solid #ddd;
+    position: relative;
+    margin: 0 40px 0 40px; /* Elimino margen inferior */
+    box-sizing: border-box;
+}
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+    font-size: 0.95rem;
+    margin-top: 0;
+}
+.table th, .table td {
+    vertical-align: middle;
+    text-align: left;
+    padding: 8px 12px;
+    white-space: normal;
+    font-size: 0.95rem;
+}
+.table td:last-child {
+    text-align: center;
+    vertical-align: middle;
+}
+.table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 101;
+    background: #f0ebeb;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+/* Título fijo de la tabla */
+.card-header.text-center {
+    position: sticky;
+    top: 56px;
+    width: 100%;
+    z-index: 102;
+    padding: 0;
+    color: #7c2323 !important;
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Card contenedor visual */
+.card {
+    width: 100%;
+    max-width: 1400px;
+    background: none;
+    border: none;
+    margin-top: 2.5rem;
+}
+.card-body {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1rem 2rem;
+    overflow: visible;
+    background: none;
+    border: none;
+}
+
+/* Cabecera de los modales */
+.modal-header.rosa {
+    background: #470909 !important;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 0.7rem;
+    font-size: 2rem;
+    color: #fff !important;
+}
+
+/* Scroll solo en filas de la tabla */
+.table-scroll {
+    max-height: 50vh;
+    overflow-y: auto;
+    width: 100%;
+}
+
+/* Responsivo para pantallas pequeñas */
+@media (max-width: 991px) {
+    .navbar-nav {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        width: 100%;
+    }
+    .navbar-brand { font-size: 1.2em; }
+    .card, .card-body, .table { width: 100%; max-width: 100vw; margin: 0 auto; }
+    .table-responsive { width: 100%; max-width: 100vw; border: none; padding: 0; }
+    .sidebar-logo {
+        position: relative;
+        width: 100%;
+        height: auto;
+        top: 0;
+        border-right: none;
+    }
+    .layout-section { margin-left: 0; width: 100%; }
+}
+
+

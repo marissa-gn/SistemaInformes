@@ -1,0 +1,105 @@
+<% if (title === 'Inicio') { %>
+  <div class="bienvenido-box text-center">
+    ¡Bienvenido al sistema de informes!
+  </div>
+<% } else { %>
+  <div class="main-content d-flex flex-column align-items-center justify-content-center w-100">
+    <div class="card-header text-center">
+      INFORMES
+    </div>
+    <div class="card mt-4">
+      <div class="table-responsive">
+        <div class="table-scroll">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Área</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>Chris Hernandez</td>
+                <td>Finanzas y Contabilidad</td>
+                <td>05/08/2025</td>
+                <td><button type="button" class="btn btn-abrir btn-sm" data-bs-toggle="modal" data-bs-target="#modalInforme">Abrir</button></td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>Cecilia Dávila</td>
+                <td>Recursos Humanos (RH)</td>
+                <td>13/08/2025</td>
+                <td><button type="button" class="btn btn-abrir btn-sm" data-bs-toggle="modal" data-bs-target="#modalInforme">Abrir</button></td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td>Jesus Saucedo</td>
+                <td>Tecnologías de la Información (TI)</td>
+                <td>09/08/2025</td>
+                <td><button type="button" class="btn btn-abrir btn-sm" data-bs-toggle="modal" data-bs-target="#modalInforme">Abrir</button></td>
+              </tr>
+              <tr>
+                <th scope="row">4</th>
+                <td>Daniel Navarrete</td>
+                <td>Mercadotecnia</td>
+                <td>24/08/2025</td>
+                <td><button type="button" class="btn btn-abrir btn-sm" data-bs-toggle="modal" data-bs-target="#modalInforme">Abrir</button></td>
+              </tr>
+              <tr>
+                <th scope="row">5</th>
+                <td>Wayne Ramirez</td>
+                <td>Departamento de Lógistica</td>
+                <td>02/08/2025</td>
+                <td><button type="button" class="btn btn-abrir btn-sm" data-bs-toggle="modal" data-bs-target="#modalInforme">Abrir</button></td>
+              </tr>
+              <tr>
+                <th scope="row">6</th>
+                <td>Alan Guzman</td>
+                <td>Producción / Operaciones</td>
+                <td>02/08/2025</td>
+                <td><button type="button" class="btn btn-abrir btn-sm" data-bs-toggle="modal" data-bs-target="#modalInforme">Abrir</button></td>
+              </tr>
+              <tr>
+                <th scope="row">7</th>
+                <td>Chris Hernandez</td>
+                <td>Finanzas y Contabilidad</td>
+                <td>05/08/2025</td>
+                <td><button type="button" class="btn btn-abrir btn-sm" data-bs-toggle="modal" data-bs-target="#modalInforme">Abrir</button></td>
+              </tr>
+              <tr>
+                <th scope="row">8</th>
+                <td>Cecilia Dávila</td>
+                <td>Recursos Humanos (RH)</td>
+                <td>13/08/2025</td>
+                <td><button type="button" class="btn btn-abrir btn-sm" data-bs-toggle="modal" data-bs-target="#modalInforme">Abrir</button></td>
+              </tr>
+              <tr>
+                <th scope="row">9</th>
+                <td>Jesus Saucedo</td>
+                <td>Tecnologías de la Información (TI)</td>
+                <td>09/08/2025</td>
+                <td><button type="button" class="btn btn-abrir btn-sm" data-bs-toggle="modal" data-bs-target="#modalInforme">Abrir</button></td>
+              </tr>
+              <tr>
+                <th scope="row">10</th>
+                <td>Daniel Navarrete</td>
+                <td>Mercadotecnia</td>
+                <td>24/08/2025</td>
+                <td><button type="button" class="btn btn-abrir btn-sm" data-bs-toggle="modal" data-bs-target="#modalInforme">Abrir</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%- include('ModalInforme') %>
+  <div class="busqueda-informes">
+    <!-- ...resto de los filtros y botones de búsqueda... -->
+  </div>
+<% } %>
+</div>

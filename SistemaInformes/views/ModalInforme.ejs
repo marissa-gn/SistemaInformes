@@ -1,0 +1,102 @@
+
+<!-- Modal para mostrar el detalle del informe -->
+<div class="modal fade" id="modalInforme" tabindex="-1" aria-labelledby="modalInformeLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+  <div class="modal-header" style="background: #ffd6e0;">
+        <h5 class="modal-title" id="modalInformeLabel">Reporte</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="row mb-2">
+            <div class="col-md-4 mb-2">
+              <label for="nombre" class="form-label">Nombre de quien envía:</label>
+              <input type="text" class="form-control" id="nombre">
+            </div>
+            <div class="col-md-4 mb-2">
+              <label for="fecha" class="form-label">Fecha de envío:</label>
+              <input type="text" class="form-control" id="fecha">
+            </div>
+            <div class="col-md-4 mb-2">
+              <label for="area" class="form-label">Área:</label>
+              <input type="text" class="form-control" id="area">
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-md-4 mb-2">
+              <label for="colonia" class="form-label">Colonia o comunidad:</label>
+              <input type="text" class="form-control" id="colonia">
+            </div>
+            <div class="col-md-4 mb-2">
+              <label for="lugar" class="form-label">Lugar de actividad:</label>
+              <input type="text" class="form-control" id="lugar">
+            </div>
+            <div class="col-md-4 mb-2">
+              <label for="sector" class="form-label">Sector al que beneficia:</label>
+              <input type="text" class="form-control" id="sector">
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-md-4 mb-2">
+              <label for="tipo" class="form-label">Tipo de actividad / unidad de medida:</label>
+              <input type="text" class="form-control" id="tipo">
+            </div>
+            <div class="col-md-4 mb-2">
+              <label for="beneficiarios" class="form-label">Número de beneficiarios:</label>
+              <input type="text" class="form-control" id="beneficiarios">
+            </div>
+            <div class="col-md-4 mb-2">
+              <label for="monto" class="form-label">Monto generado por la actividad (si aplica):</label>
+              <input type="text" class="form-control" id="monto">
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-md-4 mb-2">
+              <label for="solicitudCiudadania" class="form-label">¿Responde a una solicitud de la ciudadanía?</label>
+              <select class="form-select" id="solicitudCiudadania">
+                <option value="">Selecciona...</option>
+                <option value="si">Sí</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-2">
+              <label for="procedimientosArea" class="form-label">¿Pertenece la actividad a los procedimientos de su área?</label>
+              <select class="form-select" id="procedimientosArea">
+                <option value="">Selecciona...</option>
+                <option value="si">Sí</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-2">
+              <label for="evidencia" class="form-label">Evidencia fotográfica:</label>
+              <input class="form-control" type="file" id="evidencia" accept="image/*">
+            </div>
+          </div>
+          <div class="mb-2">
+            <label for="descripcion" class="form-label">Descripción de la actividad:</label>
+            <input type="text" class="form-control" id="descripcion">
+          </div>
+          <div class="mb-2">
+            <label for="comentario" class="form-label">Comentario:</label>
+            <input type="text" class="form-control" id="comentario">
+          </div>
+          <div class="mb-2 d-flex gap-2 align-items-center">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="evaluacion" id="rechazar">
+              <label class="form-check-label" for="rechazar">Rechazar</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="evaluacion" id="aceptar">
+              <label class="form-check-label" for="aceptar">Aprobar</label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success">Aceptar</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
