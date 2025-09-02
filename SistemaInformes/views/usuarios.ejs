@@ -1,0 +1,123 @@
+<!-- Toast de usuario eliminado -->
+<div class="toast align-items-center" id="toastUsuarioEliminado" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; display: none; min-width: 300px;">
+        <div class="d-flex">
+                <div class="toast-body text-dark">
+                        Usuario eliminado
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+</div>
+
+<!-- Toast de cambios guardados -->
+<div class="toast align-items-center" id="toastCambiosGuardadosUsuario" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; display: none; min-width: 300px;">
+        <div class="d-flex">
+                <div class="toast-body text-dark">
+                        Cambios guardados
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+</div>
+
+<!-- Los botones Editar y Eliminar estarán solo en la tabla -->
+<div class="main-content d-flex flex-column align-items-center justify-content-center w-100">
+    <div class="card-header text-center" style="color: var(--color-card-header); font-size: 2rem; font-weight: bold; text-align: center; margin-bottom: 0.5rem; margin-top: 0;">USUARIOS</div>
+    <div class="card mt-4" style="background: transparent; box-shadow: none; border: none;">
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <div class="table-scroll">
+                        <table class="table table-hover text-center usuarios-table">
+                            <thead class="text-center">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Área</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Chris</td>
+                                    <td>Hernandez</td>
+                                    <td>Finanzas y Contabilidad</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <button class="btn btn-editar btn-sm" data-bs-toggle="modal" data-bs-target="#modalUsuarios">Editar</button>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="mostrarToastUsuarioEliminado()">Eliminar</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Cecilia</td>
+                                    <td>Dávila</td>
+                                    <td>Recursos Humanos</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <button class="btn btn-editar btn-sm" data-bs-toggle="modal" data-bs-target="#modalUsuarios">Editar</button>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="mostrarToastUsuarioEliminado()">Eliminar</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Jesus</td>
+                                    <td>Saucedo</td>
+                                    <td>Tecnologías de la Información</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <button class="btn btn-editar btn-sm" data-bs-toggle="modal" data-bs-target="#modalUsuarios">Editar</button>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="mostrarToastUsuarioEliminado()">Eliminar</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Daniel</td>
+                                    <td>Navarrete</td>
+                                    <td>Mercadotecnia</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <button class="btn btn-editar btn-sm" data-bs-toggle="modal" data-bs-target="#modalUsuarios">Editar</button>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="mostrarToastUsuarioEliminado()">Eliminar</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Wayne</td>
+                                    <td>Ramirez</td>
+                                    <td>Departamento de Logística</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <button class="btn btn-editar btn-sm" data-bs-toggle="modal" data-bs-target="#modalUsuarios">Editar</button>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="mostrarToastUsuarioEliminado()">Eliminar</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Alan</td>
+                                    <td>Gúzman</td>
+                                    <td>Producción / Operaciones</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <button class="btn btn-editar btn-sm" data-bs-toggle="modal" data-bs-target="#modalUsuarios">Editar</button>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="mostrarToastUsuarioEliminado()">Eliminar</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="w-100 d-flex justify-content-end mt-2"></div>
+                <div class="w-100 d-flex justify-content-start mt-2">
+                    <button class="btn btn-anadir-usuario" data-bs-toggle="modal" data-bs-target="#modalUsuarios">Añadir usuario</button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<%- include('ModalUsuarios') %>

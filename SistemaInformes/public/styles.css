@@ -1,3 +1,33 @@
+/* Sombreado al pasar el cursor sobre las filas de la tabla */
+table.table-hover tbody tr:hover,
+table.usuarios-table tbody tr:hover {
+    background-color: #f5f5c2 !important;
+    transition: background 0.2s;
+}
+/* Botón personalizado para Editar */
+.btn-editar {
+    background-color: #5a5e01 !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(90,94,1,0.15);
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s;
+}
+.btn-editar:hover, .btn-editar:focus {
+    background-color: #484a01 !important;
+    color: #fff !important;
+    outline: none;
+}
+/* Estilo personalizado para los toasts de usuarios */
+.toast#toastUsuarioEliminado,
+.toast#toastCambiosGuardadosUsuario {
+    background: #ddd !important;
+    color: #333;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    font-size: 1.2rem;
+    font-weight: 500;
+}
 /* Variables globales de color y diseño */
 :root {
     --color-principal: #7c2323;
@@ -8,6 +38,11 @@
     --color-borde-boton: #993f51;
     --color-card-header: #7c2323;
     --color-table-border: #ddd;
+    --color-modal-header: #811406;
+    --color-verde-boton: #28a745;
+    --color-verde-boton-dark: #218838;
+    --color-rojo-boton: #dc3545;
+    --color-rojo-boton-dark: #c82333;
 }
 
 /* Caja de bienvenida */
@@ -41,7 +76,29 @@ body {
     font-weight: 600;
     transition: background 0.2s, color 0.2s;
 }
-.btn-buscar, .btn-inicio, .btn-abrir {
+
+.btn-success {
+    background: linear-gradient(90deg, var(--color-verde-boton) 60%, var(--color-verde-boton-dark) 100%);
+    border: none;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(40,167,69,0.15);
+}
+.btn-success:hover {
+    background: linear-gradient(90deg, var(--color-verde-boton-dark) 60%, var(--color-verde-boton) 100%);
+    color: #fff;
+}
+
+.btn-danger {
+    background: linear-gradient(90deg, var(--color-rojo-boton) 60%, var(--color-rojo-boton-dark) 100%);
+    border: none;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(220,53,69,0.15);
+}
+.btn-danger:hover {
+    background: linear-gradient(90deg, var(--color-rojo-boton-dark) 60%, var(--color-rojo-boton) 100%);
+    color: #fff;
+}
+.btn-buscar, .btn-inicio, .btn-abrir, .btn-usuarios, .btn-anadir-usuario {
     background-color: var(--color-boton);
     border-color: var(--color-borde-boton);
     color: var(--color-blanco);
@@ -75,7 +132,7 @@ body {
 }
 .logo { max-width: 140px; margin-bottom: 8px; }
 .user-name { font-size: 1em; margin: 0 0 8px 0; }
-.busqueda-informes { display: flex; flex-direction: column; margin-top: 0.3rem; }
+.busqueda-informes { display: flex; flex-direction: column; margin-top: 0.2rem; }
 .busqueda-informes .d-flex.w-100.gap-2.mt-2.justify-content-center {
     flex-direction: column !important;
     gap: 0.3rem !important;
@@ -92,7 +149,6 @@ body {
     z-index: 999;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 0 1rem;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
@@ -129,6 +185,29 @@ body {
     max-width: 220px;
     box-sizing: border-box;
     white-space: normal;
+    overflow-x: hidden !important;
+}
+.form-select {
+    max-width: 250px;
+    overflow-x: hidden !important;
+    white-space: normal !important;
+}
+
+/* Evitar desbordamiento en el dropdown de Área */
+.form-select {
+    max-width: 250px;
+    overflow-x: hidden;
+    white-space: normal;
+}
+.form-select option {
+    max-width: 250px;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+.dropdown-menu {
+    max-width: 250px;
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 /* Layout principal y estructura base */
@@ -175,25 +254,27 @@ body {
     margin: 0 40px 0 40px; /* Elimino margen inferior */
     box-sizing: border-box;
 }
-.table {
+.table, .usuarios-table {
     width: 100%;
     border-collapse: collapse;
     table-layout: auto;
     font-size: 0.95rem;
     margin-top: 0;
 }
-.table th, .table td {
+.table th, .table td, .usuarios-table th, .usuarios-table td {
     vertical-align: middle;
     text-align: left;
     padding: 8px 12px;
     white-space: normal;
     font-size: 0.95rem;
 }
-.table td:last-child {
+.table td:last-child, .usuarios-table td:last-child {
     text-align: center;
     vertical-align: middle;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
 }
-.table thead th {
+.table thead th, .usuarios-table thead th {
     position: sticky;
     top: 0;
     z-index: 101;
@@ -202,6 +283,19 @@ body {
     font-size: 1rem;
 }
 
+.toast#toastAreaEliminada, #toastCambiosGuardados {
+    background: #ddd !important;
+    color: #333;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+.form-select,
+.form-select option,
+.dropdown-menu {
+    font-size: 0.8rem;
+}
 /* Título fijo de la tabla */
 .card-header.text-center {
     position: sticky;
@@ -210,7 +304,7 @@ body {
     z-index: 102;
     padding: 0;
     color: #7c2323 !important;
-    font-size: 2rem;
+    background: transparent !important;
     font-weight: bold;
     text-align: center;
 }
@@ -219,7 +313,7 @@ body {
 .card {
     width: 100%;
     max-width: 1400px;
-    background: none;
+    background: transparent !important;
     border: none;
     margin-top: 2.5rem;
 }
@@ -228,17 +322,33 @@ body {
     box-sizing: border-box;
     padding: 1rem 2rem;
     overflow: visible;
-    background: none;
+    background: transparent !important;
     border: none;
 }
 
 /* Cabecera de los modales */
-.modal-header.rosa {
-    background: #470909 !important;
+.modal-header {
+    background: var(--color-modal-header);
     border-bottom: 2px solid #ddd;
     margin-bottom: 0.7rem;
-    font-size: 2rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
     color: #fff !important;
+}
+
+/* Estilo personalizado para el toast de informe revisado */
+.toast#toastInformeRevisado {
+    background: #ddd !important;
+    color: #333;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.modal-header .modal-title {
+    font-size: 2rem;
 }
 
 /* Scroll solo en filas de la tabla */

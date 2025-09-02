@@ -1,0 +1,94 @@
+<div class="modal fade" id="modalUsuarios" tabindex="-1" aria-labelledby="modalUsuariosLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalUsuariosLabel"><b>Usuarios</b></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <!-- Campos principales del usuario -->
+          <div class="row mb-2">
+            <div class="col-md-6 mb-2">
+              <label for="nombreUsuario" class="form-label">Nombre:</label>
+              <input type="text" class="form-control" id="nombreUsuario">
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="apellidosUsuario" class="form-label">Apellidos:</label>
+              <input type="text" class="form-control" id="apellidosUsuario">
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-md-6 mb-2">
+              <label for="correoUsuario" class="form-label">Correo electrónico:</label>
+              <input type="email" class="form-control" id="correoUsuario">
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="telefonoUsuario" class="form-label">Teléfono:</label>
+              <input type="tel" class="form-control" id="telefonoUsuario">
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-md-6 mb-2">
+              <label for="cargoUsuario" class="form-label">Cargo:</label>
+              <select class="form-select" id="cargoUsuario">
+                <option value="">Selecciona...</option>
+                <option value="Coordinador">Coordinador</option>
+                <option value="Asistente">Asistente</option>
+                <option value="Director">Director</option>
+                <option value="Tesorero">Tesorero</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="areaUsuario" class="form-label">Área:</label>
+              <select class="form-select" id="areaUsuario">
+                <option value="">Selecciona...</option>
+                <option value="Finanzas y Contabilidad">Finanzas y Contabilidad</option>
+                <option value="Recursos Humanos">Recursos Humanos</option>
+                <option value="Tecnologías de la Información">Tecnologías de la Información</option>
+                <option value="Mercadotecnia">Mercadotecnia</option>
+                <option value="Departamento de Logística">Departamento de Logística</option>
+                <option value="Producción / Operaciones">Producción / Operaciones</option>
+                <option value="Investigación y Desarrollo (I+D)">Investigación y Desarrollo (I+D)</option>
+                <option value="Atención al cliente">Atención al cliente</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-md-6 mb-2">
+              <label for="rolUsuario" class="form-label">Rol de usuario:</label>
+              <select class="form-select" id="rolUsuario">
+                <option value="">Selecciona...</option>
+                <option value="Capturista">Capturista</option>
+                <option value="Administrador">Administrador</option>
+                <option value="Visitante">Visitante</option>
+              </select>
+            </div>
+          </div>
+          <!-- Campos de contraseña y verificación -->
+          <div class="row mb-2">
+            <div class="col-md-6 mb-2">
+              <label for="inputPassword5" class="form-label">Password</label>
+              <input type="password" id="inputPassword5" class="form-control" aria-describedby="passwordHelpBlock">
+              <div id="passwordHelpBlock" class="form-text">
+                Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+              </div>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="verificarPasswordUsuario" class="form-label">Verificar contraseña</label>
+              <input type="password" class="form-control" id="verificarPasswordUsuario" aria-describedby="verificarPasswordHelpBlock">
+              <div id="verificarPasswordHelpBlock" class="form-text">
+                Repite la contraseña para verificar que coincidan.
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" id="btnGuardarUsuario">Guardar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Fin del modal de usuarios -->

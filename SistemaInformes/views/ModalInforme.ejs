@@ -1,10 +1,8 @@
-
-<!-- Modal para mostrar el detalle del informe -->
 <div class="modal fade" id="modalInforme" tabindex="-1" aria-labelledby="modalInformeLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-  <div class="modal-header" style="background: #ffd6e0;">
-        <h5 class="modal-title" id="modalInformeLabel">Reporte</h5>
+  <div class="modal-header">
+        <h5 class="modal-title" id="modalInformeLabel"><b>INFORME</b></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
@@ -94,8 +92,42 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-success">Aceptar</button>
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" id="btnAceptarInforme">Aceptar</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast de informe revisado -->
+  <div class="toast align-items-center" id="toastInformeRevisado" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; display: none; min-width: 300px;">
+    <div class="d-flex">
+      <div class="toast-body">
+        Informe revisado.
+      </div>
+      <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var btnAceptar = document.getElementById('btnAceptarInforme');
+    var modal = document.getElementById('modalInforme');
+    var toast = document.getElementById('toastInformeRevisado');
+    var bsModal = bootstrap.Modal.getOrCreateInstance(modal);
+    var bsToast = bootstrap.Toast.getOrCreateInstance(toast);
+
+    btnAceptar.addEventListener('click', function() {
+      bsModal.hide();
+      toast.style.display = 'block';
+      bsToast.show();
+    });
+
+    toast.addEventListener('hidden.bs.toast', function () {
+      toast.style.display = 'none';
+    });
+  });
+  </script>
       </div>
     </div>
   </div>

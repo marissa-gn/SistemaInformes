@@ -1,0 +1,127 @@
+<!-- Vista principal de Áreas -->
+<div class="main-content d-flex flex-column align-items-center justify-content-center w-100">
+    <div class="card-header text-center" style="color: var(--color-card-header); font-size: 2rem; font-weight: bold; text-align: center; margin-bottom: 0.5rem; margin-top: 0;">ÁREAS</div>
+    <div class="card mt-4" style="background: transparent; box-shadow: none; border: none;">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <div class="table-scroll">
+                    <!-- Tabla de áreas -->
+                    <table class="table table-hover text-center usuarios-table">
+                        <thead class="text-center">
+                            <tr>
+                                <th>#</th>
+                                <th>Área</th>
+                                <th>Descripción</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Ejemplo de filas de áreas -->
+                            <tr>
+                                <td>1</td>
+                                <td>Recursos Humanos</td>
+                                <td>Gestión del talento humano y desarrollo organizacional</td>
+                                <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-editar btn-sm" data-bs-toggle="modal" data-bs-target="#modalAreas">Editar</button>
+                                           <button class="btn btn-outline-danger btn-sm" onclick="mostrarToastAreaEliminada()">Eliminar</button>
+                                       </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Tecnologías de la Información</td>
+                                <td>Gestión de la infraestructura tecnológica y soporte técnico</td>
+                                <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-editar btn-sm" data-bs-toggle="modal" data-bs-target="#modalAreas">Editar</button>
+                                               <button class="btn btn-outline-danger btn-sm" onclick="mostrarToastAreaEliminada()">Eliminar</button>
+                                       </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Mercadotecnia</td>
+                                <td>Gestión de estrategias de mercado y publicidad</td>
+                                <td>
+                                   <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-editar btn-sm" data-bs-toggle="modal" data-bs-target="#modalAreas">Editar</button>
+                                               <button class="btn btn-outline-danger btn-sm" onclick="mostrarToastAreaEliminada()">Eliminar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Departamento de Logística</td>
+                                <td>Gestión de la cadena de suministro y distribución</td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-editar btn-sm" data-bs-toggle="modal" data-bs-target="#modalAreas">Editar</button>
+                                               <button class="btn btn-outline-danger btn-sm" onclick="mostrarToastAreaEliminada()">Eliminar</button>
+                                       </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>Producción / Operaciones</td>
+                                <td>Gestión de la producción y operaciones</td>
+                                <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-editar btn-sm" data-bs-toggle="modal" data-bs-target="#modalAreas">Editar</button>
+                                               <button class="btn btn-outline-danger btn-sm" onclick="mostrarToastAreaEliminada()">Eliminar</button>
+                                       </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>Investigación y Desarrollo (I+D)</td>
+                                <td>Gestión de la investigación y desarrollo de nuevos productos</td>
+                                <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-editar btn-sm" data-bs-toggle="modal" data-bs-target="#modalAreas">Editar</button>
+                                               <button class="btn btn-outline-danger btn-sm" onclick="mostrarToastAreaEliminada()">Eliminar</button>
+                                       </div>
+                                </td>
+                            </tr>
+                             <tr>
+                                <td>7</td>
+                                <td>Atención al cliente</td>
+                                <td>Gestión de la atención al cliente y soporte</td>
+                                <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-editar btn-sm" data-bs-toggle="modal" data-bs-target="#modalAreas">Editar</button>
+                                               <button class="btn btn-outline-danger btn-sm" onclick="mostrarToastAreaEliminada()">Eliminar</button>
+                                       </div>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Botón para añadir nueva área -->
+        <div class="w-100 d-flex justify-content-start mt-2">
+            <button class="btn btn-anadir-usuario" data-bs-toggle="modal" data-bs-target="#modalAreas">Añadir área</button>
+        </div>
+    </div>
+    <!-- Incluye el modal de áreas -->
+    <%- include('ModalAreas') %>
+<!-- Toast de área eliminada -->
+<div class="toast align-items-center" id="toastAreaEliminada" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; display: none; min-width: 300px;">
+    <div class="d-flex">
+        <div class="toast-body text-dark">
+            Área eliminada
+        </div>
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+</div>
+<!-- Toast de cambios guardados -->
+<div class="toast align-items-center" id="toastCambiosGuardados" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; display: none; min-width: 300px;">
+    <div class="d-flex">
+        <div class="toast-body text-dark">
+            Cambios guardados
+        </div>
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+</div>
+<!-- Los scripts de toast y modal se cargan en layout.ejs -->
+
