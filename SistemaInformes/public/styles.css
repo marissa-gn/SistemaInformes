@@ -377,5 +377,7 @@ body {
     }
     .layout-section { margin-left: 0; width: 100%; }
 }
-
+.btn-inicio {
+    border-radius: 2rem !important;
+}
 
