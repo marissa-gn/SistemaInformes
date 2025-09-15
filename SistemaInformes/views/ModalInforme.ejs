@@ -1,7 +1,8 @@
+<!-- Modal para ver informe -->
 <div class="modal fade" id="modalInforme" tabindex="-1" aria-labelledby="modalInformeLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-  <div class="modal-header">
+      <div class="modal-header">
         <h5 class="modal-title" id="modalInformeLabel"><b>INFORME</b></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
@@ -9,49 +10,49 @@
         <form>
           <div class="row mb-2">
             <div class="col-md-4 mb-2">
-              <label for="nombre" class="form-label">Nombre de quien envía:</label>
+              <label for="nombre" class="form-label"><b>Nombre de quien envía:</b></label>
               <input type="text" class="form-control" id="nombre">
             </div>
             <div class="col-md-4 mb-2">
-              <label for="fecha" class="form-label">Fecha de envío:</label>
+              <label for="fecha" class="form-label"><b>Fecha de envío:</b></label>
               <input type="text" class="form-control" id="fecha">
             </div>
             <div class="col-md-4 mb-2">
-              <label for="area" class="form-label">Área:</label>
+              <label for="area" class="form-label"><b>Área:</b></label>
               <input type="text" class="form-control" id="area">
             </div>
           </div>
           <div class="row mb-2">
             <div class="col-md-4 mb-2">
-              <label for="colonia" class="form-label">Colonia o comunidad:</label>
+              <label for="colonia" class="form-label"><b>Colonia o comunidad:</b></label>
               <input type="text" class="form-control" id="colonia">
             </div>
             <div class="col-md-4 mb-2">
-              <label for="lugar" class="form-label">Lugar de actividad:</label>
+              <label for="lugar" class="form-label"><b>Lugar de actividad:</b></label>
               <input type="text" class="form-control" id="lugar">
             </div>
             <div class="col-md-4 mb-2">
-              <label for="sector" class="form-label">Sector al que beneficia:</label>
+              <label for="sector" class="form-label"><b>Sector al que beneficia:</b></label>
               <input type="text" class="form-control" id="sector">
             </div>
           </div>
           <div class="row mb-2">
             <div class="col-md-4 mb-2">
-              <label for="tipo" class="form-label">Tipo de actividad / unidad de medida:</label>
+              <label for="tipo" class="form-label"><b>Tipo de actividad / unidad de medida:</b></label>
               <input type="text" class="form-control" id="tipo">
             </div>
             <div class="col-md-4 mb-2">
-              <label for="beneficiarios" class="form-label">Número de beneficiarios:</label>
+              <label for="beneficiarios" class="form-label"><b>Número de beneficiarios:</b></label>
               <input type="text" class="form-control" id="beneficiarios">
             </div>
             <div class="col-md-4 mb-2">
-              <label for="monto" class="form-label">Monto generado por la actividad (si aplica):</label>
+              <label for="monto" class="form-label"><b>Monto generado por la actividad (si aplica):</b></label>
               <input type="text" class="form-control" id="monto">
             </div>
           </div>
           <div class="row mb-2">
             <div class="col-md-4 mb-2">
-              <label for="solicitudCiudadania" class="form-label">¿Responde a una solicitud de la ciudadanía?</label>
+              <label for="solicitudCiudadania" class="form-label"><b>¿Responde a una solicitud de la ciudadanía?</b></label>
               <select class="form-select" id="solicitudCiudadania">
                 <option value="">Selecciona...</option>
                 <option value="si">Sí</option>
@@ -59,7 +60,7 @@
               </select>
             </div>
             <div class="col-md-4 mb-2">
-              <label for="procedimientosArea" class="form-label">¿Pertenece la actividad a los procedimientos de su área?</label>
+              <label for="procedimientosArea" class="form-label"><b>¿Pertenece la actividad a los procedimientos de su área?</b></label>
               <select class="form-select" id="procedimientosArea">
                 <option value="">Selecciona...</option>
                 <option value="si">Sí</option>
@@ -67,42 +68,44 @@
               </select>
             </div>
             <div class="col-md-4 mb-2">
-              <label for="evidencia" class="form-label">Evidencia fotográfica:</label>
+              <label for="evidencia" class="form-label"><b>Evidencia fotográfica:</b></label>
               <input class="form-control" type="file" id="evidencia" accept="image/*">
             </div>
           </div>
           <div class="mb-2">
-            <label for="descripcion" class="form-label">Descripción de la actividad:</label>
+            <label for="descripcion" class="form-label"><b>Descripción de la actividad:</b></label>
             <input type="text" class="form-control" id="descripcion">
           </div>
           <div class="mb-2">
-            <label for="comentario" class="form-label">Comentario:</label>
+            <label for="comentario" class="form-label"><b>Comentario:</b></label>
             <input type="text" class="form-control" id="comentario">
           </div>
           <div class="mb-2 d-flex gap-2 align-items-center">
             <div class="form-check">
               <input class="form-check-input" type="radio" name="evaluacion" id="rechazar">
-              <label class="form-check-label" for="rechazar">Rechazar</label>
+              <label class="form-check-label" for="rechazar"><b>Rechazar</b></label>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="evaluacion" id="aceptar">
-              <label class="form-check-label" for="aceptar">Aprobar</label>
+              <label class="form-check-label" for="aceptar"><b>Aprobar</b></label>
             </div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-          <button type="button" class="btn btn-success" id="btnAceptarInforme">Aceptar</button>
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-        </div>
+        <button type="button" class="btn btn-success" id="btnAceptarInforme">Aceptar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+      </div>
       </div>
     </div>
   </div>
 
   <!-- Toast de informe revisado -->
-  <div class="toast align-items-center" id="toastInformeRevisado" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; display: none; min-width: 300px;">
+  <div class="toast align-items-center shadow border-0" id="toastInformeRevisado" role="alert" aria-live="assertive" aria-atomic="true"
+    style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; display: none; min-width: 300px; background: #f5f5c2; color: #7c2323; border-radius: 10px; font-size: 1.2rem; font-weight: 500;">
     <div class="d-flex">
       <div class="toast-body">
+        <i class="bi bi-check-circle-fill me-2" style="color: #28a745;"></i>
         Informe revisado.
       </div>
       <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>

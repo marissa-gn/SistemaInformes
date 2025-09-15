@@ -1,42 +1,46 @@
 const express = require('express');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
+
 const app = express();
 
-// Configuración de EJS y layouts
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+// Middleware para layouts, excepto en /inicioSesion
+app.use((req, res, next) => {
+  if (req.path === '/inicioSesion') {
+    res.locals.layout = false;
+  }
+  next();
+});
 app.use(expressLayouts);
 
-// Archivos estáticos (CSS, JS, imágenes)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Ruta principal (pantalla de bienvenida)
+
 app.get('/', (req, res) => {
-  // Renderiza la vista de informes como pantalla de inicio
   res.render('VerInformes', { title: 'Inicio' });
 });
 
-// Ruta para ver informes
+app.get('/inicioSesion', (req, res) => {
+  res.render('inicioSesion', { title: 'Iniciar Sesión', layout: false });
+});
+
 app.get('/informes', (req, res) => {
-  // Renderiza la vista de informes
   res.render('VerInformes', { title: 'Informes' });
 });
 
-// Ruta para ver usuarios
 app.get('/usuarios', (req, res) => {
-  // Renderiza la vista de usuarios
   res.render('usuarios', { title: 'Usuarios' });
 });
 
-// Ruta para ver áreas
 app.get('/areas', (req, res) => {
-  // Renderiza la vista de áreas
   res.render('areas', { title: 'Áreas' });
 });
 
-// Inicializa el servidor en el puerto configurado
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor iniciado en http://localhost:${PORT}`);
+  console.log(`A ver checale si ya se ve en http://localhost:${PORT}`);
 });
+
+// ...existing code...

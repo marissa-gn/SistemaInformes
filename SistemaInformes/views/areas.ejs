@@ -1,11 +1,8 @@
 <!-- Vista principal de Áreas -->
-<div class="main-content d-flex flex-column align-items-center justify-content-center w-100">
+<div class="main-content">
     <!-- Encabezado de la sección Áreas -->
-    <div class="card-header text-center"
-         style="color: var(--color-card-header); font-size: 2rem; font-weight: bold; text-align: center; margin-bottom: 0.5rem; margin-top: 2.5rem;">
-        ÁREAS
-    </div>
-    <div class="card mt-4" style="background: transparent; box-shadow: none; border: none;">
+    <div class="card-header text-center titulo-tabla">ÁREAS</div>
+    <div class="card" style="background: transparent; box-shadow: none; border: none; margin-top: 0;">
         <div class="card-body p-4">
             <div class="table-responsive">
                 <div class="table-scroll">
@@ -115,7 +112,10 @@
     <div class="toast align-items-center" id="toastAreaEliminada" role="alert" aria-live="assertive" aria-atomic="true"
          style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; display: none; min-width: 300px;">
         <div class="d-flex">
-            <div class="toast-body text-dark">Área eliminada</div>
+            <div class="toast-body d-flex align-items-center">
+                <i class="bi bi-check-circle-fill me-2" style="color: #198754; font-size: 1.5rem;"></i>
+                <span>Área eliminada</span>
+            </div>
             <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
     </div>
@@ -124,7 +124,10 @@
     <div class="toast align-items-center" id="toastCambiosGuardados" role="alert" aria-live="assertive" aria-atomic="true"
          style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; display: none; min-width: 300px;">
         <div class="d-flex">
-            <div class="toast-body text-dark">Cambios guardados</div>
+            <div class="toast-body d-flex align-items-center">
+                <i class="bi bi-check-circle-fill me-2" style="color: #198754; font-size: 1.5rem;"></i>
+                <span>Cambios guardados</span>
+            </div>
             <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
     </div>
