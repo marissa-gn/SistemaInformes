@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'Sistema de Informes' %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="d-flex flex-column" style="min-height: 100vh;">
+        <!-- Menú principal superior -->
+        <nav class="navbar navbar-expand-lg navbar-main px-3 py-0">
+            <div class="container-fluid flex-nowrap">
+                <span class="navbar-brand">Ayuntamiento de Atlacomulco</span>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainMenu">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 d-flex flex-row align-items-center gap-2">
+                        <li class="nav-item"><a class="nav-link fw-bold" href="/generar-informe">Generar Informe</a></li>
+                        <li class="nav-item"><a class="nav-link fw-bold" href="/estadisticas">Estadísticas</a></li>
+                        <li class="nav-item"><a class="nav-link fw-bold" href="/historial">Historial</a></li>
+                        <li class="nav-item"><a class="nav-link fw-bold" href="/perfil">Perfil</a></li>
+                    </ul>
+                    <button class="btn btn-danger btn-logout ms-lg-3"><i class="bi bi-x-circle"></i> Cerrar sesión</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="d-flex flex-row flex-grow-1 layout-row" style="flex: 1 0 auto;">
+            <!-- Barra lateral -->
+            <aside class="sidebar-logo d-flex flex-column align-items-center justify-content-between">
+                <div class="w-100 d-flex flex-column align-items-center">
+                    <div class="d-flex flex-row align-items-center justify-content-center mb-2" style="gap: 0.5rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15px" height="15px" fill="#624700" class="bi bi-person-circle" viewBox="0 0 16 16" style="margin-bottom:0;">
+                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                        </svg>
+                        <span class="user-name" style="font-size: 1em; color: #624700; font-weight: 600; margin-bottom:0;">Ceci Dávila</span>
+                    </div>
+                    <img src="/Img/logo.jpg" class="logo img-fluid mx-auto d-block mb-2" alt="Logo Atlacomulco">
+                </div>
+            </aside>
+            <!-- Fin barra lateral -->
+            <section class="flex-grow-1 d-flex flex-column align-items-center layout-section">
+                <main class="main-content d-flex flex-column align-items-center justify-content-center w-100">
+                    <%- body %>
+                </main>
+            </section>
+        </div>
+
+        <footer class="footer bg-light text-center py-2 mt-auto">
+            © 2025 Ayuntamiento de Atlacomulco. Todos los derechos reservados.
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/modalAreasToast.js"></script>
+    <script src="/js/modalUsuariosToast.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<div class="container mt-5" style="max-height: 75vh; overflow-y: auto;">
+  <h2 class="text-center mb-4" style="color: #a12424; font-weight: bold;">Estadísticas de Informes</h2>
+  <div class="row mb-5">
+  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaBeneficiarios" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaMontos" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+  </div>
+  <div class="row mb-5">
+  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaAreas" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaSectores" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+  </div>
+  <div class="row mb-5">
+  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaColonia" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaLugar" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+  </div>
+  <div class="row mb-5">
+  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaTipoActividad" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaEvidencia" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+  </div>
+  <div class="row mb-5">
+  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaSolicitudes" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaProcedimientos" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+  </div>
+  <div class="row mb-5">
+  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaDescripcion" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaComentario" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+  </div>
+  <div class="row mb-5">
+  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaObservaciones" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaFecha" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Ejemplo de datos estáticos, reemplazar por datos reales desde el backend
+  const beneficiariosData = {
+    labels: ['Informe 1', 'Informe 2', 'Informe 3'],
+    datasets: [{ label: 'Número de beneficiarios', data: [10, 20, 15], backgroundColor: '#a12424' }]
+  };
+  const montosData = {
+    labels: ['Generado', 'Invertido'],
+    datasets: [{ label: 'Montos', data: [5000, 3000], backgroundColor: ['#a12424', '#7c2323'] }]
+  };
+  const areasData = {
+    labels: ['Finanzas', 'RH', 'TI', 'Marketing'],
+    datasets: [{ label: 'Informes por área', data: [5, 8, 3, 4], backgroundColor: ['#a12424', '#7c2323', '#c14444', '#f5b5b5'] }]
+  };
+  const sectoresData = {
+    labels: ['Sector 1', 'Sector 2', 'Sector 3'],
+    datasets: [{ label: 'Informes por sector', data: [7, 2, 6], backgroundColor: ['#a12424', '#7c2323', '#c14444'] }]
+  };
+  const coloniaData = {
+    labels: ['Colonia 1', 'Colonia 2', 'Colonia 3'],
+    datasets: [{ label: 'Informes por colonia', data: [3, 6, 2], backgroundColor: ['#a12424', '#7c2323', '#c14444'] }]
+  };
+  const lugarData = {
+    labels: ['Lugar 1', 'Lugar 2', 'Lugar 3'],
+    datasets: [{ label: 'Informes por lugar', data: [4, 5, 3], backgroundColor: ['#a12424', '#7c2323', '#c14444'] }]
+  };
+  const tipoActividadData = {
+    labels: ['Tipo 1', 'Tipo 2', 'Tipo 3'],
+    datasets: [{ label: 'Tipo de actividad', data: [2, 7, 4], backgroundColor: ['#a12424', '#7c2323', '#c14444'] }]
+  };
+  const evidenciaData = {
+    labels: ['Con evidencia', 'Sin evidencia'],
+    datasets: [{ label: 'Evidencia fotográfica', data: [8, 2], backgroundColor: ['#a12424', '#7c2323'] }]
+  };
+  const solicitudesData = {
+    labels: ['Sí', 'No'],
+    datasets: [{ label: 'Solicitudes de ciudadanía', data: [6, 4], backgroundColor: ['#a12424', '#7c2323'] }]
+  };
+  const procedimientosData = {
+    labels: ['Sí', 'No'],
+    datasets: [{ label: 'Procedimientos de área', data: [7, 3], backgroundColor: ['#a12424', '#7c2323'] }]
+  };
+  const descripcionData = {
+    labels: ['Desc. corta', 'Desc. media', 'Desc. larga'],
+    datasets: [{ label: 'Descripción', data: [4, 3, 3], backgroundColor: ['#a12424', '#7c2323', '#c14444'] }]
+  };
+  const comentarioData = {
+    labels: ['Con comentario', 'Sin comentario'],
+    datasets: [{ label: 'Comentario', data: [6, 4], backgroundColor: ['#a12424', '#7c2323'] }]
+  };
+  const observacionesData = {
+    labels: ['Con observaciones', 'Sin observaciones'],
+    datasets: [{ label: 'Observaciones', data: [5, 5], backgroundColor: ['#a12424', '#7c2323'] }]
+  };
+  const fechaData = {
+    labels: ['Ago', 'Sep', 'Oct'],
+    datasets: [{ label: 'Informes por mes', data: [3, 4, 3], backgroundColor: ['#a12424', '#7c2323', '#c14444'] }]
+  };
+  new Chart(document.getElementById('graficaBeneficiarios'), { type: 'bar', data: beneficiariosData });
+  new Chart(document.getElementById('graficaMontos'), { type: 'pie', data: montosData });
+  new Chart(document.getElementById('graficaAreas'), { type: 'doughnut', data: areasData });
+  new Chart(document.getElementById('graficaSectores'), { type: 'bar', data: sectoresData });
+  new Chart(document.getElementById('graficaColonia'), { type: 'bar', data: coloniaData });
+  new Chart(document.getElementById('graficaLugar'), { type: 'bar', data: lugarData });
+  new Chart(document.getElementById('graficaTipoActividad'), { type: 'bar', data: tipoActividadData });
+  new Chart(document.getElementById('graficaEvidencia'), { type: 'pie', data: evidenciaData });
+  new Chart(document.getElementById('graficaSolicitudes'), { type: 'pie', data: solicitudesData });
+  new Chart(document.getElementById('graficaProcedimientos'), { type: 'pie', data: procedimientosData });
+  new Chart(document.getElementById('graficaDescripcion'), { type: 'bar', data: descripcionData });
+  new Chart(document.getElementById('graficaComentario'), { type: 'pie', data: comentarioData });
+  new Chart(document.getElementById('graficaObservaciones'), { type: 'pie', data: observacionesData });
+  new Chart(document.getElementById('graficaFecha'), { type: 'bar', data: fechaData });
+</script>

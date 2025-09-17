@@ -8,68 +8,74 @@
       </div>
       <div class="modal-body">
         <form>
+          <!-- Fila 1: Área y Sector -->
           <div class="row mb-2">
-            <div class="col-md-4 mb-2">
-              <label for="nombre" class="form-label"><b>Nombre de quien envía:</b></label>
-              <input type="text" class="form-control" id="nombre">
-            </div>
-            <div class="col-md-4 mb-2">
-              <label for="fecha" class="form-label"><b>Fecha de envío:</b></label>
-              <input type="text" class="form-control" id="fecha">
-            </div>
-            <div class="col-md-4 mb-2">
+            <div class="col-md-6 mb-2">
               <label for="area" class="form-label"><b>Área:</b></label>
               <input type="text" class="form-control" id="area">
             </div>
-          </div>
-          <div class="row mb-2">
-            <div class="col-md-4 mb-2">
-              <label for="colonia" class="form-label"><b>Colonia o comunidad:</b></label>
-              <input type="text" class="form-control" id="colonia">
-            </div>
-            <div class="col-md-4 mb-2">
-              <label for="lugar" class="form-label"><b>Lugar de actividad:</b></label>
-              <input type="text" class="form-control" id="lugar">
-            </div>
-            <div class="col-md-4 mb-2">
+            <div class="col-md-6 mb-2">
               <label for="sector" class="form-label"><b>Sector al que beneficia:</b></label>
               <input type="text" class="form-control" id="sector">
             </div>
           </div>
+          <!-- Fila 2: Colonia y Lugar de actividad -->
           <div class="row mb-2">
-            <div class="col-md-4 mb-2">
+            <div class="col-md-6 mb-2">
+              <label for="colonia" class="form-label"><b>Colonia o comunidad:</b></label>
+              <input type="text" class="form-control" id="colonia">
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="lugar" class="form-label"><b>Lugar de actividad:</b></label>
+              <input type="text" class="form-control" id="lugar">
+            </div>
+          </div>
+          <!-- Fila 3: Tipo de actividad y Número de beneficiarios -->
+          <div class="row mb-2">
+            <div class="col-md-6 mb-2">
               <label for="tipo" class="form-label"><b>Tipo de actividad / unidad de medida:</b></label>
               <input type="text" class="form-control" id="tipo">
             </div>
-            <div class="col-md-4 mb-2">
+            <div class="col-md-6 mb-2">
               <label for="beneficiarios" class="form-label"><b>Número de beneficiarios:</b></label>
               <input type="text" class="form-control" id="beneficiarios">
             </div>
-            <div class="col-md-4 mb-2">
+          </div>
+          <!-- Fila 4: Monto generado y Monto invertido -->
+          <div class="row mb-2">
+            <div class="col-md-6 mb-2">
               <label for="monto" class="form-label"><b>Monto generado por la actividad (si aplica):</b></label>
               <input type="text" class="form-control" id="monto">
             </div>
+            <div class="col-md-6 mb-2">
+              <label for="montoInvertido" class="form-label"><b>¿Cuál fue el monto invertido en la actividad?</b></label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="text" class="form-control" id="montoInvertido">
+              </div>
+            </div>
           </div>
+          <!-- Fila 5: Evidencia fotográfica y Solicitud/procedimientos -->
           <div class="row mb-2">
-            <div class="col-md-4 mb-2">
-              <label for="solicitudCiudadania" class="form-label"><b>¿Responde a una solicitud de la ciudadanía?</b></label>
-              <select class="form-select" id="solicitudCiudadania">
-                <option value="">Selecciona...</option>
-                <option value="si">Sí</option>
-                <option value="no">No</option>
-              </select>
-            </div>
-            <div class="col-md-4 mb-2">
-              <label for="procedimientosArea" class="form-label"><b>¿Pertenece la actividad a los procedimientos de su área?</b></label>
-              <select class="form-select" id="procedimientosArea">
-                <option value="">Selecciona...</option>
-                <option value="si">Sí</option>
-                <option value="no">No</option>
-              </select>
-            </div>
-            <div class="col-md-4 mb-2">
+            <div class="col-md-6 mb-2">
               <label for="evidencia" class="form-label"><b>Evidencia fotográfica:</b></label>
               <input class="form-control" type="file" id="evidencia" accept="image/*">
+            </div>
+            <div class="col-md-3 mb-2 text-center d-flex flex-column align-items-center justify-content-center">
+              <label for="solicitudCiudadania" class="form-label w-100 text-center" style="white-space: normal;"><b>¿Responde a una solicitud de la ciudadanía?</b></label>
+              <select class="form-select text-center" id="solicitudCiudadania" style="max-width: 90%; margin: 0 auto;">
+                <option value="" class="text-center">Selecciona...</option>
+                <option value="si">Sí</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+            <div class="col-md-3 mb-2 text-center d-flex flex-column align-items-center justify-content-center">
+              <label for="procedimientosArea" class="form-label w-100 text-center" style="white-space: normal;"><b>¿Pertenece la actividad a los procedimientos de su área?</b></label>
+              <select class="form-select text-center" id="procedimientosArea" style="max-width: 90%; margin: 0 auto;">
+                <option value="" class="text-center">Selecciona...</option>
+                <option value="si">Sí</option>
+                <option value="no">No</option>
+              </select>
             </div>
           </div>
           <div class="mb-2">
@@ -79,6 +85,10 @@
           <div class="mb-2">
             <label for="comentario" class="form-label"><b>Comentario:</b></label>
             <input type="text" class="form-control" id="comentario">
+          </div>
+          <div class="mb-2">
+            <label for="observaciones" class="form-label"><b>Observaciones:</b></label>
+            <input type="text" class="form-control" id="observaciones">
           </div>
           <div class="mb-2 d-flex gap-2 align-items-center">
             <div class="form-check">

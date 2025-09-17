@@ -1,0 +1,86 @@
+<h2 class="text-center" style="color: #a12424; font-weight: bold; margin-bottom: 32px;">Creando nuevo informe</h2>
+<form class="w-100 px-4" style="margin: 0; color: #111; max-height: 70vh; overflow-y: auto; min-height: 70vh;">
+  <div class="row mb-4">
+    <div class="col-md-6 mb-2">
+      <label for="area" class="form-label"><b>Área:</b></label>
+      <select class="form-select" id="area">
+        <option value="">Selecciona...</option>
+        <option value="Finanzas y Contabilidad">Finanzas y Contabilidad</option>
+        <option value="Recursos Humanos">Recursos Humanos</option>
+        <option value="Tecnologías de la Información">Tecnologías de la Información</option>
+        <option value="Mercadotecnia">Mercadotecnia</option>
+        <option value="Departamento de Logística">Departamento de Logística</option>
+        <option value="Producción / Operaciones">Producción / Operaciones</option>
+      </select>
+    </div>
+    <div class="col-md-6 mb-2">
+      <label for="sector" class="form-label"><b>Sector al que beneficia:</b></label>
+      <input type="text" class="form-control" id="sector">
+    </div>
+  </div>
+  <div class="row mb-4">
+    <div class="col-md-6 mb-2">
+      <label for="lugar" class="form-label"><b>Lugar de actividad:</b></label>
+      <input type="text" class="form-control" id="lugar">
+    </div>
+    <div class="col-md-6 mb-2">
+      <label for="tipo" class="form-label"><b>Tipo de actividad / unidad de medida:</b></label>
+      <input type="text" class="form-control" id="tipo">
+    </div>
+  </div>
+  <div class="row mb-4">
+    <div class="col-md-6 mb-2">
+      <label for="beneficiarios" class="form-label"><b>Número de beneficiarios:</b></label>
+      <input type="text" class="form-control" id="beneficiarios">
+    </div>
+    <div class="col-md-6 mb-2">
+      <label for="monto" class="form-label"><b>Monto generado por la actividad (si aplica):</b></label>
+      <input type="text" class="form-control" id="monto">
+    </div>
+  </div>
+  <div class="row mb-4">
+    <div class="col-md-6 mb-2">
+      <label for="montoInvertido" class="form-label"><b>¿Cuál fue el monto invertido en la actividad?</b></label>
+      <div class="input-group">
+        <span class="input-group-text">$</span>
+        <input type="text" class="form-control" id="montoInvertido">
+      </div>
+    </div>
+    <div class="col-md-6 mb-2">
+      <label for="evidencia" class="form-label"><b>Evidencia fotográfica:</b></label>
+      <input class="form-control" type="file" id="evidencia" accept="image/*">
+    </div>
+  </div>
+  <div class="row mb-4">
+    <div class="col-md-6 mb-2">
+      <label for="solicitudCiudadania" class="form-label"><b>¿Responde a una solicitud de la ciudadanía?</b></label>
+      <select class="form-select" id="solicitudCiudadania">
+        <option value="">Selecciona...</option>
+        <option value="si">Sí</option>
+        <option value="no">No</option>
+      </select>
+    </div>
+    <div class="col-md-6 mb-2">
+      <label for="procedimientosArea" class="form-label"><b>¿Pertenece la actividad a los procedimientos de su área?</b></label>
+      <select class="form-select" id="procedimientosArea">
+        <option value="">Selecciona...</option>
+        <option value="si">Sí</option>
+        <option value="no">No</option>
+      </select>
+    </div>
+  </div>
+  <div class="row mb-4">
+    <div class="col-md-6 mb-2">
+      <label for="descripcion" class="form-label"><b>Descripción de la actividad:</b></label>
+      <textarea class="form-control" id="descripcion" rows="2" style="resize:vertical; min-height:38px;"></textarea>
+    </div>
+    <div class="col-md-6 mb-2">
+      <label for="comentario" class="form-label"><b>Comentario:</b></label>
+      <textarea class="form-control" id="comentario" rows="2" style="resize:vertical; min-height:38px;"></textarea>
+    </div>
+  </div>
+  <div class="mt-4 text-center d-flex justify-content-center gap-3">
+    <button type="submit" class="btn btn-inicio btn-lg rounded-pill px-5">Guardar</button>
+    <button type="button" class="btn btn-inicio btn-lg rounded-pill px-5">Enviar</button>
+  </div>
+</form>

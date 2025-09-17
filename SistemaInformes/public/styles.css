@@ -1,3 +1,7 @@
+html, body {
+    overflow: hidden !important;
+    height: 100%;
+}
 :root {
     --color-principal: #7c2323;
     --color-secundario: #5e0a1a;

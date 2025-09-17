@@ -1,3 +1,5 @@
+// ...existing code...
+
 const express = require('express');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
@@ -22,6 +24,11 @@ app.get('/', (req, res) => {
   res.render('VerInformes', { title: 'Inicio' });
 });
 
+// Ruta para Estadísticas (admin)
+app.get('/estadisticas', (req, res) => {
+  res.render('estadisticas', { title: 'Estadísticas', layout:false });
+});
+
 app.get('/inicioSesion', (req, res) => {
   res.render('inicioSesion', { title: 'Iniciar Sesión', layout: false });
 });
@@ -37,6 +44,19 @@ app.get('/usuarios', (req, res) => {
 app.get('/areas', (req, res) => {
   res.render('areas', { title: 'Áreas' });
 });
+
+
+
+// Ruta para Generar Informe (usuario)
+app.get('/generar-informe', (req, res) => {
+  res.render('GenerarInforme', { title: 'Generar Informe', layout: 'layoutUsuario' });
+});
+
+// Ruta temporal para probar el layout de usuario
+app.get('/usuario-layout', (req, res) => {
+  res.render('inicioUsuario', { title: 'Inicio', layout: 'layoutUsuario' });
+});
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
