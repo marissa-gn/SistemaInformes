@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🐛 Debug Server",
+      "type": "node", 
+      "request": "launch",
+      "program": "server-final.js",
+      "cwd": "${workspaceFolder}",
+      "restart": true,
+      "skipFiles": ["<node_internals>/**"],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "stopOnEntry": false,
+      "outputCapture": "std"
+    },
+    {
+      "name": "🔗 Attach to Running Server", 
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "restart": true,
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": ".",
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}

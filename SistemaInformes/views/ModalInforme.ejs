@@ -1,13 +1,24 @@
 <!-- Modal para ver informe -->
 <div class="modal fade" id="modalInforme" tabindex="-1" aria-labelledby="modalInformeLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modalInformeLabel"><b>INFORME</b></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body px-4 py-4">
         <form>
+          <!-- Fila 0: Nombre de quien envía y Fecha -->
+          <div class="row mb-2">
+            <div class="col-md-6 mb-2">
+              <label for="nombreRemitente" class="form-label"><b>Nombre de quien envía:</b></label>
+              <input type="text" class="form-control" id="nombreRemitente">
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="fechaEnvio" class="form-label"><b>Fecha:</b></label>
+              <input type="date" class="form-control" id="fechaEnvio">
+            </div>
+          </div>
           <!-- Fila 1: Área y Sector -->
           <div class="row mb-2">
             <div class="col-md-6 mb-2">
@@ -83,12 +94,12 @@
             <input type="text" class="form-control" id="descripcion">
           </div>
           <div class="mb-2">
-            <label for="comentario" class="form-label"><b>Comentario:</b></label>
-            <input type="text" class="form-control" id="comentario">
-          </div>
-          <div class="mb-2">
             <label for="observaciones" class="form-label"><b>Observaciones:</b></label>
             <input type="text" class="form-control" id="observaciones">
+          </div>
+          <div class="mb-2 text-center">
+            <label for="comentarios" class="form-label" style="color: #a12424; width: 100%; display: block;"><b>Comentarios sobre el informe:</b></label>
+            <input type="text" class="form-control text-center" id="comentarios" style="color: #a12424; font-weight: bold;">
           </div>
           <div class="mb-2 d-flex gap-2 align-items-center">
             <div class="form-check">
@@ -103,44 +114,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-success" id="btnAceptarInforme">Aceptar</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-      </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Toast de informe revisado -->
-  <div class="toast align-items-center shadow border-0" id="toastInformeRevisado" role="alert" aria-live="assertive" aria-atomic="true"
-    style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; display: none; min-width: 300px; background: #f5f5c2; color: #7c2323; border-radius: 10px; font-size: 1.2rem; font-weight: 500;">
-    <div class="d-flex">
-      <div class="toast-body">
-        <i class="bi bi-check-circle-fill me-2" style="color: #28a745;"></i>
-        Informe revisado.
-      </div>
-      <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-  </div>
-
-  <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var btnAceptar = document.getElementById('btnAceptarInforme');
-    var modal = document.getElementById('modalInforme');
-    var toast = document.getElementById('toastInformeRevisado');
-    var bsModal = bootstrap.Modal.getOrCreateInstance(modal);
-    var bsToast = bootstrap.Toast.getOrCreateInstance(toast);
-
-    btnAceptar.addEventListener('click', function() {
-      bsModal.hide();
-      toast.style.display = 'block';
-      bsToast.show();
-    });
-
-    toast.addEventListener('hidden.bs.toast', function () {
-      toast.style.display = 'none';
-    });
-  });
-  </script>
+        <button type="button" class="btn btn-success" id="btnAceptarInforme" data-bs-dismiss="modal" onclick="mostrarInformeRevisado()">Aceptar</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="mostrarCambiosCancelados()">Cancelar</button>
       </div>
     </div>
   </div>

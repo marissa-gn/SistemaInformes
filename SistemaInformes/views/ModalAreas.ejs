@@ -1,25 +1,29 @@
 <!-- Modal para editar o añadir área -->
 <div class="modal fade" id="modalAreas" tabindex="-1" aria-labelledby="modalAreasLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modalAreasLabel"><b>Áreas</b></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
-      <div class="modal-body">
-        <form>
+      <div class="modal-body px-4 py-4">
+        <form id="form-area" novalidate>
+          <input type="hidden" id="area-id" name="area_id" value="">
+          
           <div class="mb-3">
-            <label for="nombreArea" class="form-label"><b>Nombre del área:</b></label>
-            <textarea class="form-control" id="nombreArea" rows="1"></textarea>
+            <label for="area-nombre" class="form-label"><b>Nombre del área:</b></label>
+            <input type="text" class="form-control" id="area-nombre" name="nombre" required>
+            <div class="invalid-feedback">El nombre del área es requerido.</div>
           </div>
           <div class="mb-3">
-            <label for="descripcionArea" class="form-label"><b>Descripción:</b></b></label>
-            <textarea class="form-control" id="descripcionArea" rows="4"></textarea>
+            <label for="area-descripcion" class="form-label"><b>Descripción:</b></label>
+            <textarea class="form-control" id="area-descripcion" name="descripcion" rows="4"></textarea>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-success" id="btnGuardarArea">Guardar</button>
+        <!-- Hacer que el botón envíe el formulario como fallback (asocia al form por id) -->
+  <button type="submit" form="form-area" class="btn btn-success" id="btn-guardar-area" onclick="try{ __fallbackGuardarArea(this); }catch(e){}">Guardar</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
       </div>
     </div>

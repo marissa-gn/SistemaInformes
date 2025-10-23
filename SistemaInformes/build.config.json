@@ -1,0 +1,39 @@
+{
+  "name": "Sistema de Informes - Configuración de Build",
+  "version": "1.0.0",
+  "buildConfig": {
+    "target": "node",
+    "platform": "server",
+    "optimization": {
+      "minify": true,
+      "removeComments": true,
+      "dropConsole": true
+    },
+    "output": {
+      "directory": "dist",
+      "publicPath": "/",
+      "cleanBeforeBuild": true
+    },
+    "assets": {
+      "copyImages": true,
+      "optimizeCSS": true,
+      "minifyJS": true
+    },
+    "development": {
+      "sourceMap": false,
+      "watch": true
+    },
+    "production": {
+      "sourceMap": false,
+      "compress": true,
+      "removeDebugger": true
+    }
+  },
+  "buildSteps": [
+    "Limpiar directorio de distribución",
+    "Procesar y minificar archivos CSS",
+    "Minificar archivos JavaScript",
+    "Copiar assets estáticos (imágenes, etc.)",
+    "Generar manifesto de archivos"
+  ]
+}
