@@ -1,0 +1,1186 @@
+html, body {
+    overflow-x: hidden;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+:root {
+    --color-principal: #7c2323;
+    --color-secundario: #5e0a1a;
+    --color-fondo: #fafafa;
+    --color-blanco: #fff;
+    --color-boton: #740906;
+    --color-borde-boton: #993f51;
+    --color-card-header: #7c2323;
+    --color-table-border: #ddd;
+    --color-modal-header: #811406;
+    --color-verde-boton: #28a745;
+    --color-verde-boton-dark: #218838;
+    --color-rojo-boton: #dc3545;
+    --color-rojo-boton-dark: #c82333;
+    --color-principal-bienvenida: #892b23;
+    --fondo-bienvenida: rgba(255,255,255,0.9);
+    --sombra-bienvenida: 0 2px 16px 0 rgba(0,0,0,0.10);
+    --radio-bienvenida: 15px;
+}
+
+.login-bg {
+    min-height: 100vh;
+    background: url('/Img/inicioSesion.jpg') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card {
+    background: rgba(255,255,255,0.92);
+    border-radius: 22px;
+    box-shadow: 0 8px 32px 0 rgba(31,38,135,0.18);
+    padding: 2.5rem 2.5rem 2rem 2.5rem;
+    max-width: 350px;
+    width: 100%;
+    margin: auto;
+    position: relative;
+}
+
+.login-avatar {
+    width: 80px;
+    height: 80px;
+    background: var(--color-principal);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 50%;
+    top: -40px;
+    transform: translateX(-50%);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+}
+
+.login-avatar i {
+    color: #fff;
+    font-size: 2.5rem;
+}
+
+/* Ensure input icons and toggle-eye in login use the primary color and a consistent size */
+.input-group-inside .input-icon-inside, .toggle-password-btn i {
+    color: var(--color-boton);
+    font-size: 1.2rem;
+}
+
+.toggle-password-btn:hover i { color: var(--color-borde-boton); }
+
+.login-title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-principal);
+    margin-top: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.input-group-inside {
+    position: relative;
+    margin-bottom: 1.2rem;
+}
+
+.input-group-inside .input-icon-inside {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-principal);
+    font-size: 1.2rem;
+    z-index: 2;
+}
+
+.input-group-inside input {
+    padding-left: 2.2rem;
+    height: 44px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: #f7f7fa;
+    font-size: 1rem;
+}
+
+.login-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+    font-size: 0.97rem;
+}
+
+.btn-login {
+    width: 100%;
+    background: linear-gradient(90deg, var(--color-principal) 60%, var(--color-secundario) 100%);
+    color: #fff !important;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    height: 44px;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 8px rgba(31,38,135,0.10);
+    margin-top: 0.5rem;
+    transition: background 0.2s;
+}
+
+.btn-login:hover {
+    background: linear-gradient(90deg, var(--color-secundario) 60%, var(--color-principal) 100%);
+    color: #fff !important;
+}
+
+@media (max-width: 500px) {
+    .login-card {
+        padding: 1.2rem 0.5rem 1rem 0.5rem;
+    }
+    .login-title {
+        font-size: 1.1rem;
+    }
+}
+
+body {
+    font-family: 'Century Gothic', Arial, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    background-color: var(--color-fondo);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.d-flex.flex-column.min-vh-100 {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+main.main-content {
+    flex: 1 0 auto;
+}
+.footer {
+    flex-shrink: 0;
+    margin-top: auto;
+    position: fixed;
+    bottom: 0;
+    left: 230px;
+    width: calc(100% - 230px);
+    z-index: 999;
+}
+.layout-row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+.layout-section {
+    margin-left: 230px;
+    padding-top: 56px;
+    padding-bottom: 40px;
+    min-width: 0;
+    height: calc(100vh - 40px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+/* IMAGEN DE FONDO PANTALLA COMPLETA PARA PÁGINAS DE INICIO */
+.layout-section:not(.no-bg)::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: url('/Img/Admin.jpg') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    z-index: -1;
+}
+
+.layout-section:not(.no-bg) {
+    background: transparent !important;
+}
+
+/* Solo la barra lateral es completamente blanca en páginas de inicio */
+body:has(.layout-section:not(.no-bg)) .sidebar-logo {
+    background: white !important;
+}
+
+/* Main content para página de inicio - sin imagen de fondo duplicada */
+.main-content.inicio-bg {
+    background: transparent !important;
+    width: 100% !important;
+    height: 100% !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 1;
+}
+
+.layout-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    padding-bottom: 10px;
+}
+
+.bienvenido-box {
+    background: rgba(255,255,255,0.9);
+    border-radius: var(--radio-bienvenida);
+    padding: 1.5rem 2.5rem;
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: var(--color-principal-bienvenida);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    z-index: 10;
+    text-align: center;
+    border: 2px solid rgba(124, 35, 35, 0.4);
+    backdrop-filter: blur(12px);
+    max-width: 600px;
+    white-space: nowrap;
+    position: relative;
+}
+
+/* Contenedor para centrar el mensaje de bienvenida */
+.inicio-welcome-container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: calc(100vh - 96px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+body.inicio-bg .main-content {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-logo {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    width: 230px;
+    height: calc(100vh - 56px);
+    background: var(--color-blanco);
+    box-sizing: border-box;
+    padding: 16px 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 1px solid #eee;
+    z-index: 100;
+}
+.logo { max-width: 140px; margin-bottom: 8px; }
+.user-name { font-size: 1em; margin: 0 0 8px 0; }
+.busqueda-informes { display: flex; flex-direction: column; margin-top: 0.2rem; }
+.busqueda-informes .d-flex.w-100.gap-2.mt-2.justify-content-center {
+    flex-direction: column !important;
+    gap: 0.3rem !important;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background-color: var(--color-principal);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Estilos específicos para navbar-main */
+.navbar-main {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background-color: var(--color-principal);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.navbar-brand {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--color-blanco);
+    margin-left: 16px;
+    text-decoration: none;
+}
+.navbar-nav {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+.navbar-nav .nav-link {
+    color: var(--color-blanco);
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+}
+.navbar-nav .nav-link:hover {
+    background-color: var(--color-secundario);
+    border-radius: 4px;
+}
+
+.btn {
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s;
+}
+.btn-inicio { 
+    border-radius: 2rem !important; 
+}
+
+/* Botón flotante de inicio */
+.fixed-bottom .btn-inicio {
+    margin: 0 1.5rem 1.5rem 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+}
+
+/* Estilos para página de Generar Informe */
+.form-scroll-container {
+    max-width: 100%;
+    padding: 0 15px;
+    margin-bottom: 80px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    position: relative;
+}
+
+.form-scroll-container form {
+    background: transparent;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: none;
+    width: 100%;
+}
+
+/* Prevenir scrolls extra en botones */
+.form-scroll-container .btn {
+    position: relative;
+    transform: none !important;
+    will-change: auto;
+}
+
+.form-scroll-container .btn:focus,
+.form-scroll-container .btn:active {
+    outline: none;
+    transform: none !important;
+}
+
+/* Estilo personalizado para el scrollbar */
+.form-scroll-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.form-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.form-scroll-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.form-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Estilos para páginas de historial y perfil */
+.layout-section.no-bg .main-content {
+    background: transparent !important;
+    width: 100%;
+    min-height: calc(100vh - 96px);
+    padding: 20px;
+    padding-bottom: 120px; /* Espacio extra para el botón flotante y footer */
+}
+.btn-editar {
+    background-color: #5a5e01 !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(90,94,1,0.15);
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s;
+}
+.btn-editar:hover, .btn-editar:focus {
+    background-color: #484a01 !important;
+    color: #fff !important;
+    outline: none;
+}
+.btn-success {
+    background: linear-gradient(90deg, var(--color-verde-boton) 60%, var(--color-verde-boton-dark) 100%);
+    border: none;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(40,167,69,0.15);
+}
+.btn-success:hover {
+    background: linear-gradient(90deg, var(--color-verde-boton-dark) 60%, var(--color-verde-boton) 100%);
+    color: #fff;
+}
+.btn-danger {
+    background: linear-gradient(90deg, var(--color-rojo-boton) 60%, var(--color-rojo-boton-dark) 100%);
+    border: none;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(220,53,69,0.15);
+}
+.btn-danger:hover {
+    background: linear-gradient(90deg, var(--color-rojo-boton-dark) 60%, var(--color-rojo-boton) 100%);
+    color: #fff;
+}
+.btn-buscar, .btn-inicio, .btn-abrir, .btn-usuarios, .btn-anadir-usuario {
+    background-color: var(--color-boton);
+    border-color: var(--color-borde-boton);
+    color: var(--color-blanco);
+}
+.btn-nuevos, .btn-area, .btn-revisados {
+    background: #685e04;
+    color: #fff;
+    border: 1px solid #eee;
+    font-size: 1.5em;
+}
+.btn-logout {
+    white-space: nowrap;
+    position: relative;
+    z-index: 1000;
+    outline: none !important;
+    border: none !important;
+    transform: none !important;
+    will-change: auto !important;
+    pointer-events: auto !important;
+    scroll-behavior: auto !important;
+}
+
+.btn-logout:focus,
+.btn-logout:active,
+.btn-logout:hover,
+.btn-logout:visited {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    scroll-behavior: auto !important;
+    text-decoration: none !important;
+}
+
+.btn-logout:focus-visible {
+    outline: none !important;
+}
+
+/* Prevenir scroll automático en navbar */
+.navbar-collapse {
+    scroll-behavior: auto !important;
+}
+
+.navbar-collapse.collapsing {
+    scroll-behavior: auto !important;
+}
+
+.navbar-collapse.show {
+    scroll-behavior: auto !important;
+}
+
+/* Asegurar que el botón de logout no interfiera con el colapso */
+.navbar-collapse .btn-logout {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* Prevenir scroll en todo el navbar cuando se hace clic en logout */
+.navbar-main {
+    scroll-behavior: auto !important;
+}
+
+.navbar-main * {
+    scroll-behavior: auto !important;
+}
+
+.titulo-tabla {
+    margin-top: 2.5rem !important;
+    margin-bottom: 1.5rem !important;
+    color: var(--color-card-header, #7c2323) !important;
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    padding-bottom: 0;
+}
+table.table-hover tbody tr:hover,
+table.usuarios-table tbody tr:hover {
+    background-color: #f5f5c2 !important;
+    transition: background 0.2s;
+}
+.table-responsive {
+    width: auto;
+    max-width: 1400px;
+    border: 1px solid #ddd;
+    position: relative;
+    margin: 0 40px 0 40px;
+    box-sizing: border-box;
+}
+.table, .usuarios-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+    font-size: 0.95rem;
+    margin-top: 0;
+}
+.table th, .table td, .usuarios-table th, .usuarios-table td {
+    vertical-align: middle;
+    text-align: left;
+    padding: 8px 12px;
+    white-space: normal;
+    font-size: 0.95rem;
+}
+.table td:last-child, .usuarios-table td:last-child {
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+}
+.table thead th, .usuarios-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 101;
+    background: #f0ebeb;
+    font-weight: 700;
+    font-size: 1rem;
+}
+.table-scroll {
+    max-height: 50vh;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.card-header.text-center {
+    width: 100%;
+    padding: 0;
+    color: #7c2323 !important;
+    background: transparent !important;
+    font-weight: bold;
+    text-align: center;
+}
+.card {
+    width: 100%;
+    max-width: 1400px;
+    background: transparent !important;
+    border: none;
+    margin-top: 0 !important;
+}
+.card-body {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1rem 2rem;
+    overflow: visible;
+    background: transparent !important;
+    border: none;
+}
+.modal-header {
+    background: var(--color-modal-header);
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 0.7rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    color: #fff !important;
+}
+.modal-header .modal-title {
+    font-size: 2rem;
+        color: var(--color-blanco) !important;
+        font-size: 1.6rem;
+        text-align: center;
+    }
+.toast#toastAreaEliminada, #toastCambiosGuardados,
+.toast#toastUsuarioEliminado, #toastCambiosGuardadosUsuario {
+    background: #ddd !important;
+    color: #333;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+/* Clases necesarias para layout completo */
+.layout-section.no-bg {
+    background: var(--color-fondo) !important;
+    min-height: calc(100vh - 40px);
+    width: 100%;
+    padding-bottom: 40px;
+}
+
+.layout-section.no-bg::before {
+    display: none !important;
+}
+
+/* Estilos específicos para página de estadísticas */
+.estadisticas-page {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.estadisticas-scroll-container {
+    width: 100%;
+    height: calc(100vh - 150px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 20px;
+    scroll-behavior: smooth;
+}
+
+.estadisticas-scroll-container .container {
+    max-width: 100%;
+    padding: 0;
+}
+
+.estadisticas-scroll-container .row {
+    margin: 0 -10px;
+}
+
+.estadisticas-scroll-container .col-md-6 {
+    padding: 0 10px;
+    margin-bottom: 30px;
+}
+
+.estadisticas-scroll-container canvas {
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Scrollbar personalizado para estadísticas */
+.estadisticas-scroll-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.estadisticas-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.estadisticas-scroll-container::-webkit-scrollbar-thumb {
+    background: var(--color-principal);
+    border-radius: 4px;
+}
+
+.estadisticas-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: var(--color-secundario);
+}
+
+@media (max-width: 991px) {
+    .navbar-nav {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        width: 100%;
+    }
+    .navbar-brand { font-size: 1.2em; }
+    .card, .card-body, .table { width: 100%; max-width: 100vw; margin: 0 auto; }
+    .table-responsive { width: 100%; max-width: 100vw; border: none; padding: 0; }
+    .sidebar-logo {
+        position: relative;
+        width: 100%;
+        height: auto;
+        top: 0;
+        border-right: none;
+    }
+    .layout-section { 
+        margin-left: 0; 
+        width: 100%; 
+        padding-bottom: 40px;
+    }
+    .footer {
+        left: 0;
+        width: 100%;
+    }
+    .estadisticas-scroll-container {
+        height: calc(100vh - 120px);
+        padding: 0 10px;
+    }
+    .bienvenido-box {
+        font-size: 1.8rem;
+        padding: 1.2rem 2rem;
+        max-width: 90%;
+        white-space: normal;
+        background: rgba(255,255,255,0.9);
+    }
+    .main-content.inicio-bg {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+}
+
+/* =================== ESTILOS ESPECÍFICOS PARA EL PERFIL DE USUARIO =================== */
+
+/* Prevenir scrolls extra en página de perfil */
+.form-scroll-container {
+    position: relative;
+    scroll-behavior: auto !important;
+}
+
+.form-scroll-container * {
+    box-sizing: border-box;
+}
+
+/* Asegurar que los botones no causen scroll */
+.btn {
+    position: relative !important;
+    transform: none !important;
+    will-change: auto !important;
+    transition: none !important;
+}
+
+.btn:focus, 
+.btn:active, 
+.btn:hover {
+    outline: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+    transition: none !important;
+}
+
+/* Evitar cambios de layout al hacer click */
+.btn-success, 
+.btn-danger {
+    background: var(--color-verde-boton) !important;
+    border: none !important;
+}
+
+.btn-danger {
+    background: var(--color-rojo-boton) !important;
+}
+
+.btn-success:active, 
+.btn-danger:active, 
+.btn-success:focus, 
+.btn-danger:focus,
+.btn-success:hover, 
+.btn-danger:hover {
+    transform: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    background: var(--color-verde-boton) !important;
+}
+
+.btn-danger:active, 
+.btn-danger:focus, 
+.btn-danger:hover {
+    background: var(--color-rojo-boton) !important;
+}
+
+/* Estilos específicos para el avatar del perfil */
+.profile-avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.profile-avatar i {
+    font-size: 6rem;
+    color: var(--color-principal);
+}
+
+/* Estilos para el formulario de perfil */
+.form-label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, 
+.form-select {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.75rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus, 
+.form-select:focus {
+    border-color: var(--color-principal);
+    box-shadow: 0 0 0 0.2rem rgba(124, 35, 35, 0.25);
+}
+
+/* Estilos para los botones de toggle de contraseña */
+.btn-editar {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+.btn-editar:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+/* Estilos para la información de debug (temporal) */
+.form-text {
+    font-size: 0.75em;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    border-left: 4px solid #007bff;
+}
+
+.form-text code {
+    background: #e9ecef;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    color: #e83e8c;
+}
+
+/* Separador visual mejorado */
+hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--color-principal), transparent);
+    margin: 2rem 0;
+}
+
+/* Estilos para los badges */
+.badge {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+}
+
+/* Estilo hover para los campos de formulario */
+.form-control:hover,
+.form-select:hover {
+    border-color: var(--color-principal);
+}
+
+/* Estilo para campos inválidos */
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+}
+
+/* Mejorar la legibilidad del texto del perfil */
+h2, h5 {
+    color: var(--color-principal) !important;
+    font-weight: bold !important;
+}
+
+/* Espaciado consistente en perfil */
+.mb-3 {
+    margin-bottom: 1.5rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 2rem !important;
+}
+
+/* Estilos específicos para sección de contraseñas */
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+/* Campo de contraseña actual (solo lectura) */
+#contrasena-actual {
+    background-color: #f8f9fa !important;
+    color: #071827 !important;
+    cursor: not-allowed;
+}
+
+/* Mejorar visibilidad de botones de toggle */
+.btn-outline-secondary {
+    border-color: #6c757d;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+.btn-outline-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Íconos de ayuda en form-text */
+.form-text .bi-check-circle {
+    color: #28a745;
+}
+
+.form-text .bi-shield-check {
+    color: #007bff;
+}
+
+/* Animación suave para campos inválidos */
+.form-control.is-invalid {
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Mejorar contraste para campos de contraseña */
+.input-group .form-control:focus {
+    z-index: 2;
+}
+
+.input-group .btn {
+    z-index: 3;
+}
+
+/* Mejoras para el formulario GenerarInforme */
+.form-scroll-container {
+    padding-bottom: 120px !important;
+    min-height: calc(100vh - 180px);
+}
+
+.form-scroll-container form {
+    padding-bottom: 40px;
+}
+
+/* Espaciado mejorado para campos del formulario */
+.form-scroll-container .row {
+    margin-bottom: 1.5rem;
+}
+
+.form-scroll-container .col-md-6,
+.form-scroll-container .col-12 {
+    margin-bottom: 1rem;
+}
+
+/* Estilos para los botones de acción del formulario */
+.form-scroll-container .btn {
+    font-weight: 600;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.form-scroll-container .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.form-scroll-container .btn-success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border: none;
+}
+
+.form-scroll-container .btn-primary {
+    background: linear-gradient(135deg, #007bff, #6f42c1);
+    border: none;
+}
+
+.form-scroll-container .btn-danger {
+    background: linear-gradient(135deg, #dc3545, #e83e8c);
+    border: none;
+}
+
+/* Mejoras para campos del formulario */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #7c2323;
+    box-shadow: 0 0 0 0.2rem rgba(124, 35, 35, 0.25);
+}
+
+/* Estilos para textareas */
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Mejoras para labels */
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+/* Botón flotante mejorado */
+.position-fixed .btn-inicio {
+    background: linear-gradient(135deg, #7c2323, #a12424);
+    border: none;
+    box-shadow: 0 4px 15px rgba(124, 35, 35, 0.3);
+    transition: all 0.3s ease;
+}
+
+.position-fixed .btn-inicio:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(124, 35, 35, 0.4);
+}
+
+/* Responsive design para formulario */
+@media (max-width: 768px) {
+    .form-scroll-container {
+        padding: 0 15px;
+        margin-bottom: 140px;
+    }
+    
+    .form-scroll-container .d-flex.gap-3 {
+        flex-direction: column;
+        gap: 1rem !important;
+    }
+    
+    .form-scroll-container .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .position-fixed {
+        bottom: 20px !important;
+        right: 20px !important;
+    }
+    
+    .position-fixed .btn-inicio {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Mejoras para inputs numéricos y de fecha */
+input[type="number"], input[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Estilos para file input */
+input[type="file"] {
+    padding: 0.75rem 1rem;
+    background: #f8f9fa;
+}
+
+input[type="file"]:focus {
+    background: #fff;
+}
+
+/* Animaciones suaves */
+.form-scroll-container * {
+    transition: all 0.3s ease;
+}
+
+/* Mejora en la visualización de campos obligatorios */
+.form-label b {
+    color: #7c2323;
+}
+
+/* Estilos para mensajes de ayuda */
+.form-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+/* Estilos específicos para inputs de fecha en la barra lateral */
+.sidebar-logo input[type="date"] {
+    max-width: 130px !important;
+    font-size: 0.88rem !important;
+    padding: 0.35rem 0.45rem !important;
+    height: auto !important;
+}
+
+.sidebar-logo .btn-buscar {
+    font-size: 0.93rem !important;
+    padding: 0.35rem 0.65rem !important;
+    white-space: nowrap !important;
+}
+
+/* Compactar contenedores de fecha */
+.sidebar-logo .d-flex.gap-1 {
+    gap: 0.6rem !important;
+}
+
+.sidebar-logo label {
+    font-size: 0.83rem !important;
+    margin-bottom: 0.25rem !important;
+}
+
+/* =================== LOGIN-SPECIFIC STYLES (merged from public/css/login.css) =================== */
+/* Ajustes para el toggle de contraseña */
+.input-group-inside.position-relative { position: relative; }
+.input-group-inside input.form-control { padding-right: 44px; }
+.toggle-password-btn {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: #495057;
+}
+.toggle-password-btn:focus { outline: none; box-shadow: none; }
+.toggle-password-btn i { font-size: 1.05rem; }
+
+/* Small helpers for the login card (if not present in main styles) */
+.login-bg { display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.login-card { max-width: 380px; width:100%; padding: 28px; border-radius:8px; background:#fff; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+.login-avatar { width:72px; height:72px; border-radius:50%; background:#f1f1f1; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 12px; }
+.login-title { text-align:center; font-weight:600; margin-bottom:18px; }
+.input-icon-inside { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#6c757d; }
+.input-group-inside { position:relative; margin-bottom:12px; }
+.input-group-inside input.form-control { padding-left:36px; }
+.btn-login { width:100%; }

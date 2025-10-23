@@ -1,0 +1,84 @@
+<%- contentFor('content') %>
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light text-center py-3">
+                    <h4 class="mb-0 text-primary">
+                        <i class="bi bi-eye me-2"></i>
+                        Acceso de Visitante
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center justify-content-center">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-primary border-2">
+                                <div class="card-body d-flex flex-column">
+                                    <i class="bi bi-journal-text text-primary mb-3" style="font-size: 3rem;"></i>
+                                    <h5 class="card-title">Ver Informes</h5>
+                                    <p class="card-text flex-grow-1">Consulta todos los informes del sistema. Filtra por período, área y estado.</p>
+                                    <a href="/ver-informes" class="btn btn-primary mt-auto">
+                                        <i class="bi bi-search me-1"></i>
+                                        Consultar Informes
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-warning border-2">
+                                <div class="card-body d-flex flex-column">
+                                    <i class="bi bi-graph-up text-warning mb-3" style="font-size: 3rem;"></i>
+                                    <h5 class="card-title">Estadísticas</h5>
+                                    <p class="card-text flex-grow-1">Visualiza las estadísticas y métricas del sistema de informes.</p>
+                                    <a href="/estadisticas-visitante" class="btn btn-warning mt-auto">
+                                        <i class="bi bi-bar-chart me-1"></i>
+                                        Ver Estadísticas
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="alert alert-info" role="alert">
+                                <h6 class="alert-heading">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Acceso de Visitante
+                                </h6>
+                                <p class="mb-2">Como visitante, tienes acceso <strong>limitado</strong> al sistema. Solo puedes:</p>
+                                <ul class="mb-0">
+                                    <li>Consultar informes existentes</li>
+                                    <li>Ver estadísticas y gráficas del sistema</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="bi bi-person-circle me-2"></i>
+                                        Tu información
+                                    </h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Nombre:</strong> <%= session.user?.nombre || 'No disponible' %> <%= session.user?.apellido || '' %></p>
+                                            <p class="mb-1"><strong>Usuario:</strong> <%= session.user?.username || 'No disponible' %></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Área:</strong> <%= session.user?.area_nombre || 'No asignada' %></p>
+                                            <p class="mb-1"><strong>Rol:</strong> <span class="badge bg-secondary">Visitante</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

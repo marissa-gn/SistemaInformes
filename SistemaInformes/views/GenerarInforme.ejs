@@ -1,0 +1,290 @@
+<!-- Encabezado del generar informe -->
+<div class="text-center mb-4 mt-4" style="padding: 0 20px;">
+  <h2 style="color: #a12424; font-weight: bold; margin: 1.5rem 0;">
+    <i class="bi bi-file-earmark-plus me-2"></i>Creando nuevo informe
+  </h2>
+</div>
+
+<div class="form-scroll-container w-100" style="padding: 0 30px; margin-bottom: 120px; min-height: calc(100vh - 200px);">
+  <form style="color: #111;" id="formularioInforme" enctype="multipart/form-data" method="post" action="/informes/crear">
+    <!-- Título del informe -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <label for="titulo" class="form-label"><b>Título del informe:</b></label>
+        <input type="text" class="form-control" id="titulo" name="titulo" required placeholder="Ingresa el título del informe">
+      </div>
+    </div>
+
+    <!-- Área y Sector -->
+    <div class="row mb-4">
+      <div class="col-md-6 mb-3">
+        <label for="area" class="form-label"><b>Área:</b></label>
+        <select class="form-select" id="area" name="area_id" required>
+          <option value="">Selecciona...</option>
+          <% if (areas && areas.length > 0) { %>
+              <% areas.forEach(area => { %>
+                  <option value="<%= area.id %>"><%= area.nombre %></option>
+              <% }) %>
+          <% } %>
+        </select>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="sector" class="form-label"><b>Sector al que beneficia:</b></label>
+        <input type="text" class="form-control" id="sector" name="sector_beneficia" placeholder="Ej: Educación, Salud, Infraestructura">
+      </div>
+    </div>
+
+    <!-- Lugar y Tipo de actividad -->
+    <div class="row mb-4">
+      <div class="col-md-6 mb-3">
+        <label for="lugar" class="form-label"><b>Lugar de actividad:</b></label>
+        <input type="text" class="form-control" id="lugar" name="lugar_actividad" placeholder="Ubicación donde se realizó la actividad">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="tipo" class="form-label"><b>Tipo de actividad / unidad de medida:</b></label>
+        <input type="text" class="form-control" id="tipo" name="tipo_actividad" placeholder="Ej: Capacitación, Reunión, Evento">
+      </div>
+    </div>
+
+    <!-- Beneficiarios y Monto generado -->
+    <div class="row mb-4">
+      <div class="col-md-6 mb-3">
+        <label for="beneficiarios" class="form-label"><b>Número de beneficiarios:</b></label>
+        <input type="number" class="form-control" id="beneficiarios" name="numero_beneficiarios" min="0" placeholder="0">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="monto" class="form-label"><b>Monto generado por la actividad (si aplica):</b></label>
+        <div class="input-group">
+          <span class="input-group-text">$</span>
+          <input type="number" class="form-control" id="monto" name="monto_generado" min="0" step="0.01" placeholder="0.00">
+        </div>
+      </div>
+    </div>
+
+    <!-- Monto invertido y Evidencia -->
+    <div class="row mb-4">
+      <div class="col-md-6 mb-3">
+        <label for="montoInvertido" class="form-label"><b>¿Cuál fue el monto invertido en la actividad?</b></label>
+        <div class="input-group">
+          <span class="input-group-text">$</span>
+          <input type="number" class="form-control" id="montoInvertido" name="monto_invertido" min="0" step="0.01" placeholder="0.00">
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="evidencia" class="form-label"><b>Evidencia fotográfica:</b></label>
+        <input class="form-control" type="file" id="evidencia" name="evidencia_fotografica" accept="image/*" multiple>
+        <small class="form-text text-muted">Puedes seleccionar múltiples imágenes</small>
+      </div>
+    </div>
+
+    <!-- Fecha de actividad -->
+    <div class="row mb-4">
+      <div class="col-md-6 mb-3">
+        <label for="fechaActividad" class="form-label"><b>Fecha de la actividad:</b></label>
+        <input type="date" class="form-control" id="fechaActividad" name="fecha_actividad" required>
+      </div>
+    </div>
+
+    <!-- Preguntas de selección -->
+    <div class="row mb-4">
+      <div class="col-md-6 mb-3">
+        <label for="solicitudCiudadania" class="form-label"><b>¿Responde a una solicitud de la ciudadanía?</b></label>
+        <select class="form-select" id="solicitudCiudadania" name="responde_solicitud_ciudadania">
+          <option value="">Selecciona...</option>
+          <option value="1">Sí</option>
+          <option value="0">No</option>
+        </select>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="procedimientosArea" class="form-label"><b>¿Pertenece la actividad a los procedimientos de su área?</b></label>
+        <select class="form-select" id="procedimientosArea" name="pertenece_procedimientos_area">
+          <option value="">Selecciona...</option>
+          <option value="1">Sí</option>
+          <option value="0">No</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Descripciones -->
+    <div class="row mb-4">
+      <div class="col-12 mb-3">
+        <label for="descripcion" class="form-label"><b>Descripción de la actividad:</b></label>
+        <textarea class="form-control" id="descripcion" name="descripcion_actividad" rows="4" 
+                  placeholder="Describe detalladamente la actividad realizada..." style="resize: vertical;"></textarea>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-md-6 mb-3">
+        <label for="objetivos" class="form-label"><b>Objetivos:</b></label>
+        <textarea class="form-control" id="objetivos" name="objetivos" rows="3" 
+                  placeholder="Objetivos de la actividad..." style="resize: vertical;"></textarea>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="resultados" class="form-label"><b>Resultados:</b></label>
+        <textarea class="form-control" id="resultados" name="resultados" rows="3" 
+                  placeholder="Resultados obtenidos..." style="resize: vertical;"></textarea>
+      </div>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-12 mb-3">
+        <label for="observaciones" class="form-label"><b>Observaciones:</b></label>
+        <textarea class="form-control" id="observaciones" name="observaciones" rows="3" 
+                  placeholder="Observaciones adicionales..." style="resize: vertical;"></textarea>
+      </div>
+    </div>
+
+    <!-- Botones de acción con espaciado mejorado -->
+    <div class="row">
+      <div class="col-12">
+        <div class="d-flex justify-content-center gap-3 flex-wrap" style="margin-bottom: 80px;">
+          <button type="button" class="btn btn-success px-4 py-2" onclick="guardarInforme()" style="min-width: 140px;">
+            <i class="bi bi-floppy me-2"></i>Guardar Borrador
+          </button>
+          <button type="button" class="btn btn-primary px-4 py-2" onclick="enviarInforme()" style="min-width: 140px;">
+            <i class="bi bi-send me-2"></i>Enviar Informe
+          </button>
+          <button type="button" class="btn btn-danger px-4 py-2" onclick="cancelarInforme()" style="min-width: 140px;">
+            <i class="bi bi-x-circle me-2"></i>Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Botón flotante de inicio con posición mejorada -->
+<div class="position-fixed bottom-0 end-0 p-4" style="z-index: 1000;">
+  <a href="/inicio-usuario" class="btn btn-inicio btn-lg rounded-pill shadow-lg">
+    <i class="bi bi-house-door-fill me-2"></i>Inicio
+  </a>
+</div>
+
+<script>
+  // Establecer fecha actual por defecto
+  document.addEventListener('DOMContentLoaded', function() {
+    const fechaInput = document.getElementById('fechaActividad');
+    const today = new Date().toISOString().split('T')[0];
+    fechaInput.value = today;
+  });
+
+  // Función para guardar informe como borrador
+  function guardarInforme() {
+    console.log('Guardando informe como borrador...');
+    
+    // Validar campos obligatorios mínimos
+    const titulo = document.getElementById('titulo').value.trim();
+    const area = document.getElementById('area').value;
+    const fechaActividad = document.getElementById('fechaActividad').value;
+    
+    if (!titulo || !area || !fechaActividad) {
+      alert('Por favor completa al menos: Título, Área y Fecha de actividad');
+      return;
+    }
+    
+    // Recopilar datos del formulario
+    const formData = new FormData(document.getElementById('formularioInforme'));
+    formData.append('estado', 'borrador');
+
+    // Enviar al servidor usando fetch (multipart/form-data)
+    fetch('/informes/crear', {
+      method: 'POST',
+      body: formData,
+      credentials: 'same-origin'
+    }).then(async (res) => {
+      try {
+        const json = await res.json();
+        if (json.success) {
+          alert('Informe guardado como borrador exitosamente');
+          console.log('Respuesta servidor:', json);
+          setTimeout(() => window.location.href = '/historial', 1000);
+        } else {
+          alert('No se pudo guardar el informe: ' + (json.message || 'Error del servidor'));
+          console.error('Error guardando informe:', json);
+        }
+      } catch (err) {
+        console.error('Respuesta no JSON:', err);
+        alert('Informe guardado (respuesta inesperada del servidor)');
+      }
+    }).catch(err => {
+      console.error('Error de red guardando informe:', err);
+      alert('No se pudo conectar con el servidor. El informe se guardará localmente (simulación).');
+      console.log('Datos del formulario (local):', Object.fromEntries(formData.entries()));
+    });
+  }
+
+  // Función para enviar informe
+  function enviarInforme() {
+    console.log('Enviando informe...');
+    
+    // Validar campos obligatorios
+    const campos = ['titulo', 'area', 'sector', 'lugar', 'tipo', 'fechaActividad', 'descripcion'];
+    const camposFaltantes = [];
+    
+    campos.forEach(campo => {
+      const elemento = document.getElementById(campo);
+      if (!elemento.value.trim()) {
+        camposFaltantes.push(elemento.previousElementSibling.textContent.replace(':', ''));
+      }
+    });
+    
+    if (camposFaltantes.length > 0) {
+      alert('Por favor completa los siguientes campos obligatorios:\n• ' + camposFaltantes.join('\n• '));
+      return;
+    }
+    
+    // Recopilar datos del formulario
+    const formData = new FormData(document.getElementById('formularioInforme'));
+    formData.append('estado', 'enviado');
+
+    confirmModal('¿Estás seguro de que deseas enviar el informe? Una vez enviado no podrás modificarlo.').then(confirmed => {
+      if (!confirmed) return;
+
+      fetch('/informes/crear', {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin'
+      }).then(async (res) => {
+        try {
+          const json = await res.json();
+          if (json.success) {
+            alert('Informe enviado exitosamente para revisión');
+            console.log('Respuesta servidor:', json);
+            setTimeout(() => { window.location.href = '/historial'; }, 1500);
+          } else {
+            alert('No se pudo enviar el informe: ' + (json.message || 'Error del servidor'));
+            console.error('Error enviando informe:', json);
+          }
+        } catch (err) {
+          console.error('Respuesta no JSON:', err);
+          alert('Informe enviado (respuesta inesperada del servidor)');
+        }
+      }).catch(err => {
+        console.error('Error de red enviando informe:', err);
+        alert('No se pudo conectar con el servidor. Intenta más tarde.');
+      });
+    });
+  }
+
+  // Función para cancelar informe
+  function cancelarInforme() {
+    confirmModal('¿Estás seguro de que deseas cancelar? Se perderán todos los cambios no guardados.').then(confirmed => {
+      if (!confirmed) return;
+      document.getElementById('formularioInforme').reset();
+      
+      // Restablecer fecha actual
+      const fechaInput = document.getElementById('fechaActividad');
+      const today = new Date().toISOString().split('T')[0];
+      fechaInput.value = today;
+      
+      alert('Formulario cancelado y reiniciado');
+    });
+  }
+
+  // Función auxiliar para mostrar mensajes (si existe el sistema de toasts)
+  function mostrarToast(mensaje, tipo = 'info') {
+    console.log(`${tipo.toUpperCase()}: ${mensaje}`);
+    // Aquí se integraría con el sistema de toasts si existe
+  }
+</script>

@@ -1,0 +1,72 @@
+<!-- Vista principal de Áreas -->
+    <!-- Encabezado de la sección Áreas -->
+    <div class="text-center mb-4 mt-3">
+        <h2 style="color: #a12424; font-weight: bold; margin: 1rem 0;">
+            <i class="bi bi-building me-2"></i>Áreas
+        </h2>
+    </div>
+    <div class="card" style="background: transparent; box-shadow: none; border: none; margin-top: 0;">
+        <div class="card-body">
+            <div class="table-responsive" style="max-height: 50vh; overflow-x: auto; overflow-y: auto;">
+                <!-- Tabla de áreas -->
+                <table class="table table-hover text-center usuarios-table">
+                        <thead class="text-center">
+                            <tr>
+                                <th>#</th>
+                                <th>Área</th>
+                                <th>Descripción</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaAreas">
+                            <% if (areas && areas.length > 0) { %>
+                                <% areas.forEach((area, index) => { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td><%= area.nombre %></td>
+                                        <td><%= area.descripcion || 'Sin descripción' %></td>
+                                        <td>
+                                            <div class="d-flex justify-content-center gap-2" style="white-space: nowrap;">
+                                                <button type="button" 
+                                                        class="btn btn-editar btn-sm btn-editar-area" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#modalAreas"
+                                                        data-area-id="<%= area.id %>"
+                                                        data-area-nombre="<%= area.nombre %>"
+                                                        data-area-descripcion="<%= area.descripcion || '' %>"
+                                                        style="min-width: 70px;">
+                                                    Editar
+                                                </button>
+                                                <button type="button" 
+                                                        class="btn btn-danger btn-sm btn-eliminar-area" 
+                                                        data-area-id="<%= area.id %>"
+                                                        data-area-nombre="<%= area.nombre %>"
+                                                        style="min-width: 70px;">
+                                                    Eliminar
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">No hay áreas registradas</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Botón para añadir nueva área -->
+            <div class="w-100 d-flex justify-content-start mt-3">
+                <button type="button" 
+                        class="btn btn-anadir-usuario" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#modalAreas">
+                    Añadir área
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Incluye el modal de áreas -->
+    <%- include('ModalAreas') %>

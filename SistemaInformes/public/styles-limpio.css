@@ -1,0 +1,569 @@
+/* ===================================================
+   SISTEMA DE INFORMES - CSS OPTIMIZADO Y LIMPIO
+   =================================================== */
+
+/* Variables CSS principales */
+:root {
+    --color-principal: #7c2323;
+    --color-secundario: #5e0a1a;
+    --color-fondo: #fafafa;
+    --color-blanco: #fff;
+    --color-boton: #740906;
+    --color-borde-boton: #993f51;
+    --color-card-header: #7c2323;
+    --color-table-border: #ddd;
+    --color-modal-header: #811406;
+    --color-verde-boton: #28a745;
+    --color-verde-boton-dark: #218838;
+    --color-rojo-boton: #dc3545;
+    --color-rojo-boton-dark: #c82333;
+    --color-principal-bienvenida: #892b23;
+    --fondo-bienvenida: rgba(255,255,255,0.9);
+    --sombra-bienvenida: 0 2px 16px 0 rgba(0,0,0,0.10);
+    --radio-bienvenida: 15px;
+}
+
+/* ===================================================
+   BASE STYLES
+   =================================================== */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Century Gothic', Arial, sans-serif;
+    background-color: var(--color-fondo);
+    overflow-x: hidden;
+    height: auto;
+}
+
+/* ===================================================
+   LOGIN STYLES
+   =================================================== */
+
+.login-bg {
+    min-height: 100vh;
+    background: url('/Img/inicioSesion.jpg') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card {
+    background: rgba(255,255,255,0.92);
+    border-radius: 22px;
+    box-shadow: 0 8px 32px 0 rgba(31,38,135,0.18);
+    padding: 2.5rem;
+    max-width: 350px;
+    width: 100%;
+    margin: auto;
+    position: relative;
+}
+
+.login-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    display: block;
+    border: 4px solid var(--color-principal);
+}
+
+.login-title {
+    color: var(--color-principal);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+
+.logo {
+    max-width: 100px;
+    height: auto;
+    margin-bottom: 1rem;
+}
+
+/* ===================================================
+   LAYOUT STYLES
+   =================================================== */
+
+.layout-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 230px;
+    min-width: 230px;
+    background: linear-gradient(145deg, var(--color-principal), var(--color-secundario));
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 20px 15px;
+    box-sizing: border-box;
+    z-index: 1000;
+}
+
+.main-content {
+    margin-left: 230px;
+    width: calc(100% - 230px);
+    height: 100vh;
+    overflow-y: auto;
+    padding: 30px 40px 80px;
+    box-sizing: border-box;
+    background-color: var(--color-fondo);
+}
+
+.main-content.estadisticas {
+    padding: 0;
+}
+
+.main-content.inicio-admin, 
+.main-content.inicio-usuario {
+    background: url('/Img/Admin.jpg') no-repeat center center;
+    background-size: cover;
+    padding: 0;
+}
+
+/* ===================================================
+   NAVIGATION STYLES
+   =================================================== */
+
+.navbar {
+    background: var(--color-principal) !important;
+    border-bottom: 1px solid var(--color-secundario);
+}
+
+.navbar-brand {
+    color: white !important;
+    font-weight: bold;
+}
+
+.nav-link {
+    color: white !important;
+    padding: 0.75rem 1rem;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+    background: rgba(255,255,255,0.1);
+    color: white !important;
+}
+
+/* ===================================================
+   FORM STYLES
+   =================================================== */
+
+.form-scroll-container {
+    height: 90vh;
+    max-height: 50vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+.form-control, .form-select {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 0.5rem 0.75rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--color-principal);
+    box-shadow: 0 0 0 0.2rem rgba(124, 35, 35, 0.25);
+}
+
+/* ===================================================
+   BUTTON STYLES
+   =================================================== */
+
+.btn-primary {
+    background-color: var(--color-boton);
+    border-color: var(--color-borde-boton);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--color-secundario);
+    border-color: var(--color-borde-boton);
+}
+
+.btn-success {
+    background-color: var(--color-verde-boton);
+    border-color: var(--color-verde-boton);
+}
+
+.btn-success:hover, .btn-success:focus {
+    background-color: var(--color-verde-boton-dark);
+    border-color: var(--color-verde-boton-dark);
+}
+
+.btn-danger {
+    background-color: var(--color-rojo-boton);
+    border-color: var(--color-rojo-boton);
+}
+
+.btn-danger:hover, .btn-danger:focus {
+    background-color: var(--color-rojo-boton-dark);
+    border-color: var(--color-rojo-boton-dark);
+}
+
+.btn-editar {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #212529;
+}
+
+.btn-editar:hover, .btn-editar:focus {
+    background-color: #e0a800;
+    border-color: #d39e00;
+    color: #212529;
+}
+
+.btn-anadir-usuario, .btn-buscar, .btn-area, .btn-nuevos, .btn-revisados {
+    background-color: var(--color-boton);
+    border: 1px solid var(--color-borde-boton);
+    color: white;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-anadir-usuario:hover, .btn-buscar:hover, .btn-area:hover, 
+.btn-nuevos:hover, .btn-revisados:hover {
+    background-color: var(--color-secundario);
+    border-color: var(--color-borde-boton);
+    color: white;
+}
+
+.btn-abrir {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: white;
+}
+
+.btn-abrir:hover, .btn-abrir:focus {
+    background-color: #138496;
+    border-color: #117a8b;
+    color: white;
+}
+
+/* ===================================================
+   TABLE STYLES
+   =================================================== */
+
+.table, .usuarios-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+    background-color: transparent;
+}
+
+.table th, .table td, .usuarios-table th, .usuarios-table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid var(--color-table-border);
+    text-align: center;
+}
+
+.table thead th, .usuarios-table thead th {
+    background-color: var(--color-card-header);
+    color: white;
+    border-bottom: 2px solid var(--color-table-border);
+    font-weight: bold;
+}
+
+.table td:last-child, .usuarios-table td:last-child {
+    white-space: nowrap;
+}
+
+.table tbody tr:hover, .usuarios-table tbody tr:hover {
+    background-color: rgba(0,0,0,0.075);
+}
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-scroll {
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
+
+/* ===================================================
+   CARD STYLES
+   =================================================== */
+
+.card {
+    border: 1px solid rgba(0,0,0,0.125);
+    border-radius: 0.375rem;
+    background-color: white;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+}
+
+.card-header {
+    background-color: var(--color-card-header);
+    color: white;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 0;
+    border-bottom: 1px solid rgba(0,0,0,0.125);
+    border-radius: 0.375rem 0.375rem 0 0;
+    font-weight: bold;
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+/* ===================================================
+   MODAL STYLES
+   =================================================== */
+
+.modal-header {
+    background-color: var(--color-modal-header);
+    color: white;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-title {
+    margin: 0;
+    line-height: 1.5;
+    font-weight: bold;
+}
+
+.modal-dialog-scrollable .modal-body {
+    overflow-y: auto;
+}
+
+.modal-dialog-scrollable .modal-content {
+    max-height: 85vh;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+/* ===================================================
+   SEARCH STYLES
+   =================================================== */
+
+.busqueda-usuarios, .busqueda-informes {
+    margin-top: 0.5rem;
+    padding: 1rem;
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 8px;
+}
+
+.dropdown-menu {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.dropdown-item {
+    color: #333;
+    padding: 0.5rem 1rem;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: var(--color-principal);
+    color: white;
+}
+
+/* ===================================================
+   WELCOME STYLES
+   =================================================== */
+
+.welcome-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--fondo-bienvenida);
+    padding: 3rem;
+    border-radius: var(--radio-bienvenida);
+    box-shadow: var(--sombra-bienvenida);
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+}
+
+.welcome-title {
+    color: var(--color-principal-bienvenida);
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.welcome-subtitle {
+    color: #666;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.user-name {
+    color: var(--color-principal);
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+/* ===================================================
+   UTILITY CLASSES
+   =================================================== */
+
+.text-center { text-align: center !important; }
+.text-left { text-align: left !important; }
+.text-right { text-align: right !important; }
+
+.d-flex { display: flex !important; }
+.d-block { display: block !important; }
+.d-none { display: none !important; }
+
+.justify-content-center { justify-content: center !important; }
+.justify-content-between { justify-content: space-between !important; }
+.justify-content-end { justify-content: flex-end !important; }
+.justify-content-start { justify-content: flex-start !important; }
+
+.align-items-center { align-items: center !important; }
+
+.w-100 { width: 100% !important; }
+.h-100 { height: 100% !important; }
+
+.mb-1 { margin-bottom: 0.25rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
+
+.mt-1 { margin-top: 0.25rem !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.mt-3 { margin-top: 1rem !important; }
+.mt-4 { margin-top: 1.5rem !important; }
+
+.p-0 { padding: 0 !important; }
+.p-1 { padding: 0.25rem !important; }
+.p-2 { padding: 0.5rem !important; }
+.p-3 { padding: 1rem !important; }
+.p-4 { padding: 1.5rem !important; }
+
+.gap-1 { gap: 0.25rem !important; }
+.gap-2 { gap: 0.5rem !important; }
+
+/* ===================================================
+   RESPONSIVE DESIGN
+   =================================================== */
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+        min-width: 200px;
+    }
+    
+    .main-content {
+        margin-left: 200px;
+        width: calc(100% - 200px);
+        padding: 20px;
+    }
+    
+    .welcome-title {
+        font-size: 2rem;
+    }
+    
+    .welcome-container {
+        padding: 2rem;
+        width: 95%;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 15px;
+    }
+    
+    .layout-wrapper {
+        position: relative;
+        height: auto;
+        flex-direction: column;
+    }
+    
+    .table-responsive {
+        margin: 0 10px !important;
+        border: none !important;
+    }
+    
+    .welcome-title {
+        font-size: 1.5rem;
+    }
+    
+    .welcome-container {
+        padding: 1.5rem;
+        width: 98%;
+    }
+    
+    .btn {
+        font-size: 0.875rem;
+        padding: 0.375rem 0.75rem;
+    }
+    
+    .modal-dialog {
+        margin: 0.5rem;
+        max-width: calc(100% - 1rem);
+    }
+}
+
+/* ===================================================
+   FIXES AND OVERWRITES
+   =================================================== */
+
+/* Fix para evitar scroll horizontal */
+* {
+    box-sizing: border-box;
+}
+
+/* Fix para Bootstrap conflicts */
+.container-fluid {
+    padding: 0 !important;
+}
+
+/* Fix para tablas en espacios pequeños */
+@media (max-width: 768px) {
+    .table-scroll {
+        height: auto !important;
+        max-height: 50vh;
+    }
+}
+
+/* Fix para modales en móvil */
+@media (max-width: 576px) {
+    .modal-lg {
+        max-width: 95vw;
+    }
+}

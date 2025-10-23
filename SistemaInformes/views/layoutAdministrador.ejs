@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'Sistema de Informes' %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+    <div>
+        <nav class="navbar navbar-expand-lg navbar-main px-3 py-0">
+            <div class="container-fluid flex-nowrap">
+                <span class="navbar-brand">Ayuntamiento de Atlacomulco</span>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainMenu">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 d-flex flex-row align-items-center gap-2">
+                        <li class="nav-item"><a class="nav-link fw-bold" href="/informes">Ver informes</a></li>
+                        <li class="nav-item"><a class="nav-link fw-bold" href="/estadisticas">Estadísticas</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link fw-bold dropdown-toggle" href="#" id="configDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Configuración</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/usuarios">Usuarios</a></li>
+                                <li><a class="dropdown-item" href="/areas">Áreas</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <button class="btn btn-danger btn-logout ms-lg-3" onclick="cerrarSesion()"><i class="bi bi-x-circle"></i> Cerrar sesión</button>
+                </div>
+            </div>
+        </nav>
+
+
+    <div class="layout-row">
+        <!-- BARRA LATERAL UNIFICADA -->
+        <aside class="sidebar-logo d-flex flex-column align-items-center justify-content-between">
+            <div class="w-100 d-flex flex-column align-items-center">
+                    <%- include('partials/userBadge') %>
+                <img src="/Img/logo.jpg" class="logo img-fluid mx-auto d-block mb-2" alt="Logo Atlacomulco">
+                <% if (title === 'Usuarios') { %>
+                    <!-- Filtro de usuarios -->
+                    <div class="busqueda-usuarios d-flex flex-column align-items-center gap-1 w-100" style="margin-top: 0.2rem;">
+                        <h5 class="fw-bold text-dark text-center mb-1" style="font-size:1em;">Filtrar usuarios</h5>
+                        <div class="w-100 d-flex flex-column gap-1" style="margin-bottom:0;">
+                            <div class="dropdown w-100">
+                                <button class="btn btn-area dropdown-toggle w-100" type="button" id="dropdownAreaUsuarios" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:0.95em; padding:0.3rem 0.1rem;">Área</button>
+                                <ul class="dropdown-menu w-100" aria-labelledby="dropdownAreaUsuarios">
+                                    <li><a class="dropdown-item" href="#">Finanzas y Contabilidad</a></li>
+                                    <li><a class="dropdown-item" href="#">Recursos Humanos</a></li>
+                                    <li><a class="dropdown-item" href="#">Tecnologías de la Información</a></li>
+                                    <li><a class="dropdown-item" href="#">Mercadotecnia</a></li>
+                                    <li><a class="dropdown-item" href="#">Departamento de Logística</a></li>
+                                    <li><a class="dropdown-item" href="#">Producción / Operaciones</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown w-100">
+                                <button class="btn btn-area dropdown-toggle w-100" type="button" id="dropdownTipoUsuario" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:0.95em; padding:0.3rem 0.7rem;">Tipo de usuario</button>
+                                <ul class="dropdown-menu w-100" aria-labelledby="dropdownTipoUsuario">
+                                    <li><a class="dropdown-item" href="#">Administrador</a></li>
+                                    <li><a class="dropdown-item" href="#">Visitante</a></li>
+                                    <li><a class="dropdown-item" href="#">Capturista</a></li>
+                                </ul>
+                            </div>
+                            <input class="form-control" type="text" name="nombre" placeholder="Buscar por nombre" aria-label="Nombre..." style="font-size:0.95em;">
+                            <button class="btn btn-buscar w-100" type="button" onclick="buscarUsuarios()" style="font-size:0.95em; padding:0.3rem 0.7rem;">Buscar</button>
+                        </div>
+                    </div>
+                <% } else if (title === 'Áreas') { %>
+                    <!-- Filtro de áreas -->
+                    <div class="busqueda-usuarios d-flex flex-column align-items-center gap-1 w-100" style="margin-top: 0.2rem;">
+                        <h5 class="fw-bold text-dark text-center mb-1" style="font-size:1em;">Filtrar áreas</h5>
+                        <div class="w-100 d-flex flex-column gap-1" style="margin-bottom:0;">
+                            <div class="dropdown w-100">
+                                <button class="btn btn-area dropdown-toggle w-100" type="button" id="dropdownArea" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:0.95em; padding:0.3rem 0.1rem;">Área</button>
+                                <ul class="dropdown-menu w-100" aria-labelledby="dropdownAreaUsuarios">
+                                    <li><a class="dropdown-item" href="#">Finanzas y Contabilidad</a></li>
+                                    <li><a class="dropdown-item" href="#">Recursos Humanos</a></li>
+                                    <li><a class="dropdown-item" href="#">Tecnologías de la Información</a></li>
+                                    <li><a class="dropdown-item" href="#">Mercadotecnia</a></li>
+                                    <li><a class="dropdown-item" href="#">Departamento de Logística</a></li>
+                                    <li><a class="dropdown-item" href="#">Producción / Operaciones</a></li>
+                                </ul>
+                            </div>
+                            <input class="form-control" type="text" name="nombre" placeholder="Buscar por nombre" aria-label="Nombre..." style="font-size:0.95em;">
+                            <button class="btn btn-buscar w-100" type="button" onclick="buscarAreas()" style="font-size:0.95em; padding:0.3rem 0.7rem;">Buscar</button>
+                        </div>
+                    </div>
+                <% } else if (title === 'Informes') { %>
+                    <!-- Filtro de informes -->
+                    <div class="busqueda-informes mt-2" style="font-size: 0.95em;">
+                        <h5 class="fw-bold mb-2 text-dark text-center" style="font-size:1em;">Búsqueda por...</h5>
+                        <div class="dropdown mb-1 w-100">
+                            <button class="btn btn-area dropdown-toggle w-100" type="button" id="dropdownArea" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:0.95em; padding:0.3rem 0.7rem;">Área</button>
+                            <ul class="dropdown-menu w-100" aria-labelledby="dropdownArea">
+                                <li><a class="dropdown-item" href="#">Finanzas y Contabilidad</a></li>
+                                <li><a class="dropdown-item" href="#">Recursos Humanos (RH)</a></li>
+                                <li><a class="dropdown-item" href="#">Tecnologías de la Información (TI)</a></li>
+                                <li><a class="dropdown-item" href="#">Mercadotecnia</a></li>
+                                <li><a class="dropdown-item" href="#">Departamento de Logística</a></li>
+                                <li><a class="dropdown-item" href="#">Producción / Operaciones</a></li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-nuevos mb-1 w-100" style="font-size:0.95em; padding:0.3rem 0.7rem;">Nuevos</button>
+                        <div class="dropdown mb-1 w-100">
+                            <button class="btn btn-revisados dropdown-toggle w-100" type="button" id="dropdownRevisados" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:0.95em; padding:0.3rem 0.7rem;">Revisados</button>
+                            <ul class="dropdown-menu w-100" aria-labelledby="dropdownRevisados">
+                                <li><a class="dropdown-item" href="#">Aceptados</a></li>
+                                <li><a class="dropdown-item" href="#">Rechazados</a></li>
+                            </ul>
+                        </div>
+                        <div class="d-flex w-100 gap-2 mt-2 justify-content-center">
+                            <div class="d-flex flex-column align-items-center">
+                                <label for="fecha-desde" class="small mb-1 text-dark text-center label-area" style="font-size:0.95em;"><b>Desde</b></label>
+                                <input type="date" id="fecha-desde" class="form-control form-control-sm mb-1 input-area" style="font-size:0.95em;">
+                            </div>
+                            <div class="d-flex flex-column align-items-center">
+                                <label for="fecha-hasta" class="small mb-1 text-dark text-center label-nuevos" style="font-size:0.95em;"><b>Hasta</b></label>
+                                <input type="date" id="fecha-hasta" class="form-control form-control-sm mb-1 input-nuevos" style="font-size:0.95em;">
+                            </div>
+                        </div>
+                        <button class="btn btn-buscar w-100 mt-2" type="button" onclick="buscarInformes()" style="font-size:0.95em; padding:0.3rem 0.7rem;">Buscar</button>
+                    </div>
+                <% } %>
+            </div>
+        </aside>
+        <!-- FIN BARRA LATERAL -->
+        <section class="layout-section<% if (title !== 'Inicio') { %> no-bg<% } %>">
+            <% if (title === 'Inicio') { %>
+                <main class="main-content inicio-bg d-flex align-items-center justify-content-center position-relative" style="min-height: 100%; width: 100%;">
+                    <div class="bienvenido-box text-center">
+                        ¡Bienvenido al sistema!
+                    </div>
+                </main>
+            <% } else { %>
+                <main class="main-content">
+                    <%- body %>
+                </main>
+            <% } %>
+        </section>
+    </div>
+
+        <footer class="footer bg-light text-center py-2 mt-auto">
+            © 2025 Ayuntamiento de Atlacomulco. Todos los derechos reservados.
+        </footer>
+    </div>
+
+    <% if (title === 'Informes' || title === 'Usuarios' || title === 'Áreas') { %>
+        <div class="fixed-bottom text-end">
+            <a href="/" class="btn btn-inicio btn-lg rounded-pill">
+                <i class="bi bi-house-door-fill me-2"></i>Inicio
+            </a>
+        </div>
+    <% } %>
+
+    <!-- Contenedor global para tostadas -->
+    <div id="global-toast-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sistema.js"></script>
+    
+    <script>
+        // Función global de tostadas unificada para Admin
+        function mostrarToast(mensaje, tipo = 'success') {
+            const tiposConfig = {
+                'success': {
+                    bgClass: 'toast-success',
+                    icon: 'bi-check-circle-fill'
+                },
+                'warning': {
+                    bgClass: 'toast-warning', 
+                    icon: 'bi-exclamation-triangle-fill'
+                },
+                'danger': {
+                    bgClass: 'toast-danger',
+                    icon: 'bi-x-circle-fill'
+                },
+                'info': {
+                    bgClass: 'toast-info',
+                    icon: 'bi-info-circle-fill'
+                }
+            };
+
+            const config = tiposConfig[tipo] || tiposConfig['success'];
+            const toastId = 'toast-' + Date.now();
+            
+            const toastHtml = `
+                <div class="toast align-items-center text-white ${config.bgClass} border-0" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="bi ${config.icon} me-2"></i>
+                            ${mensaje}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            `;
+            
+            const container = document.getElementById('global-toast-container');
+            if (container) {
+                container.insertAdjacentHTML('beforeend', toastHtml);
+                const toastElement = document.getElementById(toastId);
+                const bsToast = new bootstrap.Toast(toastElement, {
+                    autohide: true,
+                    delay: 3000
+                });
+                bsToast.show();
+                
+                // Remover del DOM después de que se oculte
+                toastElement.addEventListener('hidden.bs.toast', () => {
+                    toastElement.remove();
+                });
+            }
+        }
+
+        // Funciones de conveniencia para mensajes comunes
+        function mostrarCambiosGuardados() {
+            mostrarToast('Cambios guardados exitosamente', 'success');
+        }
+        
+        function mostrarCambiosCancelados() {
+            mostrarToast('Cambios cancelados', 'warning');
+        }
+        
+        function mostrarElementoEliminado(elemento = 'Elemento') {
+            mostrarToast(`${elemento} eliminado exitosamente`, 'success');
+        }
+
+        function mostrarUsuarioEliminado() {
+            mostrarElementoEliminado('Usuario');
+        }
+
+        function mostrarAreaEliminada() {
+            mostrarElementoEliminado('Área');
+        }
+
+        function mostrarInformeRevisado() {
+            mostrarToast('Informe revisado exitosamente', 'success');
+        }
+
+        function mostrarInformeEliminado() {
+            mostrarElementoEliminado('Informe');
+        }
+        
+        function mostrarDescargaIniciada() {
+            mostrarToast('Descarga iniciada', 'info');
+        }
+        
+        function mostrarInformeVisto() {
+            mostrarToast('Informe visualizado', 'info');
+        }
+        
+        // Usar la función global cerrarSesion() desde /js/sistema.js
+        
+        function buscarUsuarios() {
+            const termino = document.querySelector('[placeholder="Buscar por nombre o email"]').value;
+            if (termino.trim()) {
+                mostrarToast(`Buscando usuarios: "${termino}"`, 'info');
+                // Aquí iría la lógica real de búsqueda
+                console.log('Buscando usuarios:', termino);
+            } else {
+                mostrarToast('Ingresa un término de búsqueda', 'warning');
+            }
+        }
+        
+        function buscarAreas() {
+            const termino = document.querySelector('[placeholder="Buscar área..."]').value;
+            if (termino.trim()) {
+                mostrarToast(`Buscando áreas: "${termino}"`, 'info');
+                // Aquí iría la lógica real de búsqueda
+                console.log('Buscando áreas:', termino);
+            } else {
+                mostrarToast('Ingresa un término de búsqueda', 'warning');
+            }
+        }
+        
+        function buscarInformes() {
+            const termino = document.querySelector('[placeholder="Buscar informe..."]').value;
+            if (termino.trim()) {
+                mostrarToast(`Buscando informes: "${termino}"`, 'info');
+                // Aquí iría la lógica real de búsqueda
+                console.log('Buscando informes:', termino);
+            } else {
+                mostrarToast('Ingresa un término de búsqueda', 'warning');
+            }
+        }
+    </script>
+</body>
+</html>
+
+<%- include('ModalConfirm') %>
