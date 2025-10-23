@@ -1,6 +1,8 @@
 html, body {
-    overflow: hidden !important;
+    overflow-x: hidden;
     height: 100%;
+    margin: 0;
+    padding: 0;
 }
 :root {
     --color-principal: #7c2323;
@@ -61,6 +63,14 @@ html, body {
     color: #fff;
     font-size: 2.5rem;
 }
+
+/* Ensure input icons and toggle-eye in login use the primary color and a consistent size */
+.input-group-inside .input-icon-inside, .toggle-password-btn i {
+    color: var(--color-boton);
+    font-size: 1.2rem;
+}
+
+.toggle-password-btn:hover i { color: var(--color-borde-boton); }
 
 .login-title {
     text-align: center;
@@ -151,6 +161,11 @@ main.main-content {
 .footer {
     flex-shrink: 0;
     margin-top: auto;
+    position: fixed;
+    bottom: 0;
+    left: 230px;
+    width: calc(100% - 230px);
+    z-index: 999;
 }
 .layout-row {
     display: flex;
@@ -162,11 +177,63 @@ main.main-content {
 .layout-section {
     margin-left: 230px;
     padding-top: 56px;
+    padding-bottom: 40px;
     min-width: 0;
-    height: 100%;
+    height: calc(100vh - 40px);
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
+}
+
+/* IMAGEN DE FONDO PANTALLA COMPLETA PARA PÁGINAS DE INICIO */
+.layout-section:not(.no-bg)::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: url('/Img/Admin.jpg') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    z-index: -1;
+}
+
+.layout-section:not(.no-bg) {
+    background: transparent !important;
+}
+
+/* Solo la barra lateral es completamente blanca en páginas de inicio */
+body:has(.layout-section:not(.no-bg)) .sidebar-logo {
+    background: white !important;
+}
+
+/* Main content para página de inicio - sin imagen de fondo duplicada */
+.main-content.inicio-bg {
+    background: transparent !important;
+    width: 100% !important;
+    height: 100% !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 1;
+}
+
+.layout-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 1;
 }
 .main-content {
     display: flex;
@@ -179,26 +246,37 @@ main.main-content {
 }
 
 .bienvenido-box {
-    background: var(--fondo-bienvenida);
+    background: rgba(255,255,255,0.9);
     border-radius: var(--radio-bienvenida);
-    padding: 0.7rem 1.5rem;
-    font-size: 2rem;
+    padding: 1.5rem 2.5rem;
+    font-size: 2.2rem;
     font-weight: bold;
     color: var(--color-principal-bienvenida);
-    box-shadow: var(--sombra-bienvenida);
-    z-index: 2;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    z-index: 10;
     text-align: center;
+    border: 2px solid rgba(124, 35, 35, 0.4);
+    backdrop-filter: blur(12px);
+    max-width: 600px;
+    white-space: nowrap;
+    position: relative;
+}
+
+/* Contenedor para centrar el mensaje de bienvenida */
+.inicio-welcome-container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: calc(100vh - 96px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 body.inicio-bg .main-content {
     min-height: 80vh;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-.inicio-bg {
-    min-height: 100vh;
-    background: url('/Img/inicioSesion.jpg') no-repeat center center fixed;
-    background-size: cover;
 }
 
 .sidebar-logo {
@@ -225,6 +303,21 @@ body.inicio-bg .main-content {
 }
 
 .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background-color: var(--color-principal);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Estilos específicos para navbar-main */
+.navbar-main {
     position: fixed;
     top: 0;
     left: 0;
@@ -268,7 +361,77 @@ body.inicio-bg .main-content {
     font-weight: 600;
     transition: background 0.2s, color 0.2s;
 }
-.btn-inicio { border-radius: 2rem !important; }
+.btn-inicio { 
+    border-radius: 2rem !important; 
+}
+
+/* Botón flotante de inicio */
+.fixed-bottom .btn-inicio {
+    margin: 0 1.5rem 1.5rem 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+}
+
+/* Estilos para página de Generar Informe */
+.form-scroll-container {
+    max-width: 100%;
+    padding: 0 15px;
+    margin-bottom: 80px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    position: relative;
+}
+
+.form-scroll-container form {
+    background: transparent;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: none;
+    width: 100%;
+}
+
+/* Prevenir scrolls extra en botones */
+.form-scroll-container .btn {
+    position: relative;
+    transform: none !important;
+    will-change: auto;
+}
+
+.form-scroll-container .btn:focus,
+.form-scroll-container .btn:active {
+    outline: none;
+    transform: none !important;
+}
+
+/* Estilo personalizado para el scrollbar */
+.form-scroll-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.form-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.form-scroll-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.form-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Estilos para páginas de historial y perfil */
+.layout-section.no-bg .main-content {
+    background: transparent !important;
+    width: 100%;
+    min-height: calc(100vh - 96px);
+    padding: 20px;
+    padding-bottom: 120px; /* Espacio extra para el botón flotante y footer */
+}
 .btn-editar {
     background-color: #5a5e01 !important;
     color: #fff !important;
@@ -315,6 +478,58 @@ body.inicio-bg .main-content {
 }
 .btn-logout {
     white-space: nowrap;
+    position: relative;
+    z-index: 1000;
+    outline: none !important;
+    border: none !important;
+    transform: none !important;
+    will-change: auto !important;
+    pointer-events: auto !important;
+    scroll-behavior: auto !important;
+}
+
+.btn-logout:focus,
+.btn-logout:active,
+.btn-logout:hover,
+.btn-logout:visited {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    scroll-behavior: auto !important;
+    text-decoration: none !important;
+}
+
+.btn-logout:focus-visible {
+    outline: none !important;
+}
+
+/* Prevenir scroll automático en navbar */
+.navbar-collapse {
+    scroll-behavior: auto !important;
+}
+
+.navbar-collapse.collapsing {
+    scroll-behavior: auto !important;
+}
+
+.navbar-collapse.show {
+    scroll-behavior: auto !important;
+}
+
+/* Asegurar que el botón de logout no interfiera con el colapso */
+.navbar-collapse .btn-logout {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* Prevenir scroll en todo el navbar cuando se hace clic en logout */
+.navbar-main {
+    scroll-behavior: auto !important;
+}
+
+.navbar-main * {
+    scroll-behavior: auto !important;
 }
 
 .titulo-tabla {
@@ -407,8 +622,10 @@ table.usuarios-table tbody tr:hover {
 }
 .modal-header .modal-title {
     font-size: 2rem;
-}
-
+        color: var(--color-blanco) !important;
+        font-size: 1.6rem;
+        text-align: center;
+    }
 .toast#toastAreaEliminada, #toastCambiosGuardados,
 .toast#toastUsuarioEliminado, #toastCambiosGuardadosUsuario {
     background: #ddd !important;
@@ -417,6 +634,74 @@ table.usuarios-table tbody tr:hover {
     box-shadow: 0 2px 12px rgba(0,0,0,0.10);
     font-size: 1.2rem;
     font-weight: 500;
+}
+
+/* Clases necesarias para layout completo */
+.layout-section.no-bg {
+    background: var(--color-fondo) !important;
+    min-height: calc(100vh - 40px);
+    width: 100%;
+    padding-bottom: 40px;
+}
+
+.layout-section.no-bg::before {
+    display: none !important;
+}
+
+/* Estilos específicos para página de estadísticas */
+.estadisticas-page {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.estadisticas-scroll-container {
+    width: 100%;
+    height: calc(100vh - 150px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 20px;
+    scroll-behavior: smooth;
+}
+
+.estadisticas-scroll-container .container {
+    max-width: 100%;
+    padding: 0;
+}
+
+.estadisticas-scroll-container .row {
+    margin: 0 -10px;
+}
+
+.estadisticas-scroll-container .col-md-6 {
+    padding: 0 10px;
+    margin-bottom: 30px;
+}
+
+.estadisticas-scroll-container canvas {
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Scrollbar personalizado para estadísticas */
+.estadisticas-scroll-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.estadisticas-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.estadisticas-scroll-container::-webkit-scrollbar-thumb {
+    background: var(--color-principal);
+    border-radius: 4px;
+}
+
+.estadisticas-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: var(--color-secundario);
 }
 
 @media (max-width: 991px) {
@@ -435,5 +720,467 @@ table.usuarios-table tbody tr:hover {
         top: 0;
         border-right: none;
     }
-    .layout-section { margin-left: 0; width: 100%; }
+    .layout-section { 
+        margin-left: 0; 
+        width: 100%; 
+        padding-bottom: 40px;
+    }
+    .footer {
+        left: 0;
+        width: 100%;
+    }
+    .estadisticas-scroll-container {
+        height: calc(100vh - 120px);
+        padding: 0 10px;
+    }
+    .bienvenido-box {
+        font-size: 1.8rem;
+        padding: 1.2rem 2rem;
+        max-width: 90%;
+        white-space: normal;
+        background: rgba(255,255,255,0.9);
+    }
+    .main-content.inicio-bg {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
 }
+
+/* =================== ESTILOS ESPECÍFICOS PARA EL PERFIL DE USUARIO =================== */
+
+/* Prevenir scrolls extra en página de perfil */
+.form-scroll-container {
+    position: relative;
+    scroll-behavior: auto !important;
+}
+
+.form-scroll-container * {
+    box-sizing: border-box;
+}
+
+/* Asegurar que los botones no causen scroll */
+.btn {
+    position: relative !important;
+    transform: none !important;
+    will-change: auto !important;
+    transition: none !important;
+}
+
+.btn:focus, 
+.btn:active, 
+.btn:hover {
+    outline: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+    transition: none !important;
+}
+
+/* Evitar cambios de layout al hacer click */
+.btn-success, 
+.btn-danger {
+    background: var(--color-verde-boton) !important;
+    border: none !important;
+}
+
+.btn-danger {
+    background: var(--color-rojo-boton) !important;
+}
+
+.btn-success:active, 
+.btn-danger:active, 
+.btn-success:focus, 
+.btn-danger:focus,
+.btn-success:hover, 
+.btn-danger:hover {
+    transform: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    background: var(--color-verde-boton) !important;
+}
+
+.btn-danger:active, 
+.btn-danger:focus, 
+.btn-danger:hover {
+    background: var(--color-rojo-boton) !important;
+}
+
+/* Estilos específicos para el avatar del perfil */
+.profile-avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.profile-avatar i {
+    font-size: 6rem;
+    color: var(--color-principal);
+}
+
+/* Estilos para el formulario de perfil */
+.form-label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, 
+.form-select {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.75rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus, 
+.form-select:focus {
+    border-color: var(--color-principal);
+    box-shadow: 0 0 0 0.2rem rgba(124, 35, 35, 0.25);
+}
+
+/* Estilos para los botones de toggle de contraseña */
+.btn-editar {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+.btn-editar:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+/* Estilos para la información de debug (temporal) */
+.form-text {
+    font-size: 0.75em;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    border-left: 4px solid #007bff;
+}
+
+.form-text code {
+    background: #e9ecef;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    color: #e83e8c;
+}
+
+/* Separador visual mejorado */
+hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--color-principal), transparent);
+    margin: 2rem 0;
+}
+
+/* Estilos para los badges */
+.badge {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+}
+
+/* Estilo hover para los campos de formulario */
+.form-control:hover,
+.form-select:hover {
+    border-color: var(--color-principal);
+}
+
+/* Estilo para campos inválidos */
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+}
+
+/* Mejorar la legibilidad del texto del perfil */
+h2, h5 {
+    color: var(--color-principal) !important;
+    font-weight: bold !important;
+}
+
+/* Espaciado consistente en perfil */
+.mb-3 {
+    margin-bottom: 1.5rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 2rem !important;
+}
+
+/* Estilos específicos para sección de contraseñas */
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+/* Campo de contraseña actual (solo lectura) */
+#contrasena-actual {
+    background-color: #f8f9fa !important;
+    color: #071827 !important;
+    cursor: not-allowed;
+}
+
+/* Mejorar visibilidad de botones de toggle */
+.btn-outline-secondary {
+    border-color: #6c757d;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+.btn-outline-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Íconos de ayuda en form-text */
+.form-text .bi-check-circle {
+    color: #28a745;
+}
+
+.form-text .bi-shield-check {
+    color: #007bff;
+}
+
+/* Animación suave para campos inválidos */
+.form-control.is-invalid {
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Mejorar contraste para campos de contraseña */
+.input-group .form-control:focus {
+    z-index: 2;
+}
+
+.input-group .btn {
+    z-index: 3;
+}
+
+/* Mejoras para el formulario GenerarInforme */
+.form-scroll-container {
+    padding-bottom: 120px !important;
+    min-height: calc(100vh - 180px);
+}
+
+.form-scroll-container form {
+    padding-bottom: 40px;
+}
+
+/* Espaciado mejorado para campos del formulario */
+.form-scroll-container .row {
+    margin-bottom: 1.5rem;
+}
+
+.form-scroll-container .col-md-6,
+.form-scroll-container .col-12 {
+    margin-bottom: 1rem;
+}
+
+/* Estilos para los botones de acción del formulario */
+.form-scroll-container .btn {
+    font-weight: 600;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.form-scroll-container .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.form-scroll-container .btn-success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border: none;
+}
+
+.form-scroll-container .btn-primary {
+    background: linear-gradient(135deg, #007bff, #6f42c1);
+    border: none;
+}
+
+.form-scroll-container .btn-danger {
+    background: linear-gradient(135deg, #dc3545, #e83e8c);
+    border: none;
+}
+
+/* Mejoras para campos del formulario */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #7c2323;
+    box-shadow: 0 0 0 0.2rem rgba(124, 35, 35, 0.25);
+}
+
+/* Estilos para textareas */
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Mejoras para labels */
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+/* Botón flotante mejorado */
+.position-fixed .btn-inicio {
+    background: linear-gradient(135deg, #7c2323, #a12424);
+    border: none;
+    box-shadow: 0 4px 15px rgba(124, 35, 35, 0.3);
+    transition: all 0.3s ease;
+}
+
+.position-fixed .btn-inicio:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(124, 35, 35, 0.4);
+}
+
+/* Responsive design para formulario */
+@media (max-width: 768px) {
+    .form-scroll-container {
+        padding: 0 15px;
+        margin-bottom: 140px;
+    }
+    
+    .form-scroll-container .d-flex.gap-3 {
+        flex-direction: column;
+        gap: 1rem !important;
+    }
+    
+    .form-scroll-container .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .position-fixed {
+        bottom: 20px !important;
+        right: 20px !important;
+    }
+    
+    .position-fixed .btn-inicio {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Mejoras para inputs numéricos y de fecha */
+input[type="number"], input[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Estilos para file input */
+input[type="file"] {
+    padding: 0.75rem 1rem;
+    background: #f8f9fa;
+}
+
+input[type="file"]:focus {
+    background: #fff;
+}
+
+/* Animaciones suaves */
+.form-scroll-container * {
+    transition: all 0.3s ease;
+}
+
+/* Mejora en la visualización de campos obligatorios */
+.form-label b {
+    color: #7c2323;
+}
+
+/* Estilos para mensajes de ayuda */
+.form-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+/* Estilos específicos para inputs de fecha en la barra lateral */
+.sidebar-logo input[type="date"] {
+    max-width: 130px !important;
+    font-size: 0.88rem !important;
+    padding: 0.35rem 0.45rem !important;
+    height: auto !important;
+}
+
+.sidebar-logo .btn-buscar {
+    font-size: 0.93rem !important;
+    padding: 0.35rem 0.65rem !important;
+    white-space: nowrap !important;
+}
+
+/* Compactar contenedores de fecha */
+.sidebar-logo .d-flex.gap-1 {
+    gap: 0.6rem !important;
+}
+
+.sidebar-logo label {
+    font-size: 0.83rem !important;
+    margin-bottom: 0.25rem !important;
+}
+
+/* =================== LOGIN-SPECIFIC STYLES (merged from public/css/login.css) =================== */
+/* Ajustes para el toggle de contraseña */
+.input-group-inside.position-relative { position: relative; }
+.input-group-inside input.form-control { padding-right: 44px; }
+.toggle-password-btn {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: #495057;
+}
+.toggle-password-btn:focus { outline: none; box-shadow: none; }
+.toggle-password-btn i { font-size: 1.05rem; }
+
+/* Small helpers for the login card (if not present in main styles) */
+.login-bg { display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.login-card { max-width: 380px; width:100%; padding: 28px; border-radius:8px; background:#fff; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+.login-avatar { width:72px; height:72px; border-radius:50%; background:#f1f1f1; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 12px; }
+.login-title { text-align:center; font-weight:600; margin-bottom:18px; }
+.input-icon-inside { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#6c757d; }
+.input-group-inside { position:relative; margin-bottom:12px; }
+.input-group-inside input.form-control { padding-left:36px; }
+.btn-login { width:100%; }

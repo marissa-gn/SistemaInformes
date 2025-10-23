@@ -1,0 +1,228 @@
+<!-- Vista principal del historial -->
+    <!-- Encabezado del historial -->
+    <div class="text-center mb-4 mt-3">
+        <h2 style="color: #a12424; font-weight: bold; margin: 1rem 0;">
+            <i class="bi bi-clock-history me-2"></i>Historial de Informes
+        </h2>
+    </div>
+    <div class="card" style="background: transparent; box-shadow: none; border: none; margin-top: 0;">
+        <div class="card-body">
+            <div class="table-responsive">
+                <div class="table-scroll">
+                    <table class="table table-hover text-center usuarios-table">
+                        <thead class="text-center">
+                            <tr>
+                                <th>#</th>
+                                <th>Fecha</th>
+                                <th>Período</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>15/03/2025</td>
+                                <td>Marzo 2025</td>
+                                <td><span class="badge bg-success">Completado</span></td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-editar btn-sm" onclick="mostrarDescargaIniciada()">
+                                            <i class="bi bi-download me-1"></i>Descargar
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalHistorialInforme" onclick="mostrarInformeVisto()">Ver</button>
+                                        <button class="btn btn-outline-danger btn-sm" onclick="mostrarInformeEliminado()">Eliminar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>28/02/2025</td>
+                                <td>Q1 2025</td>
+                                <td><span class="badge bg-success">Completado</span></td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-editar btn-sm" onclick="mostrarDescargaIniciada()">
+                                            <i class="bi bi-download me-1"></i>Descargar
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalHistorialInforme" onclick="mostrarInformeVisto()">Ver</button>
+                                        <button class="btn btn-outline-danger btn-sm" onclick="mostrarInformeEliminado()">Eliminar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>20/02/2025</td>
+                                <td>Febrero 2025</td>
+                                <td><span class="badge bg-warning text-dark">En Proceso</span></td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-editar btn-sm" disabled>
+                                            <i class="bi bi-download me-1"></i>Descargar
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalHistorialInforme" onclick="mostrarInformeVisto()">Ver</button>
+                                        <button class="btn btn-outline-danger btn-sm" onclick="mostrarInformeEliminado()">Eliminar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>15/01/2025</td>
+                                <td>2024</td>
+                                <td><span class="badge bg-success">Completado</span></td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-editar btn-sm" onclick="mostrarDescargaIniciada()">
+                                            <i class="bi bi-download me-1"></i>Descargar
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalHistorialInforme" onclick="mostrarInformeVisto()">Ver</button>
+                                        <button class="btn btn-outline-danger btn-sm" onclick="mostrarInformeEliminado()">Eliminar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>10/12/2024</td>
+                                <td>Diciembre 2024</td>
+                                <td><span class="badge bg-success">Completado</span></td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-editar btn-sm" onclick="mostrarDescargaIniciada()">
+                                            <i class="bi bi-download me-1"></i>Descargar
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalHistorialInforme" onclick="mostrarInformeVisto()">Ver</button>
+                                        <button class="btn btn-outline-danger btn-sm" onclick="mostrarInformeEliminado()">Eliminar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>15/11/2024</td>
+                                <td>Noviembre 2024</td>
+                                <td><span class="badge bg-danger">Rechazado</span></td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-editar btn-sm" disabled>
+                                            <i class="bi bi-download me-1"></i>Descargar
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalHistorialInforme" onclick="mostrarInformeVisto()">Ver</button>
+                                        <button class="btn btn-outline-danger btn-sm" onclick="mostrarInformeEliminado()">Eliminar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ver informe del historial -->
+<div class="modal fade" id="modalHistorialInforme" tabindex="-1" aria-labelledby="modalHistorialInformeLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalHistorialInformeLabel"><b>INFORME - HISTORIAL</b></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body px-4 py-4">
+        <form>
+          <!-- Fila 0: Nombre de quien envía y Fecha -->
+          <div class="row mb-2">
+            <div class="col-md-6 mb-2">
+              <label for="nombreRemitenteHist" class="form-label"><b>Nombre de quien envía:</b></label>
+              <input type="text" class="form-control" id="nombreRemitenteHist" value="Cecilia Dávila" readonly>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="fechaEnvioHist" class="form-label"><b>Fecha:</b></label>
+              <input type="date" class="form-control" id="fechaEnvioHist" value="2025-03-15" readonly>
+            </div>
+          </div>
+          <!-- Fila 1: Área y Sector -->
+          <div class="row mb-2">
+            <div class="col-md-6 mb-2">
+              <label for="areaHist" class="form-label"><b>Área:</b></label>
+              <input type="text" class="form-control" id="areaHist" value="Recursos Humanos" readonly>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="sectorHist" class="form-label"><b>Sector al que beneficia:</b></label>
+              <input type="text" class="form-control" id="sectorHist" value="Empleados municipales" readonly>
+            </div>
+          </div>
+          <!-- Fila 2: Colonia y Lugar de actividad -->
+          <div class="row mb-2">
+            <div class="col-md-6 mb-2">
+              <label for="coloniaHist" class="form-label"><b>Colonia o comunidad:</b></label>
+              <input type="text" class="form-control" id="coloniaHist" value="Centro" readonly>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="lugarHist" class="form-label"><b>Lugar de actividad:</b></label>
+              <input type="text" class="form-control" id="lugarHist" value="Palacio Municipal" readonly>
+            </div>
+          </div>
+          <!-- Fila 3: Tipo de actividad y Número de beneficiarios -->
+          <div class="row mb-2">
+            <div class="col-md-6 mb-2">
+              <label for="tipoHist" class="form-label"><b>Tipo de actividad / unidad de medida:</b></label>
+              <input type="text" class="form-control" id="tipoHist" value="Capacitación" readonly>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="beneficiariosHist" class="form-label"><b>Número de beneficiarios:</b></label>
+              <input type="text" class="form-control" id="beneficiariosHist" value="25" readonly>
+            </div>
+          </div>
+          <!-- Fila 4: Monto generado y Monto invertido -->
+          <div class="row mb-2">
+            <div class="col-md-6 mb-2">
+              <label for="montoHist" class="form-label"><b>Monto generado por la actividad (si aplica):</b></label>
+              <input type="text" class="form-control" id="montoHist" value="$0.00" readonly>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="montoInvertidoHist" class="form-label"><b>¿Cuál fue el monto invertido en la actividad?</b></label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="text" class="form-control" id="montoInvertidoHist" value="5,000.00" readonly>
+              </div>
+            </div>
+          </div>
+          <!-- Fila 5: Evidencia fotográfica y Solicitud/procedimientos -->
+          <div class="row mb-2">
+            <div class="col-md-6 mb-2">
+              <label for="evidenciaHist" class="form-label"><b>Evidencia fotográfica:</b></label>
+              <div class="form-control" style="background-color: #f8f9fa;">
+                <span class="text-muted">capacitacion_rh_marzo.jpg</span>
+              </div>
+            </div>
+            <div class="col-md-3 mb-2 text-center d-flex flex-column align-items-center justify-content-center">
+              <label for="solicitudCiudadaniaHist" class="form-label w-100 text-center" style="white-space: normal;"><b>¿Responde a una solicitud de la ciudadanía?</b></label>
+              <select class="form-select text-center" id="solicitudCiudadaniaHist" style="max-width: 90%; margin: 0 auto;" disabled>
+                <option value="si" selected>Sí</option>
+              </select>
+            </div>
+            <div class="col-md-3 mb-2 text-center d-flex flex-column align-items-center justify-content-center">
+              <label for="procedimientosAreaHist" class="form-label w-100 text-center" style="white-space: normal;"><b>¿Pertenece la actividad a los procedimientos de su área?</b></label>
+              <select class="form-select text-center" id="procedimientosAreaHist" style="max-width: 90%; margin: 0 auto;" disabled>
+                <option value="si" selected>Sí</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-2">
+            <label for="descripcionHist" class="form-label"><b>Descripción de la actividad:</b></label>
+            <textarea class="form-control" id="descripcionHist" rows="3" readonly>Capacitación sobre desarrollo personal y trabajo en equipo dirigida al personal del área de Recursos Humanos para mejorar el ambiente laboral y la productividad.</textarea>
+          </div>
+          <div class="mb-2">
+            <label for="observacionesHist" class="form-label"><b>Observaciones:</b></label>
+            <textarea class="form-control" id="observacionesHist" rows="2" readonly>Actividad realizada con éxito, alto nivel de participación del personal.</textarea>
+          </div>
+          <div class="mb-2 text-center">
+            <label for="comentariosHist" class="form-label" style="color: #28a745; width: 100%; display: block;"><b>Estado: APROBADO</b></label>
+            <textarea class="form-control text-center" id="comentariosHist" rows="2" style="color: #28a745; font-weight: bold;" readonly>Informe completo y bien documentado. Actividad alineada con los objetivos del área.</textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>

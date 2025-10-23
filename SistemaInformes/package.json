@@ -1,7 +1,49 @@
 {
+  "name": "sistema-informes",
+  "version": "1.0.0",
+  "description": "Sistema de Informes para Ayuntamiento de Atlacomulco",
+  "main": "server-final.js",
+  "scripts": {
+    "start": "node server-final.js",
+    "dev": "nodemon server-final.js",
+    "debug": "node --inspect-brk server-final.js",
+    "setup-db": "node database/setup.js",
+    "build": "npm run build:clean && npm run build:css && npm run build:js && npm run build:assets",
+    "build:clean": "node build/clean.js",
+    "build:css": "node build/build-css.js",
+    "build:js": "node build/build-js.js",
+    "build:assets": "node build/build-assets.js",
+    "build:prod": "npm run build && cross-env NODE_ENV=production npm start",
+    "test": "echo \"No tests specified\" && exit 0",
+    "lint": "echo \"No linting configured\" && exit 0"
+  },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.6.1",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
-    "express-ejs-layouts": "^2.5.1"
-  }
+    "express-ejs-layouts": "^2.5.1",
+    "express-session": "^1.18.2",
+    "form-data": "^4.0.4",
+    "multer": "^1.4.4",
+    "mysql2": "^3.15.1",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "clean-css": "^5.3.2",
+    "cross-env": "^7.0.3",
+    "fs-extra": "^11.1.1",
+    "nodemon": "^3.0.1",
+    "uglify-js": "^3.17.4"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "mysql",
+    "ejs",
+    "informes",
+    "ayuntamiento"
+  ],
+  "author": "Sistema de Informes",
+  "license": "MIT"
 }

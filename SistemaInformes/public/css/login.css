@@ -1,0 +1,33 @@
+/* Styles extracted from views/inicioSesion.ejs - login specific */
+/* Ajustes para el toggle de contraseña */
+.input-group-inside.position-relative { position: relative; }
+.input-group-inside input.form-control { padding-right: 44px; }
+.toggle-password-btn {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    /* keep button neutral, icon inherits color */
+    color: inherit;
+}
+.toggle-password-btn:focus { outline: none; box-shadow: none; }
+.toggle-password-btn i { font-size: 1.2rem; color: var(--color-boton); transition: color 0.12s ease; }
+.toggle-password-btn:hover i { color: var(--color-borde-boton); }
+
+/* Small helpers for the login card (if not present in main styles) */
+.login-bg { display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.login-card { max-width: 380px; width:100%; padding: 28px; border-radius:8px; background:#fff; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+.login-avatar { width:72px; height:72px; border-radius:50%; background:#f1f1f1; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 12px; }
+.login-title { text-align:center; font-weight:600; margin-bottom:18px; }
+.input-icon-inside { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#6c757d; }
+.input-group-inside { position:relative; margin-bottom:12px; }
+.input-group-inside input.form-control { padding-left:36px; }
+.btn-login { width:100%; }

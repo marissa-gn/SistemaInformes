@@ -1,0 +1,162 @@
+<!-- Encabezado del perfil -->
+<div class="text-center mb-4 mt-3">
+  <h2 style="color: #a12424; font-weight: bold; margin: 1rem 0;">
+    <i class="bi bi-person-circle me-2"></i>Mi Perfil
+  </h2>
+</div>
+
+<!-- Contenedor con scroll -->
+<div class="form-scroll-container w-100 px-4" style="height: calc(100vh - 250px); overflow-y: auto; overflow-x: hidden; margin: 0 auto; padding-bottom: 20px; scroll-behavior: smooth;">
+  <!-- Información del usuario -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <!-- Avatar y datos principales -->
+      <div class="row mb-4">
+        <div class="col-md-4 text-center">
+          <div class="profile-avatar mb-3">
+            <i class="bi bi-person-circle" style="font-size: 6rem; color: #a12424;"></i>
+          </div>
+          <h5 style="color: #a12424; font-weight: bold;"><%= user.nombre %> <%= user.apellido %></h5>
+          <p class="text-muted mb-2"><%= user.area_nombre || 'Sin área asignada' %></p>
+          <span class="badge bg-success">Usuario Activo</span>
+        </div>
+        <div class="col-md-8">
+          <!-- Campos editables -->
+          <form id="perfilForm">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="nombre" class="form-label fw-bold">Nombre:</label>
+                <input type="text" class="form-control" id="nombre" value="<%= user.nombre %>" required>
+              </div>
+              <div class="col-md-6">
+                <label for="apellidos" class="form-label fw-bold">Apellidos:</label>
+                <input type="text" class="form-control" id="apellidos" value="<%= user.apellido %>" required>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="correo" class="form-label fw-bold">Correo:</label>
+                <input type="email" class="form-control" id="correo" value="<%= user.email %>" required>
+              </div>
+              <div class="col-md-6">
+                <label for="telefono" class="form-label fw-bold">Teléfono:</label>
+                <input type="text" class="form-control" id="telefono" value="<%= user.telefono || '' %>">
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="cargo" class="form-label fw-bold">Usuario:</label>
+                <input type="text" class="form-control" id="cargo" value="<%= user.username %>" readonly>
+              </div>
+              <div class="col-md-6">
+                <label for="area" class="form-label fw-bold">Área:</label>
+                <select class="form-select" id="area" required>
+                  <option value="">Seleccionar área...</option>
+                  <% if (typeof areas !== 'undefined' && areas && areas.length > 0) { %>
+                    <% areas.forEach(area => { %>
+                      <option value="<%= area.id %>" <%= user.area_id == area.id ? 'selected' : '' %>><%= area.nombre %></option>
+                    <% }); %>
+                  <% } else { %>
+                    <option value="">No hay áreas disponibles</option>
+                  <% } %>
+                </select>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                  <label for="rol" class="form-label fw-bold">Rol:</label>
+                  <select class="form-select" id="rol" required>
+                    <option value="">Seleccionar rol...</option>
+                    <% if (typeof roles !== 'undefined' && roles && roles.length > 0) { %>
+                      <% roles.forEach(r => { %>
+                        <option value="<%= r.id %>" <%= user.rol_id == r.id ? 'selected' : '' %>><%= r.nombre %></option>
+                      <% }); %>
+                    <% } else { %>
+                      <option value="1" <%= user.rol_id == 1 ? 'selected' : '' %>>Administrador</option>
+                      <option value="2" <%= user.rol_id == 2 ? 'selected' : '' %>>Capturista</option>
+                      <option value="3" <%= user.rol_id == 3 ? 'selected' : '' %>>Visitante</option>
+                    <% } %>
+                  </select>
+                </div>
+            </div>
+
+            <!-- Separador visual -->
+            <hr class="my-4">
+            <h6 class="text-muted mb-3"><i class="bi bi-shield-lock me-2"></i>Gestión de Contraseña</h6>
+
+            <!-- Contraseña actual -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="contrasena-actual" class="form-label fw-bold">Contraseña Actual:</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="contrasena-actual" value="<%= user.password_plain || '••••••••••••' %>" readonly style="background-color: #f8f9fa; color: #6c757d;">
+                  <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('contrasena-actual')">
+                    <i class="bi bi-eye" id="iconoContrasenaActual"></i>
+                  </button>
+                </div>
+                <div class="form-text">Esta es tu contraseña actual (no modificable)</div>
+              </div>
+              <div class="col-md-6">
+                <div class="alert alert-info py-2 px-3" style="font-size: 0.9rem;">
+                  <i class="bi bi-info-circle me-2"></i>
+                  <strong>¿Quieres cambiar tu contraseña?</strong><br>
+                  Completa los campos de abajo para establecer una nueva contraseña.
+                </div>
+              </div>
+            </div>
+
+            <!-- Nueva contraseña -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="contrasena" class="form-label fw-bold">Nueva Contraseña:</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="contrasena" placeholder="Ingresa tu nueva contraseña">
+                  <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('contrasena')">
+                    <i class="bi bi-eye" id="iconoContrasena"></i>
+                  </button>
+                </div>
+                <div class="form-text">
+                  <i class="bi bi-check-circle text-success me-1"></i>Mínimo 6 caracteres
+                  <span class="text-muted">• Déjalo vacío para mantener la actual</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="confirmar-contrasena" class="form-label fw-bold">Confirmar Nueva Contraseña:</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="confirmar-contrasena" placeholder="Repite tu nueva contraseña">
+                  <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirmar-contrasena')">
+                    <i class="bi bi-eye" id="iconoConfirmarContrasena"></i>
+                  </button>
+                </div>
+                <div class="form-text">
+                  <i class="bi bi-shield-check text-primary me-1"></i>Debe coincidir con la nueva contraseña
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botones de acción -->
+  <div class="row mb-3">
+    <div class="col-12 text-center">
+      <button type="button" class="btn btn-success btn-lg rounded-pill px-5 me-3" id="btn-guardar">
+        <i class="bi bi-check-circle me-2"></i>Guardar Cambios
+      </button>
+      <button type="button" class="btn btn-danger btn-lg rounded-pill px-5" id="btn-cancelar">
+        <i class="bi bi-x-circle me-2"></i>Cancelar
+      </button>
+    </div>
+  </div>
+  
+  <!-- Espaciado reducido para evitar colisión con footer -->
+  <div style="height: 40px;"></div>
+</div>
+
+<!-- Referencia solo al archivo JS externo -->
+<script src="/js/perfil.js"></script>

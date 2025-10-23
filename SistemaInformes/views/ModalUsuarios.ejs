@@ -1,94 +1,101 @@
 <div class="modal fade" id="modalUsuarios" tabindex="-1" aria-labelledby="modalUsuariosLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalUsuariosLabel"><b>Usuarios</b></h5>
+        <h5 class="modal-title" id="modal-titulo"><b>Crear Usuario</b></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
-      <div class="modal-body">
-        <form>
+      <div class="modal-body px-4 py-4" style="max-height: 75vh; overflow-y: auto; overflow-x: hidden;">
+        <form id="form-usuario" novalidate>
+          <input type="hidden" id="usuario-id" name="usuario_id" value="">
+          
           <!-- Campos principales del usuario -->
-          <div class="row mb-2">
+          <div class="row mb-3">
             <div class="col-md-6 mb-2">
-              <label for="nombreUsuario" class="form-label">Nombre:</label>
-              <input type="text" class="form-control" id="nombreUsuario">
+              <label for="username" class="form-label">Usuario:</label>
+              <input type="text" class="form-control" id="username" name="username" required>
+              <div class="invalid-feedback">El usuario es requerido.</div>
             </div>
             <div class="col-md-6 mb-2">
-              <label for="apellidosUsuario" class="form-label">Apellidos:</label>
-              <input type="text" class="form-control" id="apellidosUsuario">
-            </div>
-          </div>
-          <div class="row mb-2">
-            <div class="col-md-6 mb-2">
-              <label for="correoUsuario" class="form-label">Correo electrónico:</label>
-              <input type="email" class="form-control" id="correoUsuario">
-            </div>
-            <div class="col-md-6 mb-2">
-              <label for="telefonoUsuario" class="form-label">Teléfono:</label>
-              <input type="tel" class="form-control" id="telefonoUsuario">
+              <label for="numero_nomina" class="form-label">Número de Nómina:</label>
+              <input type="text" class="form-control" id="numero_nomina" name="numero_nomina" placeholder="Número de nómina" required>
+              <div class="invalid-feedback">El número de nómina es requerido.</div>
             </div>
           </div>
-          <div class="row mb-2">
+          <div class="row mb-3">
             <div class="col-md-6 mb-2">
-              <label for="cargoUsuario" class="form-label">Cargo:</label>
-              <select class="form-select" id="cargoUsuario">
+              <label for="nombre" class="form-label">Nombre:</label>
+              <input type="text" class="form-control" id="nombre" name="nombre" required>
+              <div class="invalid-feedback">El nombre es requerido.</div>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="apellido" class="form-label">Apellido:</label>
+              <input type="text" class="form-control" id="apellido" name="apellido" required>
+              <div class="invalid-feedback">El apellido es requerido.</div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6 mb-2">
+              <label for="email" class="form-label">Correo electrónico:</label>
+              <input type="email" class="form-control" id="email" name="email" required 
+                     placeholder="ejemplo@correo.com">
+              <div class="invalid-feedback">El correo electrónico es requerido y debe ser válido.</div>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="telefono" class="form-label">Teléfono:</label>
+              <input type="tel" class="form-control" id="telefono" name="telefono">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6 mb-2">
+              <label for="area_id" class="form-label">Área:</label>
+              <select class="form-select" id="area_id" name="area_id">
                 <option value="">Selecciona...</option>
-                <option value="Coordinador">Coordinador</option>
-                <option value="Asistente">Asistente</option>
-                <option value="Director">Director</option>
-                <option value="Tesorero">Tesorero</option>
+                <% if (typeof areas !== 'undefined' && areas && areas.length > 0) { %>
+                  <% areas.forEach(area => { %>
+                    <option value="<%= area.id %>"><%= area.nombre %></option>
+                  <% }); %>
+                <% } else { %>
+                  <option value="1">Departamento de Tecnologías de la Información</option>
+                  <option value="2">Finanzas y Contabilidad</option>
+                  <option value="3">Recursos Humanos</option>
+                  <option value="4">Mercadotecnia</option>
+                  <option value="5">Departamento de Logística</option>
+                <% } %>
               </select>
             </div>
             <div class="col-md-6 mb-2">
-              <label for="areaUsuario" class="form-label">Área:</label>
-              <select class="form-select" id="areaUsuario">
+              <label for="rol_id" class="form-label">Rol de usuario:</label>
+              <select class="form-select" id="rol_id" name="rol_id" required>
                 <option value="">Selecciona...</option>
-                <option value="Finanzas y Contabilidad">Finanzas y Contabilidad</option>
-                <option value="Recursos Humanos">Recursos Humanos</option>
-                <option value="Tecnologías de la Información">Tecnologías de la Información</option>
-                <option value="Mercadotecnia">Mercadotecnia</option>
-                <option value="Departamento de Logística">Departamento de Logística</option>
-                <option value="Producción / Operaciones">Producción / Operaciones</option>
-                <option value="Investigación y Desarrollo (I+D)">Investigación y Desarrollo (I+D)</option>
-                <option value="Atención al cliente">Atención al cliente</option>
+                <option value="1">Administrador</option>
+                <option value="2">Capturista</option>
+                <option value="3">Visitante</option>
               </select>
+              <div class="invalid-feedback">El rol es requerido.</div>
             </div>
           </div>
-          <div class="row mb-2">
+          <!-- Contraseña al final -->
+          <div class="row mb-3">
             <div class="col-md-6 mb-2">
-              <label for="rolUsuario" class="form-label">Rol de usuario:</label>
-              <select class="form-select" id="rolUsuario">
-                <option value="">Selecciona...</option>
-                <option value="Capturista">Capturista</option>
-                <option value="Administrador">Administrador</option>
-                <option value="Visitante">Visitante</option>
-              </select>
+              <label for="password" class="form-label">Contraseña:</label>
+              <input type="password" class="form-control" id="password" name="password">
+              <div class="form-text" id="password-help">Dejar en blanco para mantener contraseña actual (al editar).</div>
+              <div class="invalid-feedback">La contraseña es requerida.</div>
             </div>
-          </div>
-          <!-- Campos de contraseña y verificación -->
-          <div class="row mb-2">
-            <div class="col-md-6 mb-2">
-              <label for="inputPassword5" class="form-label">Password</label>
-              <input type="password" id="inputPassword5" class="form-control" aria-describedby="passwordHelpBlock">
-              <div id="passwordHelpBlock" class="form-text">
-                Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
-              </div>
-            </div>
-            <div class="col-md-6 mb-2">
-              <label for="verificarPasswordUsuario" class="form-label">Verificar contraseña</label>
-              <input type="password" class="form-control" id="verificarPasswordUsuario" aria-describedby="verificarPasswordHelpBlock">
-              <div id="verificarPasswordHelpBlock" class="form-text">
-                Repite la contraseña para verificar que coincidan.
-              </div>
+            <div class="col-md-6 mb-2" id="confirm-password-row">
+              <label for="confirm-password" class="form-label">Confirmar Contraseña:</label>
+              <input type="password" class="form-control" id="confirm-password" name="confirm_password">
+              <div class="invalid-feedback">Las contraseñas no coinciden.</div>
             </div>
           </div>
         </form>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" id="btnGuardarUsuario">Guardar</button>
+      <div class="modal-footer" style="border-top: 1px solid #dee2e6; padding: 15px 24px;">
+        <button type="button" class="btn btn-success" id="btn-guardar-usuario">Guardar</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
       </div>
     </div>
   </div>
 </div>
-<!-- Fin del modal de usuarios -->
+<!-- Note: modal styles are provided globally in public/styles.css -->

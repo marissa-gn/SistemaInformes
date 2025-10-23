@@ -1,32 +1,42 @@
-<div class="container mt-5" style="max-height: 75vh; overflow-y: auto;">
-  <h2 class="text-center mb-4" style="color: #a12424; font-weight: bold;">Estadísticas de Informes</h2>
+<!-- Contenedor específico para estadísticas -->
+<div class="estadisticas-page">
+  <!-- Encabezado de la sección Estadísticas -->
+  <div class="text-center mb-2" style="padding: 10px 0;">
+    <h2 style="color: #a12424; font-weight: bold; margin: 0;">
+      <i class="bi bi-bar-chart me-2"></i>Estadísticas de Informes
+    </h2>
+  </div>
+
+  <!-- Contenedor con scroll para las gráficas -->
+  <div class="estadisticas-scroll-container">
+  <div class="container">
   <div class="row mb-5">
-  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaBeneficiarios" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
-  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaMontos" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+    <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaBeneficiarios" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+    <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaMontos" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
   </div>
   <div class="row mb-5">
-  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaAreas" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
-  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaSectores" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+    <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaAreas" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+    <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaSectores" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
   </div>
   <div class="row mb-5">
-  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaColonia" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
-  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaLugar" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+    <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaColonia" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+    <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaLugar" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
   </div>
   <div class="row mb-5">
-  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaTipoActividad" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
-  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaEvidencia" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+    <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaTipoActividad" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+    <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaEvidencia" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
   </div>
   <div class="row mb-5">
-  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaSolicitudes" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
-  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaProcedimientos" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+    <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaSolicitudes" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+    <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaProcedimientos" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
   </div>
   <div class="row mb-5">
-  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaDescripcion" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
-  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaComentario" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+    <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaDescripcion" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+    <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaComentario" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
   </div>
   <div class="row mb-5">
-  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaObservaciones" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
-  <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaFecha" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+    <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaObservaciones" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
+    <div class="col-md-6 mb-4 d-flex justify-content-center"><canvas id="graficaFecha" width="300" height="200" style="max-width:100%;max-height:220px;"></canvas></div>
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -102,4 +112,16 @@
   new Chart(document.getElementById('graficaComentario'), { type: 'pie', data: comentarioData });
   new Chart(document.getElementById('graficaObservaciones'), { type: 'pie', data: observacionesData });
   new Chart(document.getElementById('graficaFecha'), { type: 'bar', data: fechaData });
+
 </script>
+  </div>
+  <!-- Fin del contenedor con scroll -->
+</div>
+<!-- Fin del contenedor de estadísticas -->
+
+<!-- Botón de inicio -->
+<div class="btn-inicio-flotante">
+  <a href="/informes" class="btn btn-inicio btn-lg rounded-pill">
+    <i class="bi bi-house-door-fill me-2"></i>Inicio
+  </a>
+</div>
