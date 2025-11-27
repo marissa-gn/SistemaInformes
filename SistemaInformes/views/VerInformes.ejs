@@ -1,64 +1,68 @@
-<!-- Vista principal de Informes para Visitantes -->
-<div class="verinformes-content">
-    <!-- Encabezado de la sección Informes -->
-        <div class="d-flex justify-content-center align-items-center mb-4 mt-3">
-                <h2 style="color: #a12424; font-weight: bold; margin: 1rem 0; text-align:center;">
-                        <i class="bi bi-eye me-2"></i>Ver Informes
-                </h2>
-        </div>
-        <% if (typeof layout !== 'undefined' && layout === 'layoutVisitante') { %>
-            <div class="d-flex justify-content-center mb-3">
-                <div class="badge bg-secondary fs-6">Solo Lectura</div>
-            </div>
-        <% } %>
-    <div class="card" style="background: transparent; box-shadow: none; border: none; margin-top: 0;">
-        <div class="card-body p-4">
-            <div class="table-responsive">
-                <div class="table-scroll">
-                    <!-- Tabla de informes -->
-                    <table class="table table-hover text-center usuarios-table">
-                        <thead class="text-center">
-                            <tr>
-                                <th>#</th>
-                                <th>Nombre</th>
-                                <th>Área</th>
-                                <th>Fecha</th>
-                                <th>Acciones</th>
+<div class="text-center mb-4 mt-3">
+    <h2 class="titulo-tabla">
+        <i class="bi bi-eye me-2"></i>Ver Informes
+    </h2>
+</div>
+<% if (typeof layout !== 'undefined' && layout === 'layoutVisitante') { %>
+    <div class="d-flex justify-content-center mb-3">
+        <div class="badge bg-secondary fs-6">Solo Lectura</div>
+    </div>
+<% } %>
+<div class="card">
+    <div class="card-body p-4">
+        <div class="table-scroll">
+            <!-- Tabla de informes -->
+            <table class="table table-hover text-center data-table">
+                <thead class="text-center">
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Área</th>
+                        <th>Fecha</th>
+                        <th>
+                            Acciones
+                            <button id="btn-refrescar-informes" class="btn btn-sm btn-outline-secondary btn-icon ms-2" type="button" title="Refrescar lista de informes" aria-label="Refrescar lista de informes">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="informes-tbody">
+                    <% if (informes && informes.length > 0) { %>
+                        <% informes.forEach((informe, index) => { %>
+                            <tr data-informe-id="<%= informe.id %>">
+                                <td><%= index + 1 %></td>
+                                <td><%= informe.usuario_nombre %> <%= informe.usuario_apellido %></td>
+                                <td><%= informe.area_nombre %></td>
+                                <td><%= new Date(informe.fecha_creacion).toLocaleDateString() %></td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2 nowrap">
+                                        <button class="btn btn-editar btn-sm btn-min-70" 
+                                                <% if (informe.estado !== 'aprobado') { %>disabled<% } %>
+                                                onclick="descargarInforme('<%= informe.id %>')">
+                                            <i class="bi bi-download me-1"></i>Descargar
+                                        </button>
+                                        <button type="button" class="btn btn-info btn-sm btn-min-70" 
+                                                data-informe-id="<%= informe.id %>"
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#modalInforme"
+                                                onclick="cargarInformeEnModal(this)">
+                                            Abrir
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody id="tablaInformes">
-                            <% if (informes && informes.length > 0) { %>
-                                <% informes.forEach((informe, index) => { %>
-                                    <tr>
-                                        <td><%= index + 1 %></td>
-                                        <td><%= informe.usuario_nombre %> <%= informe.usuario_apellido %></td>
-                                        <td><%= informe.area_nombre %></td>
-                                        <td><%= new Date(informe.fecha_creacion).toLocaleDateString() %></td>
-                                        <td>
-                                            <button type="button" class="btn btn-abrir btn-sm" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="<%= (typeof layout !== 'undefined' && layout === 'layoutVisitante') ? '#modalInformeVisitante' : '#modalInforme' %>" 
-                                                    onclick="verInforme('<%= informe.id %>')">
-                                                Abrir
-                                            </button>
-                                        </td>
-                                    </tr>
-                                <% }) %>
-                            <% } else { %>
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted">No hay informes registrados</td>
-                                </tr>
-                            <% } %>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No hay informes registrados</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
         </div>
     </div>
-        <!-- Incluir modal apropiado según layout (visitante: modal de solo lectura) -->
-        <% if (typeof layout !== 'undefined' && layout === 'layoutVisitante') { %>
-            <%- include('ModalInformeVisitante') %>
-        <% } else { %>
-            <%- include('ModalInforme') %>
-        <% } %>
 </div>
+
+<!-- Incluir modal único para todos los roles -->
+<%- include('ModalInforme') %>

@@ -23,56 +23,14 @@
                         <li class="nav-item"><a class="nav-link fw-bold" href="/historial">Historial</a></li>
                         <li class="nav-item"><a class="nav-link fw-bold" href="/perfil">Perfil</a></li>
                     </ul>
-                    <button class="btn btn-danger btn-logout ms-lg-3" type="button" onclick="cerrarSesion()"><i class="bi bi-x-circle"></i> Cerrar sesión</button>
+                    <button class="btn btn-danger btn-logout ms-lg-3" type="button" data-action="logout"><i class="bi bi-x-circle"></i> Cerrar sesión</button>
                 </div>
             </div>
         </nav>
 
         <div class="layout-row">
-            <!-- Barra lateral -->
-            <aside class="sidebar-logo d-flex flex-column align-items-center justify-content-between">
-                <div class="w-100 d-flex flex-column align-items-center">
-                    <%- include('partials/userBadge') %>
-                    <img src="/Img/logo.jpg" class="logo img-fluid mx-auto d-block mb-2" alt="Logo Atlacomulco">
-                    <% if (title === 'Historial de Informes') { %>
-                        <!-- Filtro de historial -->
-                        <div class="busqueda-informes mt-2" style="font-size: 0.95em;">
-                            <h5 class="fw-bold mb-2 text-dark text-center" style="font-size:1em;">Búsqueda por...</h5>
-                            <div class="dropdown mb-1 w-100">
-                                <button class="btn btn-area dropdown-toggle w-100" type="button" id="dropdownPeriodo" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:0.95em; padding:0.3rem 0.7rem;">Período</button>
-                                <ul class="dropdown-menu w-100" aria-labelledby="dropdownPeriodo">
-                                    <li><a class="dropdown-item" href="#">Enero 2025</a></li>
-                                    <li><a class="dropdown-item" href="#">Febrero 2025</a></li>
-                                    <li><a class="dropdown-item" href="#">Marzo 2025</a></li>
-                                    <li><a class="dropdown-item" href="#">Q1 2025</a></li>
-                                    <li><a class="dropdown-item" href="#">2024</a></li>
-                                    <li><a class="dropdown-item" href="#">Diciembre 2024</a></li>
-                                </ul>
-                            </div>
-                            <div class="dropdown mb-1 w-100">
-                                <button class="btn btn-nuevos dropdown-toggle w-100" type="button" id="dropdownEstado" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:0.95em; padding:0.3rem 0.7rem;">Estado</button>
-                                <ul class="dropdown-menu w-100" aria-labelledby="dropdownEstado">
-                                    <li><a class="dropdown-item" href="#">Completado</a></li>
-                                    <li><a class="dropdown-item" href="#">En Proceso</a></li>
-                                    <li><a class="dropdown-item" href="#">Cancelado</a></li>
-                                </ul>
-                            </div>
-                            <div class="d-flex w-100 gap-1 mt-2 justify-content-center">
-                                <div class="d-flex flex-column align-items-center" style="flex: 0 0 auto; width: 130px;">
-                                    <label for="fecha-desde" class="small mb-1 text-dark text-center label-area" style="font-size:0.88em;"><b>Desde</b></label>
-                                    <input type="date" id="fecha-desde" class="form-control form-control-sm mb-1 input-area" style="font-size:0.88em; width: 130px;">
-                                </div>
-                                <div class="d-flex flex-column align-items-center" style="flex: 0 0 auto; width: 130px;">
-                                    <label for="fecha-hasta" class="small mb-1 text-dark text-center label-nuevos" style="font-size:0.88em;"><b>Hasta</b></label>
-                                    <input type="date" id="fecha-hasta" class="form-control form-control-sm mb-1 input-nuevos" style="font-size:0.88em; width: 130px;">
-                                </div>
-                            </div>
-                            <button class="btn btn-buscar w-100 mt-2" type="button" onclick="buscarHistorial()" style="font-size:0.93em; padding:0.35rem 0.65rem;">Buscar</button>
-                        </div>
-                    <% } %>
-                </div>
-            </aside>
-            <!-- Fin barra lateral -->
+            <!-- Shared sidebar -->
+            <%- include('partials/sidebar') %>
             <section class="layout-section<% if (title !== 'Inicio - Usuario') { %> no-bg<% } %>">
                 <% if (title === 'Inicio - Usuario') { %>
                     <main class="main-content inicio-bg d-flex align-items-center justify-content-center position-relative" style="min-height: 100%; width: 100%;">
@@ -112,108 +70,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/sistema.js"></script>
-    
-    <script>
-        // Función global de tostadas unificada
-        function mostrarToast(mensaje, tipo = 'success') {
-            const tiposConfig = {
-                'success': {
-                    bgClass: 'toast-success',
-                    icon: 'bi-check-circle-fill'
-                },
-                'warning': {
-                    bgClass: 'toast-warning', 
-                    icon: 'bi-exclamation-triangle-fill'
-                },
-                'danger': {
-                    bgClass: 'toast-danger',
-                    icon: 'bi-x-circle-fill'
-                },
-                'info': {
-                    bgClass: 'toast-info',
-                    icon: 'bi-info-circle-fill'
-                }
-            };
-
-            const config = tiposConfig[tipo] || tiposConfig['success'];
-            const toastId = 'toast-' + Date.now();
-            
-            const toastHtml = `
-                <div class="toast align-items-center text-white ${config.bgClass} border-0" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            <i class="bi ${config.icon} me-2"></i>
-                            ${mensaje}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                </div>
-            `;
-            
-            const container = document.getElementById('global-toast-container');
-            if (container) {
-                container.insertAdjacentHTML('beforeend', toastHtml);
-                const toastElement = document.getElementById(toastId);
-                const bsToast = new bootstrap.Toast(toastElement, {
-                    autohide: true,
-                    delay: 3000
-                });
-                bsToast.show();
-                
-                // Remover del DOM después de que se oculte
-                toastElement.addEventListener('hidden.bs.toast', () => {
-                    toastElement.remove();
-                });
-            }
-        }
-
-        // Funciones de conveniencia para mensajes comunes
-        function mostrarCambiosGuardados() {
-            mostrarToast('Cambios guardados exitosamente', 'success');
-        }
-        
-        function mostrarCambiosCancelados() {
-            mostrarToast('Cambios cancelados', 'warning');
-        }
-        
-        function mostrarElementoEliminado(elemento = 'Elemento') {
-            mostrarToast(`${elemento} eliminado exitosamente`, 'success');
-        }
-        
-        function mostrarDescargaIniciada() {
-            mostrarToast('Descarga iniciada', 'info');
-        }
-        
-        function mostrarInformeEnviado() {
-            mostrarToast('Informe enviado para revisión', 'success');
-        }
-        
-        function mostrarInformeEliminado() {
-            mostrarElementoEliminado('Informe');
-        }
-        
-        function mostrarInformeVisto() {
-            mostrarToast('Informe visualizado', 'info');
-        }
-        
-        function mostrarInformeBorrador() {
-            mostrarToast('Informe guardado como borrador', 'success');
-        }
-        
-        // Función para búsqueda en historial
-        function buscarHistorial() {
-            const periodo = document.getElementById('dropdownPeriodo')?.textContent.trim();
-            const estado = document.getElementById('dropdownEstado')?.textContent.trim();
-            const fechaDesde = document.getElementById('fecha-desde')?.value;
-            const fechaHasta = document.getElementById('fecha-hasta')?.value;
-            
-            // Simular búsqueda
-            mostrarToast('Búsqueda realizada', 'info');
-        }
-        
-        // El manejo de logout se realiza desde /js/sistema.js (función cerrarSesion())
-        // Se evita el uso de confirm() nativo y los formularios para unificar comportamiento.
-    </script>
 </body>
 </html>
 

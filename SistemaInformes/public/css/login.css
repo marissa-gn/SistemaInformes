@@ -25,7 +25,6 @@
 /* Small helpers for the login card (if not present in main styles) */
 .login-bg { display:flex; align-items:center; justify-content:center; min-height:100vh; }
 .login-card { max-width: 380px; width:100%; padding: 28px; border-radius:8px; background:#fff; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
-.login-avatar { width:72px; height:72px; border-radius:50%; background:#f1f1f1; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 12px; }
 .login-title { text-align:center; font-weight:600; margin-bottom:18px; }
 .input-icon-inside { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#6c757d; }
 .input-group-inside { position:relative; margin-bottom:12px; }

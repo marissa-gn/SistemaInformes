@@ -8,6 +8,9 @@ const dbConfig = {
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'sistema_informes',
   port: process.env.DB_PORT || 3306,
+  // Ensure UTF-8 (utf8mb4) charset so accented characters are handled correctly
+  // Use the charset name (utf8mb4) rather than a collation string
+  charset: process.env.DB_CHARSET || 'utf8mb4',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -97,11 +100,12 @@ const userQueries = {
   // Obtener todos los usuarios activos
   getAll: async () => {
     const query = `
-      SELECT u.*, r.nombre as rol_nombre
-      FROM usuarios u 
-      JOIN roles r ON u.rol_id = r.id 
+      SELECT u.*, a.nombre as area_nombre, r.nombre as rol_nombre
+      FROM usuarios u
+      LEFT JOIN areas a ON u.area_id = a.id
+      JOIN roles r ON u.rol_id = r.id
       WHERE u.activo = true
-      ORDER BY u.username
+      ORDER BY u.id
     `;
     return await executeQuery(query);
   },
@@ -252,9 +256,10 @@ const informeQueries = {
       SELECT i.*, u.nombre as usuario_nombre, u.apellido as usuario_apellido,
              a.nombre as area_nombre, ap.nombre as aprobado_por_nombre
       FROM informes i
-      JOIN usuarios u ON i.usuario_id = u.id
-      JOIN areas a ON i.area_id = a.id
+      JOIN usuarios u ON i.usuario_id = u.id AND u.activo = true
+      JOIN areas a ON i.area_id = a.id AND a.activa = true
       LEFT JOIN usuarios ap ON i.aprobado_por = ap.id
+      WHERE i.estado IN ('enviado', 'aprobado', 'rechazado')
       ORDER BY i.fecha_creacion DESC
     `;
     return await executeQuery(query);
@@ -263,9 +268,15 @@ const informeQueries = {
   // Obtener informes por usuario
   getByUser: async (userId) => {
     const query = `
-      SELECT i.*, a.nombre as area_nombre
+      SELECT i.*, 
+             u.nombre as usuario_nombre, 
+             u.apellido as usuario_apellido,
+             a.nombre as area_nombre,
+             ap.nombre as aprobado_por_nombre
       FROM informes i
-      JOIN areas a ON i.area_id = a.id
+      JOIN usuarios u ON i.usuario_id = u.id AND u.activo = true
+      JOIN areas a ON i.area_id = a.id AND a.activa = true
+      LEFT JOIN usuarios ap ON i.aprobado_por = ap.id
       WHERE i.usuario_id = ?
       ORDER BY i.fecha_creacion DESC
     `;
@@ -276,19 +287,33 @@ const informeQueries = {
   create: async (informeData) => {
     const query = `
       INSERT INTO informes (
-        usuario_id, area_id, titulo, sector_beneficia, lugar_actividad, tipo_actividad,
-        numero_beneficiarios, monto_generado, monto_invertido, responde_solicitud_ciudadania,
-        pertenece_procedimientos_area, descripcion_actividad, objetivos, resultados,
-        observaciones, evidencia_fotografica, fecha_actividad, estado
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        usuario_id, area_id, nombre_director, fecha_actividad, lugar_actividad, 
+        colonia_comunidad, tipo_actividad, cantidad, descripcion_actividad, 
+        sector_beneficia, numero_beneficiarios, monto_generado, 
+        pertenece_procedimientos_area, responde_solicitud_ciudadania, 
+        evidencia_fotografica, observaciones, estado, objetivos, resultados
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const params = [
-      informeData.usuario_id, informeData.area_id, informeData.titulo, informeData.sector_beneficia,
-      informeData.lugar_actividad, informeData.tipo_actividad, informeData.numero_beneficiarios,
-      informeData.monto_generado, informeData.monto_invertido, informeData.responde_solicitud_ciudadania,
-      informeData.pertenece_procedimientos_area, informeData.descripcion_actividad, informeData.objetivos,
-      informeData.resultados, informeData.observaciones, informeData.evidencia_fotografica,
-      informeData.fecha_actividad, informeData.estado || 'borrador'
+      informeData.usuario_id, 
+      informeData.area_id, 
+      informeData.nombre_director || null,
+      informeData.fecha_actividad || null, 
+      informeData.lugar_actividad || null, 
+      informeData.colonia_comunidad || null,
+      informeData.tipo_actividad || null,
+      informeData.cantidad ? parseInt(informeData.cantidad) : null,
+      informeData.descripcion_actividad || null,
+      informeData.sector_beneficia || null,
+      informeData.numero_beneficiarios ? parseInt(informeData.numero_beneficiarios) : null,
+      informeData.monto_generado ? parseFloat(informeData.monto_generado) : null,
+      informeData.pertenece_procedimientos_area !== undefined ? informeData.pertenece_procedimientos_area : null,
+      informeData.responde_solicitud_ciudadania !== undefined ? informeData.responde_solicitud_ciudadania : null,
+      informeData.evidencia_fotografica || null,
+      informeData.observaciones || null,
+      informeData.estado || 'borrador',
+      informeData.objetivos || null,
+      informeData.resultados || null
     ];
     return await insertAndGetId(query, params);
   },

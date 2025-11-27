@@ -3,6 +3,7 @@ const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
+const PDFDocument = require('pdfkit');
 
 const app = express();
 
@@ -427,10 +428,10 @@ app.post('/usuarios/crear', authenticateToken, authorizeRole('administrador'), a
       return res.status(500).json({ success: false, message: 'Base de datos no disponible' });
     }
 
-    // Verificar si el usuario ya existe por username o nomina
-    const existingUser = await userQueries.getByUsername(username);
-    if (existingUser) {
-      return res.status(400).json({ success: false, message: 'El usuario ya existe' });
+    // Verificar si ya existe un usuario con ese username, email o número de nómina
+    const existingAny = await executeQuery('SELECT id, activo FROM usuarios WHERE (username = ? OR email = ? OR numero_nomina = ?) AND activo = true LIMIT 1', [username, email, numero_nomina || null]);
+    if (existingAny && existingAny.length > 0) {
+      return res.status(400).json({ success: false, message: 'Ya existe un usuario con ese username, email o número de nómina' });
     }
 
     // hash de contraseña
@@ -452,6 +453,10 @@ app.post('/usuarios/crear', authenticateToken, authorizeRole('administrador'), a
     res.json({ success: true, message: 'Usuario creado exitosamente', userId });
   } catch (error) {
     console.error('Error creando usuario:', error);
+    // Manejar duplicados (username/email/nomina)
+    if (error && (error.code === 'ER_DUP_ENTRY' || String(error.message).toLowerCase().includes('duplicate'))) {
+      return res.status(400).json({ success: false, message: 'Ya existe un usuario con ese username o número de nómina' });
+    }
     res.status(500).json({ success: false, message: 'Error interno del servidor' });
   }
 });
@@ -502,89 +507,88 @@ app.put('/usuarios/:id', authenticateToken, authorizeRole('administrador'), asyn
   }
 });
 
-// Crear usuario
-app.post('/usuarios/crear', authenticateToken, authorizeRole('administrador'), async (req, res) => {
+// Eliminar usuario (marcar como inactivo) - soft delete
+app.delete('/usuarios/:id', authenticateToken, authorizeRole('administrador'), async (req, res) => {
   try {
-    const { username, email, nombre, apellido, telefono, area_id, rol_id, password, numero_nomina } = req.body;
-    if (!username || !email || !nombre || !apellido || !rol_id) {
-      return res.status(400).json({ success: false, message: 'Campos requeridos faltantes' });
-    }
+    const userId = req.params.id;
 
-    if (!dbConnected || !userQueries) {
+    console.log(`📤 DELETE /usuarios/${userId} invoked by session user=${req.session && req.session.user ? req.session.user.id : 'no-session'}`);
+
+    if (!dbConnected || !executeQuery) {
       return res.status(500).json({ success: false, message: 'Base de datos no disponible' });
     }
 
-    const existingUser = await userQueries.getByUsername(username);
-    if (existingUser) {
-      return res.status(400).json({ success: false, message: 'El usuario ya existe' });
+    // No permitir que un administrador se elimine a sí mismo por accidente
+    if (parseInt(userId) === req.user.id) {
+      return res.status(400).json({ success: false, message: 'No puedes eliminar tu propio usuario' });
     }
 
-    const defaultPassword = password || 'admin123';
-    const passwordHash = await bcrypt.hash(defaultPassword, 10);
+    // Obtener datos del usuario antes de eliminarlo para liberar sus campos UNIQUE
+    const user = await executeQuery('SELECT id, username, email, numero_nomina FROM usuarios WHERE id = ? AND activo = true', [userId]);
+    if (!user || user.length === 0) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado o ya eliminado' });
+    }
 
-    const userId = await userQueries.create({
-      username,
-      email,
-      password_hash: passwordHash,
-      nombre,
-      apellido,
-      telefono: telefono || null,
-      numero_nomina: numero_nomina || null,
-      area_id: area_id || null,
-      rol_id
-    });
+    // Liberar los campos UNIQUE agregando timestamp y prefijo "DELETED_"
+    const timestamp = Date.now();
+    const deletedUsername = `DELETED_${user[0].id}_${timestamp}`;
+    const deletedEmail = `DELETED_${user[0].id}_${timestamp}@deleted.local`;
+    const deletedNomina = `DELETED_${user[0].id}_${timestamp}`;
 
-    res.json({ success: true, message: 'Usuario creado exitosamente', userId });
+    const result = await executeQuery(
+      'UPDATE usuarios SET activo = false, username = ?, email = ?, numero_nomina = ?, updated_at = NOW() WHERE id = ? AND activo = true',
+      [deletedUsername, deletedEmail, deletedNomina, userId]
+    );
+    
+    if (result && result.affectedRows > 0) {
+      return res.json({ success: true, message: 'Usuario eliminado correctamente' });
+    }
+
+    return res.status(404).json({ success: false, message: 'Error al eliminar el usuario' });
   } catch (error) {
-    console.error('Error creando usuario:', error);
+    console.error('Error eliminando usuario:', error);
     res.status(500).json({ success: false, message: 'Error interno del servidor' });
   }
 });
 
-// Actualizar usuario
-app.put('/usuarios/:id', authenticateToken, authorizeRole('administrador'), async (req, res) => {
+// Fallback: permitir eliminar por POST en caso de que DELETE sea impedido por algún proxy/cliente
+app.post('/usuarios/:id/delete', authenticateToken, authorizeRole('administrador'), async (req, res) => {
   try {
     const userId = req.params.id;
-    const { nombre, apellido, telefono, area_id, rol_id, email, password, numero_nomina } = req.body;
+    console.log(`📤 POST /usuarios/${userId}/delete invoked by session user=${req.session && req.session.user ? req.session.user.id : 'no-session'}`);
 
-    if (!nombre || !apellido || !rol_id) {
-      return res.status(400).json({ success: false, message: 'Campos requeridos faltantes' });
-    }
-
-    if (!dbConnected || !userQueries) {
+    if (!dbConnected || !executeQuery) {
       return res.status(500).json({ success: false, message: 'Base de datos no disponible' });
     }
 
-    // No permitir cambiar el rol de uno mismo
-    if (parseInt(userId) === req.user.id && parseInt(rol_id) !== req.user.rol_id) {
-      return res.status(400).json({ success: false, message: 'No puedes cambiar tu propio rol' });
+    if (parseInt(userId) === req.user.id) {
+      return res.status(400).json({ success: false, message: 'No puedes eliminar tu propio usuario' });
     }
 
-    const updateData = {
-      nombre: nombre.trim(),
-      apellido: apellido.trim(),
-      email: email?.trim() || null,
-      telefono: telefono?.trim() || null,
-      area_id: area_id ? parseInt(area_id) : null,
-      rol_id: rol_id ? parseInt(rol_id) : null,
-      numero_nomina: numero_nomina || null
-    };
-
-    if (password?.trim()) {
-      if (password.trim().length < 6) {
-        return res.status(400).json({ success: false, message: 'La contraseña debe tener al menos 6 caracteres' });
-      }
-      updateData.password_hash = await bcrypt.hash(password.trim(), 10);
+    // Obtener datos del usuario antes de eliminarlo para liberar sus campos UNIQUE
+    const user = await executeQuery('SELECT id, username, email, numero_nomina FROM usuarios WHERE id = ? AND activo = true', [userId]);
+    if (!user || user.length === 0) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado o ya eliminado' });
     }
 
-    const result = await userQueries.update(userId, updateData);
-    if (result) {
-      res.json({ success: true, message: 'Usuario actualizado exitosamente' });
-    } else {
-      res.status(500).json({ success: false, message: 'Error al actualizar usuario' });
+    // Liberar los campos UNIQUE agregando timestamp y prefijo "DELETED_"
+    const timestamp = Date.now();
+    const deletedUsername = `DELETED_${user[0].id}_${timestamp}`;
+    const deletedEmail = `DELETED_${user[0].id}_${timestamp}@deleted.local`;
+    const deletedNomina = `DELETED_${user[0].id}_${timestamp}`;
+
+    const result = await executeQuery(
+      'UPDATE usuarios SET activo = false, username = ?, email = ?, numero_nomina = ?, updated_at = NOW() WHERE id = ? AND activo = true',
+      [deletedUsername, deletedEmail, deletedNomina, userId]
+    );
+    
+    if (result && result.affectedRows > 0) {
+      return res.json({ success: true, message: 'Usuario eliminado correctamente' });
     }
+
+    return res.status(404).json({ success: false, message: 'Error al eliminar el usuario' });
   } catch (error) {
-    console.error('Error actualizando usuario:', error);
+    console.error('Error eliminando usuario (POST fallback):', error);
     res.status(500).json({ success: false, message: 'Error interno del servidor' });
   }
 });
@@ -1116,28 +1120,13 @@ app.get('/estadisticas-visitante', authenticateToken, authorizeRole('visitante')
   }
 });
 
-// =================== MANEJO DE ERRORES ===================
-
-// Página de error 404
-app.use((req, res) => {
-  const acceptsJson = req.xhr || req.headers['accept']?.includes('application/json') || req.headers['x-requested-with'] === 'XMLHttpRequest';
-  if (acceptsJson) {
-    return res.status(404).json({ success: false, message: 'Recurso no encontrado' });
-  }
-  res.status(404).render('error', {
-    title: 'Página no encontrada',
-    message: 'La página que buscas no existe.',
-    error: { status: 404 },
-    layout: false
-  });
-});
-
 // =================== API ROUTES ===================
 
 // API para búsqueda de usuarios
 app.get('/api/usuarios/buscar', authenticateToken, async (req, res) => {
   try {
     const { nombre, area, rol } = req.query;
+    console.log('🔍 API: Buscando usuarios con:', { nombre, area, rol });
     
     let query = `
       SELECT u.*, a.nombre as area_nombre, r.nombre as rol_nombre
@@ -1164,9 +1153,10 @@ app.get('/api/usuarios/buscar', authenticateToken, async (req, res) => {
       params.push(rol);
     }
     
-    query += ` ORDER BY u.nombre, u.apellido`;
+  query += ` ORDER BY u.id`;
     
     const usuarios = await executeQuery(query, params);
+    console.log('✅ Encontrados:', usuarios.length, 'usuarios');
     
     res.json({
       success: true,
@@ -1175,7 +1165,7 @@ app.get('/api/usuarios/buscar', authenticateToken, async (req, res) => {
     });
     
   } catch (error) {
-    console.error('Error en búsqueda de usuarios:', error);
+    console.error('❌ Error en búsqueda de usuarios:', error);
     res.status(500).json({
       success: false,
       message: 'Error al buscar usuarios',
@@ -1187,7 +1177,8 @@ app.get('/api/usuarios/buscar', authenticateToken, async (req, res) => {
 // API para búsqueda de áreas
 app.get('/api/areas/buscar', authenticateToken, async (req, res) => {
   try {
-    const { nombre } = req.query;
+    const { nombre, area_id } = req.query;
+    console.log('🔍 API: Buscando áreas con:', { nombre, area_id });
     
     let query = `
       SELECT a.*, COUNT(u.id) as total_usuarios
@@ -1198,6 +1189,11 @@ app.get('/api/areas/buscar', authenticateToken, async (req, res) => {
     
     const params = [];
     
+    if (area_id) {
+      query += ` AND a.id = ?`;
+      params.push(area_id);
+    }
+    
     if (nombre) {
       query += ` AND a.nombre LIKE ?`;
       params.push(`%${nombre}%`);
@@ -1206,6 +1202,7 @@ app.get('/api/areas/buscar', authenticateToken, async (req, res) => {
     query += ` GROUP BY a.id ORDER BY a.nombre`;
     
     const areas = await executeQuery(query, params);
+    console.log('✅ Encontradas:', areas.length, 'áreas');
     
     res.json({
       success: true,
@@ -1214,7 +1211,7 @@ app.get('/api/areas/buscar', authenticateToken, async (req, res) => {
     });
     
   } catch (error) {
-    console.error('Error en búsqueda de áreas:', error);
+    console.error('❌ Error en búsqueda de áreas:', error);
     res.status(500).json({
       success: false,
       message: 'Error al buscar áreas',
@@ -1246,18 +1243,1022 @@ app.get('/api/filtros', authenticateToken, async (req, res) => {
   }
 });
 
-// Manejo de errores globales
-app.use((err, req, res, next) => {
-  console.error('Error capturado:', err);
-  const acceptsJson = req.xhr || req.headers['accept']?.includes('application/json') || req.headers['x-requested-with'] === 'XMLHttpRequest';
-  if (acceptsJson) {
-    return res.status(500).json({ success: false, message: 'Error interno del servidor', error: err && err.message ? err.message : String(err) });
+// =================== API DE INFORMES ===================
+
+// API para obtener historial del usuario actual
+// API para búsqueda de informes (ANTES de /:id para que no sea interceptada)
+app.get('/api/informes/buscar', authenticateToken, async (req, res) => {
+  try {
+    const { area_id, fecha_desde, fecha_hasta } = req.query;
+    console.log('🔍 API: Buscando informes con:', { area_id, fecha_desde, fecha_hasta });
+    
+    let query = `
+      SELECT i.*, 
+             u.nombre as usuario_nombre, 
+             u.apellido as usuario_apellido,
+             a.nombre as area_nombre
+      FROM informes i
+      INNER JOIN usuarios u ON i.usuario_id = u.id AND u.activo = true
+      INNER JOIN areas a ON i.area_id = a.id AND a.activa = true
+      WHERE i.estado != 'borrador'
+    `;
+    
+    const params = [];
+    
+    if (area_id) {
+      query += ` AND i.area_id = ?`;
+      params.push(area_id);
+    }
+    
+    if (fecha_desde) {
+      query += ` AND DATE(i.fecha_creacion) >= ?`;
+      params.push(fecha_desde);
+    }
+    
+    if (fecha_hasta) {
+      query += ` AND DATE(i.fecha_creacion) <= ?`;
+      params.push(fecha_hasta);
+    }
+    
+    query += ` ORDER BY i.fecha_creacion DESC`;
+    
+    const informes = await executeQuery(query, params);
+    console.log('✅ Encontrados:', informes.length, 'informes');
+    
+    res.json({
+      success: true,
+      data: { informes },
+      message: `Se encontraron ${informes.length} informes`
+    });
+    
+  } catch (error) {
+    console.error('❌ Error en búsqueda de informes:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al buscar informes',
+      error: error.message
+    });
   }
-  res.status(500).render('error', {
-    title: 'Error del servidor',
-    message: 'Ha ocurrido un error interno.',
-    error: err,
-    layout: false
+});
+
+// API para obtener un informe específico
+// API para obtener todos los informes (admin)
+app.get('/api/informes', authenticateToken, authorizeRole('administrador'), async (req, res) => {
+  try {
+    console.log('🔍 API: Obteniendo todos los informes para admin');
+    
+    if (!informeQueries) {
+      return res.status(500).json({ success: false, message: 'Conexión a BD no disponible' });
+    }
+    
+    const informes = await informeQueries.getAll();
+    console.log(`✅ Se encontraron ${informes.length} informes`);
+    
+    res.json({
+      success: true,
+      data: informes
+    });
+  } catch (error) {
+    console.error('❌ Error obteniendo informes:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al obtener informes',
+      error: error.message
+    });
+  }
+});
+
+// API para obtener historial del usuario logueado (capturista)
+app.get('/api/historial', authenticateToken, authorizeRole('capturista'), async (req, res) => {
+  try {
+    console.log('🔍 API: Obteniendo historial para usuario:', req.user.id);
+    
+    if (!informeQueries) {
+      return res.status(500).json({ success: false, message: 'Conexión a BD no disponible' });
+    }
+    
+    const informes = await informeQueries.getByUser(req.user.id);
+    console.log(`✅ Se encontraron ${informes.length} informes del usuario`);
+    
+    res.json({
+      success: true,
+      data: informes
+    });
+  } catch (error) {
+    console.error('❌ Error obteniendo historial:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al obtener historial',
+      error: error.message
+    });
+  }
+});
+
+app.get('/api/informes/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log('🔍 API: Obteniendo informe ID:', id);
+    
+    const query = `
+      SELECT i.*, 
+             u.nombre as usuario_nombre, 
+             u.apellido as usuario_apellido,
+             a.nombre as area_nombre,
+             ap.nombre as aprobado_por_nombre
+      FROM informes i
+      LEFT JOIN usuarios u ON i.usuario_id = u.id
+      LEFT JOIN areas a ON i.area_id = a.id
+      LEFT JOIN usuarios ap ON i.aprobado_por = ap.id
+      WHERE i.id = ?
+    `;
+    
+    const informe = await executeQuery(query, [id]);
+    
+    if (informe && informe.length > 0) {
+      console.log('✅ Informe encontrado:', id);
+      res.json({
+        success: true,
+        data: informe[0]
+      });
+    } else {
+      console.log('❌ Informe no encontrado:', id);
+      res.status(404).json({
+        success: false,
+        message: 'Informe no encontrado'
+      });
+    }
+  } catch (error) {
+    console.error('❌ Error obteniendo informe:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al obtener informe',
+      error: error.message
+    });
+  }
+});
+
+// Ruta para crear informe
+app.post('/informes/crear', 
+  authenticateToken, 
+  authorizeRole('capturista'),
+  (req, res, next) => {
+    // Si multer está disponible, usarlo para procesar archivos
+    if (upload) {
+      upload.array('evidencia_fotografica', 10)(req, res, next);
+    } else {
+      next();
+    }
+  },
+  async (req, res) => {
+    try {
+      console.log('📝 POST /informes/crear - Usuario ID:', req.user.id);
+      console.log('📝 Body recibido:', req.body);
+      console.log('📝 Files recibidos:', req.files ? req.files.length : 'ninguno');
+    
+    // Validar que el usuario sea capturista (sin esta línea porque ya está validado por authorizeRole)
+    if (req.user.rol !== 'capturista') {
+      console.warn('⚠️ Usuario sin permiso:', req.user.id, 'Rol:', req.user.rol);
+      return res.status(403).json({ success: false, message: 'No tienes permiso para crear informes' });
+    }
+    
+    // Mapear y parsear valores
+    const payload = {
+      usuario_id: req.user.id,
+      area_id: req.body.area_id ? parseInt(req.body.area_id) : null,
+      fecha_actividad: req.body.fecha_actividad || null,
+      nombre_director: req.body.nombre_director || null,
+      lugar_actividad: req.body.lugar_actividad || null,
+      colonia_comunidad: req.body.colonia_comunidad || null,
+      tipo_actividad: req.body.tipo_actividad || null,
+      cantidad: req.body.cantidad ? parseInt(req.body.cantidad) : null,
+      descripcion_actividad: req.body.descripcion_actividad || null,
+      sector_beneficia: req.body.sector_beneficia || null,
+      numero_beneficiarios: req.body.numero_beneficiarios ? parseInt(req.body.numero_beneficiarios) : null,
+      monto_generado: req.body.monto_generado ? parseFloat(req.body.monto_generado) : null,
+      responde_solicitud_ciudadania: (req.body.responde_solicitud_ciudadania === '1' || String(req.body.responde_solicitud_ciudadania).toLowerCase() === 'si' || String(req.body.responde_solicitud_ciudadania).toLowerCase() === 'true') ? 1 : (req.body.responde_solicitud_ciudadania === '0' || String(req.body.responde_solicitud_ciudadania).toLowerCase() === 'no' || String(req.body.responde_solicitud_ciudadania).toLowerCase() === 'false' ? 0 : null),
+      pertenece_procedimientos_area: (req.body.pertenece_procedimientos_area === '1' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'si' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'true') ? 1 : (req.body.pertenece_procedimientos_area === '0' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'no' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'false' ? 0 : null),
+      observaciones: req.body.observaciones || null,
+      evidencia_fotografica: null,
+      estado: req.body.estado || 'borrador'
+    };
+
+    console.log('✅ Payload preparado:', JSON.stringify(payload, null, 2));
+
+    if (!dbConnected || !informeQueries) {
+      console.error('❌ Base de datos no disponible');
+      return res.status(500).json({ success: false, message: 'Base de datos no disponible' });
+    }
+
+    try {
+      const informeId = await informeQueries.create(payload);
+      console.log('✅ Informe creado con ID:', informeId);
+      return res.json({ success: true, message: 'Informe creado exitosamente', informeId });
+    } catch (dbErr) {
+      console.error('❌ Error en base de datos:', dbErr.message);
+      console.error('❌ Query:', dbErr.sql || 'N/A');
+      console.error('❌ Stack:', dbErr.stack);
+      return res.status(500).json({ success: false, message: 'Error en base de datos: ' + dbErr.message });
+    }
+  } catch (error) {
+    console.error('❌ Error general creando informe:', error.message);
+    console.error('❌ Stack completo:', error.stack);
+    return res.status(500).json({ success: false, message: 'Error interno del servidor: ' + error.message });
+  }
+});
+
+// Endpoint para actualizar un informe en borrador
+app.put('/informes/:id', 
+  authenticateToken, 
+  authorizeRole('capturista'),
+  (req, res, next) => {
+    // Si multer está disponible, usarlo para procesar archivos
+    if (upload) {
+      upload.array('evidencia_fotografica', 10)(req, res, next);
+    } else {
+      next();
+    }
+  },
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const informeId = parseInt(id);
+      
+      if (!informeId) {
+        return res.status(400).json({ success: false, message: 'ID de informe inválido' });
+      }
+
+      console.log('📝 PUT /informes/:id - Actualizando informe:', informeId);
+
+      // Verificar que el informe pertenece al usuario y está en borrador
+      const checkQuery = `
+        SELECT id, estado, usuario_id FROM informes WHERE id = ? AND usuario_id = ?
+      `;
+      
+      const informe = await executeQuery(checkQuery, [informeId, req.user.id]);
+      
+      if (!informe || informe.length === 0) {
+        return res.status(404).json({ success: false, message: 'Informe no encontrado' });
+      }
+
+      if (informe[0].estado !== 'borrador') {
+        return res.status(400).json({ success: false, message: 'Solo se pueden editar informes en borrador' });
+      }
+
+      // Preparar payload para actualización
+      const payload = {
+        area_id: req.body.area_id ? parseInt(req.body.area_id) : null,
+        fecha_actividad: req.body.fecha_actividad || null,
+        nombre_director: req.body.nombre_director || null,
+        lugar_actividad: req.body.lugar_actividad || null,
+        colonia_comunidad: req.body.colonia_comunidad || null,
+        tipo_actividad: req.body.tipo_actividad || null,
+        cantidad: req.body.cantidad ? parseInt(req.body.cantidad) : null,
+        descripcion_actividad: req.body.descripcion_actividad || null,
+        sector_beneficia: req.body.sector_beneficia || null,
+        numero_beneficiarios: req.body.numero_beneficiarios ? parseInt(req.body.numero_beneficiarios) : null,
+        monto_generado: req.body.monto_generado ? parseFloat(req.body.monto_generado) : null,
+        responde_solicitud_ciudadania: (req.body.responde_solicitud_ciudadania === '1' || String(req.body.responde_solicitud_ciudadania).toLowerCase() === 'si' || String(req.body.responde_solicitud_ciudadania).toLowerCase() === 'true') ? 1 : (req.body.responde_solicitud_ciudadania === '0' || String(req.body.responde_solicitud_ciudadania).toLowerCase() === 'no' || String(req.body.responde_solicitud_ciudadania).toLowerCase() === 'false' ? 0 : null),
+        pertenece_procedimientos_area: (req.body.pertenece_procedimientos_area === '1' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'si' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'true') ? 1 : (req.body.pertenece_procedimientos_area === '0' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'no' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'false' ? 0 : null),
+        observaciones: req.body.observaciones || null
+      };
+
+      // Construir query de actualización dinámicamente
+      const fields = [];
+      const values = [];
+      
+      Object.entries(payload).forEach(([key, val]) => {
+        if (val !== undefined) {
+          fields.push(`${key} = ?`);
+          values.push(val);
+        }
+      });
+
+      if (fields.length === 0) {
+        return res.status(400).json({ success: false, message: 'No hay campos para actualizar' });
+      }
+
+      fields.push('updated_at = NOW()');
+      values.push(informeId);
+
+      const updateQuery = `UPDATE informes SET ${fields.join(', ')} WHERE id = ?`;
+      
+      const result = await executeQuery(updateQuery, values);
+
+      if (result.affectedRows === 0) {
+        return res.status(400).json({ success: false, message: 'No se pudo actualizar el informe' });
+      }
+
+      console.log('✅ Informe actualizado:', informeId);
+      return res.json({ success: true, message: 'Informe actualizado exitosamente', informeId });
+
+    } catch (error) {
+      console.error('❌ Error actualizando informe:', error.message);
+      return res.status(500).json({ success: false, message: 'Error al actualizar el informe: ' + error.message });
+    }
+  }
+);
+
+// Endpoint para que el admin evalúe un informe (aceptar/rechazar)
+app.put('/api/informes/:id/evaluar', authenticateToken, authorizeRole('administrador'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { estado, comentarios } = req.body;
+    const informeId = parseInt(id);
+    
+    if (!informeId) {
+      return res.status(400).json({ success: false, message: 'ID de informe inválido' });
+    }
+    
+    if (!['aprobado', 'rechazado'].includes(estado)) {
+      return res.status(400).json({ success: false, message: 'Estado inválido. Debe ser aprobado o rechazado' });
+    }
+    
+    // Actualizar estado y comentarios de evaluación
+    const query = `
+      UPDATE informes 
+      SET estado = ?, 
+          comentarios_revision = ?,
+          aprobado_por = ?,
+          fecha_aprobacion = NOW(),
+          updated_at = NOW()
+      WHERE id = ?
+    `;
+    
+    const result = await executeQuery(query, [estado, comentarios || null, req.user.id, informeId]);
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: 'Informe no encontrado' });
+    }
+    
+    console.log(`✅ Informe ${informeId} evaluado como ${estado} por admin ${req.user.id}`);
+    
+    res.json({ 
+      success: true, 
+      message: `Informe ${estado} exitosamente`,
+      estado: estado
+    });
+    
+  } catch (error) {
+    console.error('❌ Error al evaluar informe:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error al evaluar el informe',
+      error: error.message 
+    });
+  }
+});
+
+// Endpoint para enviar/actualizar estado del informe
+app.put('/api/informes/:id/enviar', authenticateToken, authorizeRole('capturista'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const informeId = parseInt(id);
+    
+    if (!informeId) {
+      return res.status(400).json({ success: false, message: 'ID de informe inválido' });
+    }
+    
+    // Actualizar estado a "enviado"
+    const query = `
+      UPDATE informes 
+      SET estado = 'enviado', updated_at = NOW()
+      WHERE id = ? AND usuario_id = ?
+    `;
+    
+    const result = await executeQuery(query, [informeId, req.user.id]);
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: 'Informe no encontrado o no tienes permiso para actualizarlo' });
+    }
+    
+    res.json({ 
+      success: true, 
+      message: 'Informe enviado exitosamente'
+    });
+    
+  } catch (error) {
+    console.error('❌ Error al enviar informe:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error al enviar el informe',
+      error: error.message 
+    });
+  }
+});
+
+// Endpoint para eliminar un informe (solo el capturista que lo creó)
+app.delete('/informes/:id', authenticateToken, authorizeRole('capturista'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const informeId = parseInt(id);
+    
+    if (!informeId) {
+      return res.status(400).json({ success: false, message: 'ID de informe inválido' });
+    }
+
+    // Verificar que el informe pertenece al usuario actual
+    const checkQuery = `
+      SELECT id, usuario_id, estado FROM informes WHERE id = ? AND usuario_id = ?
+    `;
+    
+    const informe = await executeQuery(checkQuery, [informeId, req.user.id]);
+    
+    if (!informe || informe.length === 0) {
+      return res.status(403).json({ success: false, message: 'No tienes permiso para eliminar este informe' });
+    }
+
+    // Permitir eliminar solo si está en borrador o enviado
+    if (!['borrador', 'enviado'].includes(informe[0].estado)) {
+      return res.status(400).json({ success: false, message: 'Solo se pueden eliminar informes en borrador o enviado' });
+    }
+
+    // Eliminar el informe (eliminación física)
+    const deleteQuery = `DELETE FROM informes WHERE id = ?`;
+    const result = await executeQuery(deleteQuery, [informeId]);
+
+    if (result.affectedRows === 0) {
+      return res.status(400).json({ success: false, message: 'No se pudo eliminar el informe' });
+    }
+
+    console.log(`✅ Informe ${informeId} eliminado por usuario ${req.user.id}`);
+    
+    res.json({
+      success: true,
+      message: 'Informe eliminado exitosamente'
+    });
+
+  } catch (error) {
+    console.error('❌ Error al eliminar informe:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al eliminar el informe',
+      error: error.message
+    });
+  }
+});
+
+// Endpoint para descargar informe como PDF
+app.get('/api/informes/:id/descargar', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const informeId = parseInt(id);
+    
+    if (!informeId) {
+      return res.status(400).json({ success: false, message: 'ID de informe inválido' });
+    }
+    
+    // Obtener los datos del informe
+    const query = `
+      SELECT i.*, u.nombre as usuario_nombre, u.apellido as usuario_apellido, 
+             a.nombre as area_nombre
+      FROM informes i
+      JOIN usuarios u ON i.usuario_id = u.id
+      JOIN areas a ON i.area_id = a.id
+      WHERE i.id = ? AND i.estado = 'aprobado'
+    `;
+    
+    const results = await executeQuery(query, [informeId]);
+    
+    if (!results || results.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Informe no encontrado o no está aprobado para descargar' 
+      });
+    }
+    
+    const informe = results[0];
+    
+    // Crear documento PDF
+    const doc = new PDFDocument({ 
+      size: 'A4',
+      margin: 50
+    });
+    
+    // Headers para descargar como archivo
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="Informe_${informeId}_${new Date().getTime()}.pdf"`);
+    
+    // Pipe del documento al response
+    doc.pipe(res);
+    
+    // Encabezado con logo y título
+    doc.fontSize(16).font('Helvetica-Bold').text('AYUNTAMIENTO DE ATLACOMULCO', { align: 'center' });
+    doc.fontSize(12).font('Helvetica').text('Sistema de Informes', { align: 'center' });
+    doc.moveDown(0.5);
+    doc.fontSize(14).font('Helvetica-Bold').text('INFORME DE ACTIVIDAD', { align: 'center' });
+    doc.moveDown(1);
+    
+    // Línea separadora
+    doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke();
+    doc.moveDown(0.5);
+    
+    // Información del informe
+    doc.fontSize(11).font('Helvetica-Bold').text('Información del Informe');
+    doc.fontSize(10).font('Helvetica');
+    doc.text(`ID: ${informe.id}`);
+    doc.text(`Fecha de Creación: ${new Date(informe.fecha_creacion).toLocaleDateString('es-ES')}`);
+    doc.text(`Período: ${new Date(informe.fecha_actividad).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}`);
+    doc.text(`Estado: Aprobado`);
+    doc.moveDown(0.3);
+    
+    // Información del usuario
+    doc.fontSize(11).font('Helvetica-Bold').text('Información del Capturista');
+    doc.fontSize(10).font('Helvetica');
+    doc.text(`Nombre: ${informe.usuario_nombre} ${informe.usuario_apellido}`);
+    doc.text(`Área: ${informe.area_nombre}`);
+    doc.moveDown(0.3);
+    
+    // Línea separadora
+    doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke();
+    doc.moveDown(0.5);
+    
+    // Detalles del informe
+    doc.fontSize(11).font('Helvetica-Bold').text('Detalles de la Actividad');
+    doc.moveDown(0.3);
+    
+    // Función auxiliar para agregar campo si existe
+    const addField = (label, value) => {
+      if (value) {
+        doc.fontSize(10).font('Helvetica-Bold').text(`${label}:`, { continued: true });
+        doc.font('Helvetica').text(` ${value}`);
+      }
+    };
+    
+    // Agregar todos los campos de datos
+    addField('Nombre del Director', informe.nombre_director);
+    addField('Número de Beneficiarios', informe.numero_beneficiarios);
+    addField('Montos Generados', `$${parseFloat(informe.montos_generados || 0).toFixed(2)}`);
+    addField('Montos Invertidos', `$${parseFloat(informe.montos_invertidos || 0).toFixed(2)}`);
+    addField('Sector Externo', informe.sector_externo);
+    addField('Colonia', informe.colonia);
+    addField('Lugar de Reunión', informe.lugar_reunion);
+    addField('Tipo de Actividad', informe.tipo_actividad);
+    addField('Solicitudes Recibidas', informe.numero_solicitudes);
+    addField('Solicitudes Resueltas', informe.numero_solicitudes_resueltas);
+    addField('Procedimientos Iniciados', informe.numero_procedimientos);
+    
+    doc.moveDown(0.5);
+    
+    // Sección de Descripción
+    if (informe.descripcion_actividad) {
+      doc.fontSize(11).font('Helvetica-Bold').text('Descripción de la Actividad');
+      doc.fontSize(10).font('Helvetica').text(informe.descripcion_actividad, {
+        align: 'justify',
+        width: 445,
+        height: 100
+      });
+      doc.moveDown(0.5);
+    }
+    
+    // Sección de Observaciones
+    if (informe.observaciones_generales) {
+      doc.fontSize(11).font('Helvetica-Bold').text('Observaciones Generales');
+      doc.fontSize(10).font('Helvetica').text(informe.observaciones_generales, {
+        align: 'justify',
+        width: 445,
+        height: 100
+      });
+      doc.moveDown(0.5);
+    }
+    
+    // Línea separadora final
+    doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke();
+    doc.moveDown(0.3);
+    
+    // Pie de página
+    doc.fontSize(8).font('Helvetica').text(
+      `Documento generado el ${new Date().toLocaleDateString('es-ES')} a las ${new Date().toLocaleTimeString('es-ES')}`,
+      { align: 'center' }
+    );
+    
+    // Finalizar documento
+    doc.end();
+    
+    console.log(`✅ PDF del informe ${informeId} generado exitosamente`);
+    
+  } catch (error) {
+    console.error('❌ Error al descargar informe:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error al generar el PDF',
+      error: error.message 
+    });
+  }
+});
+
+// =================== API ENDPOINTS PARA ESTADÍSTICAS ===================
+
+// API: Beneficiarios por actividad
+app.get('/api/estadisticas/beneficiarios', authenticateToken, async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        a.nombre as area_nombre,
+        SUM(i.numero_beneficiarios) as total_beneficiarios,
+        COUNT(i.id) as total_actividades
+      FROM areas a
+      LEFT JOIN informes i ON a.id = i.area_id
+        AND i.estado IN ('enviado', 'aprobado', 'rechazado')
+      WHERE a.activa = 1
+      GROUP BY a.id, a.nombre
+      ORDER BY total_beneficiarios DESC
+      LIMIT 10
+    `;
+    
+    const results = await executeQuery(query);
+    res.json({ success: true, data: results || [] });
+  } catch (error) {
+    console.error('❌ Error en /api/estadisticas/beneficiarios:', error);
+    res.status(500).json({ success: false, message: 'Error obteniendo beneficiarios', error: error.message });
+  }
+});
+
+// API: Montos generados e invertidos por área
+app.get('/api/estadisticas/montos', authenticateToken, async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        a.nombre as area_nombre,
+        COALESCE(SUM(CAST(i.monto_generado AS DECIMAL(10,2))), 0) as total_generado,
+        COALESCE(SUM(CAST(i.monto_invertido AS DECIMAL(10,2))), 0) as total_invertido
+      FROM areas a
+      LEFT JOIN informes i ON a.id = i.area_id
+        AND i.estado IN ('enviado', 'aprobado', 'rechazado')
+      WHERE a.activa = 1
+      GROUP BY a.id, a.nombre
+      ORDER BY total_generado DESC
+      LIMIT 10
+    `;
+    
+    const results = await executeQuery(query);
+    res.json({ success: true, data: results || [] });
+  } catch (error) {
+    console.error('❌ Error en /api/estadisticas/montos:', error);
+    res.status(500).json({ success: false, message: 'Error obteniendo montos', error: error.message });
+  }
+});
+
+// API: Informes por área
+app.get('/api/estadisticas/areas', authenticateToken, async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        a.nombre as area_nombre,
+        COUNT(i.id) as total
+      FROM areas a
+      LEFT JOIN informes i ON a.id = i.area_id
+        AND i.estado IN ('enviado', 'aprobado', 'rechazado')
+      WHERE a.activa = 1
+      GROUP BY a.id, a.nombre
+      ORDER BY total DESC
+    `;
+    
+    const results = await executeQuery(query);
+    res.json({ success: true, data: results || [] });
+  } catch (error) {
+    console.error('❌ Error en /api/estadisticas/areas:', error);
+    res.status(500).json({ success: false, message: 'Error obteniendo áreas', error: error.message });
+  }
+});
+
+// API: Informes por sector beneficiado
+app.get('/api/estadisticas/sectores', authenticateToken, async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        sector_beneficia,
+        COUNT(*) as total
+      FROM informes
+      WHERE estado IN ('enviado', 'aprobado', 'rechazado')
+        AND sector_beneficia IS NOT NULL
+        AND sector_beneficia != ''
+      GROUP BY sector_beneficia
+      ORDER BY total DESC
+      LIMIT 10
+    `;
+    
+    const results = await executeQuery(query);
+    res.json({ success: true, data: results || [] });
+  } catch (error) {
+    console.error('❌ Error en /api/estadisticas/sectores:', error);
+    res.status(500).json({ success: false, message: 'Error obteniendo sectores', error: error.message });
+  }
+});
+
+// API: Informes por colonia
+app.get('/api/estadisticas/colonias', authenticateToken, async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        colonia_comunidad,
+        COUNT(*) as total
+      FROM informes
+      WHERE estado IN ('enviado', 'aprobado', 'rechazado')
+        AND colonia_comunidad IS NOT NULL
+        AND colonia_comunidad != ''
+      GROUP BY colonia_comunidad
+      ORDER BY total DESC
+      LIMIT 10
+    `;
+    
+    const results = await executeQuery(query);
+    res.json({ success: true, data: results || [] });
+  } catch (error) {
+    console.error('❌ Error en /api/estadisticas/colonias:', error);
+    res.status(500).json({ success: false, message: 'Error obteniendo colonias', error: error.message });
+  }
+});
+
+// API: Informes por lugar de actividad
+app.get('/api/estadisticas/lugares', authenticateToken, async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        lugar_actividad,
+        COUNT(*) as total
+      FROM informes
+      WHERE estado IN ('enviado', 'aprobado', 'rechazado')
+        AND lugar_actividad IS NOT NULL
+        AND lugar_actividad != ''
+      GROUP BY lugar_actividad
+      ORDER BY total DESC
+      LIMIT 10
+    `;
+    
+    const results = await executeQuery(query);
+    res.json({ success: true, data: results || [] });
+  } catch (error) {
+    console.error('❌ Error en /api/estadisticas/lugares:', error);
+    res.status(500).json({ success: false, message: 'Error obteniendo lugares', error: error.message });
+  }
+});
+
+// API: Informes por tipo de actividad
+app.get('/api/estadisticas/tipos-actividad', authenticateToken, async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        tipo_actividad,
+        COUNT(*) as total
+      FROM informes
+      WHERE estado IN ('enviado', 'aprobado', 'rechazado')
+        AND tipo_actividad IS NOT NULL
+        AND tipo_actividad != ''
+      GROUP BY tipo_actividad
+      ORDER BY total DESC
+      LIMIT 10
+    `;
+    
+    const results = await executeQuery(query);
+    res.json({ success: true, data: results || [] });
+  } catch (error) {
+    console.error('❌ Error en /api/estadisticas/tipos-actividad:', error);
+    res.status(500).json({ success: false, message: 'Error obteniendo tipos de actividad', error: error.message });
+  }
+});
+
+// API: Informes con/sin evidencia fotográfica
+app.get('/api/estadisticas/evidencia', authenticateToken, async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        SUM(CASE WHEN evidencia_fotografica IS NOT NULL AND evidencia_fotografica != '' THEN 1 ELSE 0 END) as con_evidencia,
+        SUM(CASE WHEN evidencia_fotografica IS NULL OR evidencia_fotografica = '' THEN 1 ELSE 0 END) as sin_evidencia
+      FROM informes
+      WHERE estado IN ('enviado', 'aprobado', 'rechazado')
+    `;
+    
+    const results = await executeQuery(query);
+    const data = results[0] || { con_evidencia: 0, sin_evidencia: 0 };
+    res.json({ success: true, data: data });
+  } catch (error) {
+    console.error('❌ Error en /api/estadisticas/evidencia:', error);
+    res.status(500).json({ success: false, message: 'Error obteniendo evidencia', error: error.message });
+  }
+});
+
+// API: Informes que responden solicitudes de ciudadanía
+app.get('/api/estadisticas/solicitudes', authenticateToken, async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        SUM(CASE WHEN responde_solicitud_ciudadania = 1 THEN 1 ELSE 0 END) as si,
+        SUM(CASE WHEN responde_solicitud_ciudadania = 0 THEN 1 ELSE 0 END) as no
+      FROM informes
+      WHERE estado IN ('enviado', 'aprobado', 'rechazado')
+    `;
+    
+    const results = await executeQuery(query);
+    const data = results[0] || { si: 0, no: 0 };
+    res.json({ success: true, data: data });
+  } catch (error) {
+    console.error('❌ Error en /api/estadisticas/solicitudes:', error);
+    res.status(500).json({ success: false, message: 'Error obteniendo solicitudes', error: error.message });
+  }
+});
+
+// API: Informes que pertenecen a procedimientos de área
+app.get('/api/estadisticas/procedimientos', authenticateToken, async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        SUM(CASE WHEN pertenece_procedimientos_area = 1 THEN 1 ELSE 0 END) as si,
+        SUM(CASE WHEN pertenece_procedimientos_area = 0 THEN 1 ELSE 0 END) as no
+      FROM informes
+      WHERE estado IN ('enviado', 'aprobado', 'rechazado')
+    `;
+    
+    const results = await executeQuery(query);
+    const data = results[0] || { si: 0, no: 0 };
+    res.json({ success: true, data: data });
+  } catch (error) {
+    console.error('❌ Error en /api/estadisticas/procedimientos:', error);
+    res.status(500).json({ success: false, message: 'Error obteniendo procedimientos', error: error.message });
+  }
+});
+
+// API: Informes por mes (últimos 12 meses)
+app.get('/api/estadisticas/fechas', authenticateToken, async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        DATE_FORMAT(fecha_creacion, '%Y-%m') as mes,
+        COUNT(*) as total
+      FROM informes
+      WHERE estado IN ('enviado', 'aprobado', 'rechazado')
+        AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+      GROUP BY DATE_FORMAT(fecha_creacion, '%Y-%m')
+      ORDER BY mes ASC
+    `;
+    
+    const results = await executeQuery(query);
+    res.json({ success: true, data: results || [] });
+  } catch (error) {
+    console.error('❌ Error en /api/estadisticas/fechas:', error);
+    res.status(500).json({ success: false, message: 'Error obteniendo fechas', error: error.message });
+  }
+});
+
+// =================== NUEVAS GRÁFICAS: CANTIDAD, BENEFICIARIOS Y MONTOS ===================
+
+// API: Cantidad por año/mes/semana
+app.get('/api/estadisticas/cantidad-temporal', authenticateToken, async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        DATE_FORMAT(fecha_creacion, '%Y') as año,
+        DATE_FORMAT(fecha_creacion, '%m') as mes,
+        WEEK(fecha_creacion) as semana,
+        DATE_FORMAT(fecha_creacion, '%Y-%m-%d') as fecha,
+        SUM(cantidad) as total_cantidad,
+        COUNT(*) as total_informes
+      FROM informes
+      WHERE estado IN ('enviado', 'aprobado', 'rechazado')
+        AND cantidad IS NOT NULL
+        AND cantidad > 0
+      GROUP BY DATE_FORMAT(fecha_creacion, '%Y'), 
+               DATE_FORMAT(fecha_creacion, '%m'),
+               WEEK(fecha_creacion),
+               DATE_FORMAT(fecha_creacion, '%Y-%m-%d')
+      ORDER BY año DESC, mes DESC, semana DESC
+      LIMIT 52
+    `;
+    
+    const results = await executeQuery(query);
+    res.json({ success: true, data: results || [] });
+  } catch (error) {
+    console.error('❌ Error en /api/estadisticas/cantidad-temporal:', error);
+    res.status(500).json({ success: false, message: 'Error obteniendo cantidad temporal', error: error.message });
+  }
+});
+
+// API: Beneficiarios por año/mes/semana
+app.get('/api/estadisticas/beneficiarios-temporal', authenticateToken, async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        DATE_FORMAT(fecha_creacion, '%Y') as año,
+        DATE_FORMAT(fecha_creacion, '%m') as mes,
+        WEEK(fecha_creacion) as semana,
+        DATE_FORMAT(fecha_creacion, '%Y-%m-%d') as fecha,
+        SUM(numero_beneficiarios) as total_beneficiarios,
+        COUNT(*) as total_informes
+      FROM informes
+      WHERE estado IN ('enviado', 'aprobado', 'rechazado')
+        AND numero_beneficiarios IS NOT NULL
+        AND numero_beneficiarios > 0
+      GROUP BY DATE_FORMAT(fecha_creacion, '%Y'), 
+               DATE_FORMAT(fecha_creacion, '%m'),
+               WEEK(fecha_creacion),
+               DATE_FORMAT(fecha_creacion, '%Y-%m-%d')
+      ORDER BY año DESC, mes DESC, semana DESC
+      LIMIT 52
+    `;
+    
+    const results = await executeQuery(query);
+    res.json({ success: true, data: results || [] });
+  } catch (error) {
+    console.error('❌ Error en /api/estadisticas/beneficiarios-temporal:', error);
+    res.status(500).json({ success: false, message: 'Error obteniendo beneficiarios temporal', error: error.message });
+  }
+});
+
+// API: Montos (generados y gastados) por año/mes/semana
+app.get('/api/estadisticas/montos-temporal', authenticateToken, async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        DATE_FORMAT(fecha_creacion, '%Y') as año,
+        DATE_FORMAT(fecha_creacion, '%m') as mes,
+        WEEK(fecha_creacion) as semana,
+        DATE_FORMAT(fecha_creacion, '%Y-%m-%d') as fecha,
+        SUM(CAST(monto_generado AS DECIMAL(12,2))) as total_generado,
+        COUNT(CASE WHEN monto_generado > 0 THEN 1 END) as informes_con_monto,
+        COUNT(*) as total_informes
+      FROM informes
+      WHERE estado IN ('enviado', 'aprobado', 'rechazado')
+        AND monto_generado IS NOT NULL
+      GROUP BY DATE_FORMAT(fecha_creacion, '%Y'), 
+               DATE_FORMAT(fecha_creacion, '%m'),
+               WEEK(fecha_creacion),
+               DATE_FORMAT(fecha_creacion, '%Y-%m-%d')
+      ORDER BY año DESC, mes DESC, semana DESC
+      LIMIT 52
+    `;
+    
+    const results = await executeQuery(query);
+    res.json({ success: true, data: results || [] });
+  } catch (error) {
+    console.error('❌ Error en /api/estadisticas/montos-temporal:', error);
+    res.status(500).json({ success: false, message: 'Error obteniendo montos temporal', error: error.message });
+  }
+});
+
+// API: Informes por usuario (capturista)
+app.get('/api/estadisticas/usuarios', authenticateToken, async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        u.id as usuario_id,
+        CONCAT(u.nombre, ' ', u.apellido) as usuario_nombre,
+        COUNT(i.id) as total_informes,
+        SUM(CASE WHEN i.estado = 'enviado' THEN 1 ELSE 0 END) as enviados,
+        SUM(CASE WHEN i.estado = 'aprobado' THEN 1 ELSE 0 END) as aprobados,
+        SUM(CASE WHEN i.estado = 'rechazado' THEN 1 ELSE 0 END) as rechazados
+      FROM usuarios u
+      LEFT JOIN informes i ON u.id = i.usuario_id 
+        AND i.estado IN ('enviado', 'aprobado', 'rechazado')
+      WHERE u.rol_id = (SELECT id FROM roles WHERE nombre = 'capturista') AND u.activo = 1
+      GROUP BY u.id, u.nombre, u.apellido
+      ORDER BY total_informes DESC
+      LIMIT 20
+    `;
+    
+    const results = await executeQuery(query);
+    res.json({ success: true, data: results || [] });
+  } catch (error) {
+    console.error('❌ Error en /api/estadisticas/usuarios:', error);
+    res.status(500).json({ success: false, message: 'Error obteniendo usuarios', error: error.message });
+  }
+});
+
+// =================== MANEJO DE ERRORES Y INICIO DEL SERVIDOR ===================
+
+// Ruta 404 - distinguir entre API y páginas HTML
+app.use((req, res) => {
+  // Si es una solicitud API (contiene /api/ o acepta JSON)
+  if (req.path.includes('/api/') || req.accepts('json')) {
+    return res.status(404).json({ 
+      success: false, 
+      message: 'Ruta no encontrada' 
+    });
+  }
+  
+  // Si es una página HTML tradicional
+  res.status(404).render('error', { 
+    message: 'Página no encontrada',
+    user: req.user 
+  });
+});
+
+// Manejador de errores global (4 parámetros para que Express lo reconozca como error handler)
+app.use((err, req, res, next) => {
+  console.error('❌ Error global:', err.message);
+  console.error('❌ Path:', req.path);
+  console.error('❌ Stack:', err.stack);
+  
+  // Si es una solicitud API
+  if (req.path.includes('/api/') || req.accepts('json')) {
+    return res.status(err.status || 500).json({
+      success: false,
+      message: err.message || 'Error interno del servidor'
+    });
+  }
+  
+  // Si es una página HTML
+  res.status(err.status || 500).render('error', {
+    message: err.message || 'Error interno del servidor',
+    user: req.user
   });
 });
 
@@ -1285,72 +2286,14 @@ startServer();
 // Manejo de errores de proceso
 process.on('uncaughtException', (err) => {
   console.error('❌ Error crítico no capturado:', err);
-  process.exit(1);
+  // No forzamos la terminación inmediata para evitar que errores puntuales
+  // derriben el servidor en caliente durante pruebas o uso interactivo.
+  // Marcamos un código de salida no-cero para que supervisores lo detecten.
+  process.exitCode = 1;
 });
 
 process.on('unhandledRejection', (reason) => {
   console.error('❌ Promesa rechazada no manejada:', reason);
-  process.exit(1);
+  // Igual que arriba: registrar y fijar exitCode en lugar de terminar de inmediato.
+  process.exitCode = 1;
 });
-
-// Ruta para crear informe (acepta multipart/form-data con evidencias)
-if (upload) {
-  app.post('/informes/crear', authenticateToken, authorizeRole('capturista'), upload.array('evidencia_fotografica', 10), async (req, res) => {
-    try {
-      // Construir objeto con los campos del formulario y convertir tipos cuando aplique
-      // Recopilar URL de evidencias si existen
-      let evidenciaCsv = null;
-      if (req.files && req.files.length > 0) {
-        const urls = req.files.map(f => `/uploads/${path.basename(f.path)}`);
-        evidenciaCsv = urls.join(',');
-      } else if (req.body && req.body.evidencia_fotografica) {
-        evidenciaCsv = req.body.evidencia_fotografica; // aceptar si viene como CSV desde cliente
-      }
-
-      // Mapear y parsear valores
-      const payload = {
-        usuario_id: req.user.id,
-        area_id: req.body.area_id ? parseInt(req.body.area_id) : null,
-        titulo: req.body.titulo || null,
-        sector_beneficia: req.body.sector_beneficia || null,
-        lugar_actividad: req.body.lugar_actividad || null,
-        tipo_actividad: req.body.tipo_actividad || null,
-        numero_beneficiarios: req.body.numero_beneficiarios ? parseInt(req.body.numero_beneficiarios) : null,
-        monto_generado: req.body.monto_generado ? parseFloat(req.body.monto_generado) : null,
-        monto_invertido: req.body.monto_invertido ? parseFloat(req.body.monto_invertido) : null,
-        responde_solicitud_ciudadania: (req.body.responde_solicitud_ciudadania === '1' || String(req.body.responde_solicitud_ciudadania).toLowerCase() === 'si' || String(req.body.responde_solicitud_ciudadania).toLowerCase() === 'true') ? 1 : (req.body.responde_solicitud_ciudadania === '0' || String(req.body.responde_solicitud_ciudadania).toLowerCase() === 'no' || String(req.body.responde_solicitud_ciudadania).toLowerCase() === 'false' ? 0 : null),
-        pertenece_procedimientos_area: (req.body.pertenece_procedimientos_area === '1' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'si' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'true') ? 1 : (req.body.pertenece_procedimientos_area === '0' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'no' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'false' ? 0 : null),
-        descripcion_actividad: req.body.descripcion_actividad || null,
-        objetivos: req.body.objetivos || null,
-        resultados: req.body.resultados || null,
-        observaciones: req.body.observaciones || null,
-        evidencia_fotografica: evidenciaCsv || null,
-        fecha_actividad: req.body.fecha_actividad || null,
-        estado: req.body.estado || 'borrador'
-      };
-
-      if (!dbConnected || !informeQueries) {
-        return res.status(500).json({ success: false, message: 'Base de datos no disponible' });
-      }
-
-      try {
-        const informeId = await informeQueries.create(payload);
-        res.json({ success: true, message: 'Informe creado exitosamente', informeId });
-      } catch (dbErr) {
-        // borrar archivos subidos si la inserción falla
-        if (req.files && req.files.length) {
-          try { req.files.forEach(f => { if (fs.existsSync(f.path)) fs.unlinkSync(f.path); }); } catch (e) { console.error('Error borrando archivos:', e.message); }
-        }
-        throw dbErr;
-      }
-    } catch (error) {
-      console.error('Error creando informe con archivos:', error);
-      res.status(500).json({ success: false, message: 'Error interno del servidor' });
-    }
-  });
-} else {
-  // Fallback: si multer no está instalado, mantener una ruta que responde con error instructivo
-  app.post('/informes/crear', authenticateToken, authorizeRole('capturista'), async (req, res) => {
-    res.status(500).json({ success: false, message: 'Carga de archivos no configurada en el servidor (instala multer).' });
-  });
-}

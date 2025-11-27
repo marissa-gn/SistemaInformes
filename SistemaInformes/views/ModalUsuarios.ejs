@@ -3,6 +3,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modal-titulo"><b>Crear Usuario</b></h5>
+        <div id="modal-badge-self" style="display:none; margin-left:12px;">
+            <span class="badge bg-info text-dark">Perfil propio</span>
+        </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body px-4 py-4" style="max-height: 75vh; overflow-y: auto; overflow-x: hidden;">
@@ -73,6 +76,7 @@
                 <option value="3">Visitante</option>
               </select>
               <div class="invalid-feedback">El rol es requerido.</div>
+              <div id="self-role-note" class="form-text" style="display:none; margin-top:6px;">No puedes cambiar tu propio rol desde aquí.</div>
             </div>
           </div>
           <!-- Contraseña al final -->

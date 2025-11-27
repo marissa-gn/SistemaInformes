@@ -43,6 +43,26 @@ async function setupDatabase() {
 
     for (const stmt of statements) {
       try {
+        // Si la sentencia es un CREATE INDEX, comprobar si el índice ya existe antes de ejecutarla
+        const createIndexMatch = stmt.match(/^\s*CREATE\s+INDEX\s+`?([^`\s]+)`?\s+ON\s+`?([^`\s]+)`?/i);
+        if (createIndexMatch) {
+          const indexName = createIndexMatch[1];
+          const tableName = createIndexMatch[2];
+          try {
+            const [rows] = await connection.query(
+              `SELECT COUNT(*) as c FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND INDEX_NAME = ?`,
+              [tableName, indexName]
+            );
+            if (rows && rows[0] && rows[0].c > 0) {
+              console.warn('⚠️ Ignorado (índice ya existe):', indexName, 'en', tableName);
+              continue;
+            }
+          } catch (checkErr) {
+            // Si la comprobación falla, seguimos y dejamos que la ejecución principal maneje cualquier error
+            console.warn('⚠️ No se pudo comprobar existencia del índice, intentando crear:', indexName, '-', checkErr.message);
+          }
+        }
+
         await connection.query(stmt);
       } catch (err) {
         // Ignorar errores relacionados con índices/keys duplicados o tablas ya existentes

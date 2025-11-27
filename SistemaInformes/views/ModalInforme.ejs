@@ -1,4 +1,7 @@
 <!-- Modal para ver informe -->
+<script>
+  window.currentUserRole = '<%= user ? user.rol : "" %>';
+</script>
 <div class="modal fade" id="modalInforme" tabindex="-1" aria-labelledby="modalInformeLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
@@ -8,114 +11,130 @@
       </div>
       <div class="modal-body px-4 py-4">
         <form>
-          <!-- Fila 0: Nombre de quien envía y Fecha -->
+          <!-- Fila 1: Fecha y Área -->
           <div class="row mb-2">
             <div class="col-md-6 mb-2">
-              <label for="nombreRemitente" class="form-label"><b>Nombre de quien envía:</b></label>
-              <input type="text" class="form-control" id="nombreRemitente">
+              <label for="fechaInforme" class="form-label"><b>Fecha:</b></label>
+              <input type="date" class="form-control" id="fechaInforme" readonly>
             </div>
             <div class="col-md-6 mb-2">
-              <label for="fechaEnvio" class="form-label"><b>Fecha:</b></label>
-              <input type="date" class="form-control" id="fechaEnvio">
+              <label for="areaInforme" class="form-label"><b>Área:</b></label>
+              <input type="text" class="form-control" id="areaInforme" readonly>
             </div>
           </div>
-          <!-- Fila 1: Área y Sector -->
+
+          <!-- Fila 2: Nombre de Director/Coordinador y Lugar de Actividad -->
           <div class="row mb-2">
             <div class="col-md-6 mb-2">
-              <label for="area" class="form-label"><b>Área:</b></label>
-              <input type="text" class="form-control" id="area">
+              <label for="nombreDirector" class="form-label"><b>Nombre de Director / Coordinador / Jefe de Área:</b></label>
+              <input type="text" class="form-control" id="nombreDirector" readonly>
             </div>
             <div class="col-md-6 mb-2">
-              <label for="sector" class="form-label"><b>Sector al que beneficia:</b></label>
-              <input type="text" class="form-control" id="sector">
+              <label for="lugarActividad" class="form-label"><b>Lugar de Actividad:</b></label>
+              <input type="text" class="form-control" id="lugarActividad" readonly>
             </div>
           </div>
-          <!-- Fila 2: Colonia y Lugar de actividad -->
+
+          <!-- Fila 3: Colonia/Comunidad y Tipo de Actividad -->
           <div class="row mb-2">
             <div class="col-md-6 mb-2">
-              <label for="colonia" class="form-label"><b>Colonia o comunidad:</b></label>
-              <input type="text" class="form-control" id="colonia">
+              <label for="coloniaComunidad" class="form-label"><b>Colonia o Comunidad:</b></label>
+              <input type="text" class="form-control" id="coloniaComunidad" readonly>
             </div>
             <div class="col-md-6 mb-2">
-              <label for="lugar" class="form-label"><b>Lugar de actividad:</b></label>
-              <input type="text" class="form-control" id="lugar">
+              <label for="tipoActividad" class="form-label"><b>Tipo de Actividad / Unidad de Medida:</b></label>
+              <input type="text" class="form-control" id="tipoActividad" readonly>
             </div>
           </div>
-          <!-- Fila 3: Tipo de actividad y Número de beneficiarios -->
+
+          <!-- Fila 4: Cantidad y Sector que beneficia -->
           <div class="row mb-2">
             <div class="col-md-6 mb-2">
-              <label for="tipo" class="form-label"><b>Tipo de actividad / unidad de medida:</b></label>
-              <input type="text" class="form-control" id="tipo">
+              <label for="cantidad" class="form-label"><b>Cantidad:</b></label>
+              <input type="text" class="form-control" id="cantidad" readonly>
             </div>
             <div class="col-md-6 mb-2">
-              <label for="beneficiarios" class="form-label"><b>Número de beneficiarios:</b></label>
-              <input type="text" class="form-control" id="beneficiarios">
+              <label for="sectorBeneficia" class="form-label"><b>Sector al que Beneficia:</b></label>
+              <input type="text" class="form-control" id="sectorBeneficia" readonly>
             </div>
           </div>
-          <!-- Fila 4: Monto generado y Monto invertido -->
+
+          <!-- Descripción de la Actividad -->
+          <div class="mb-2">
+            <label for="descripcionActividad" class="form-label"><b>Descripción de la Actividad:</b></label>
+            <textarea class="form-control" id="descripcionActividad" readonly style="min-height: 80px;"></textarea>
+          </div>
+
+          <!-- Fila 5: Número de Beneficiarios y Monto Generado -->
           <div class="row mb-2">
             <div class="col-md-6 mb-2">
-              <label for="monto" class="form-label"><b>Monto generado por la actividad (si aplica):</b></label>
-              <input type="text" class="form-control" id="monto">
+              <label for="numeroBeneficiarios" class="form-label"><b>Número de Beneficiarios:</b></label>
+              <input type="text" class="form-control" id="numeroBeneficiarios" readonly>
             </div>
             <div class="col-md-6 mb-2">
-              <label for="montoInvertido" class="form-label"><b>¿Cuál fue el monto invertido en la actividad?</b></label>
-              <div class="input-group">
-                <span class="input-group-text">$</span>
-                <input type="text" class="form-control" id="montoInvertido">
+              <label for="montoGenerado" class="form-label"><b>Monto Generado (si aplica):</b></label>
+              <input type="text" class="form-control" id="montoGenerado" readonly>
+            </div>
+          </div>
+
+          <!-- Fila 6: Dos preguntas de sí/no -->
+          <div class="row mb-2">
+            <div class="col-md-6 mb-2">
+              <label for="perteneceArea" class="form-label"><b>¿Pertenece la actividad a los procedimientos de su área?</b></label>
+              <input type="text" class="form-control" id="perteneceArea" readonly>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="respondeClientela" class="form-label"><b>¿La actividad responde a una solicitud de la ciudadanía?</b></label>
+              <input type="text" class="form-control" id="respondeClientela" readonly>
+            </div>
+          </div>
+
+          <!-- Evidencia Fotográfica -->
+          <div class="mb-2">
+            <label class="form-label"><b>Evidencia Fotográfica:</b></label>
+            <div id="contenedorEvidencia" class="border rounded p-3" style="background-color: #f8f9fa; min-height: 150px; display: flex; align-items: center; justify-content: center;">
+              <div id="galeriaEvidencia" class="w-100">
+                <!-- Las imágenes se cargarán aquí dinámicamente -->
+              </div>
+              <div id="sinEvidencia" class="text-muted text-center">
+                No hay evidencia fotográfica
               </div>
             </div>
           </div>
-          <!-- Fila 5: Evidencia fotográfica y Solicitud/procedimientos -->
-          <div class="row mb-2">
-            <div class="col-md-6 mb-2">
-              <label for="evidencia" class="form-label"><b>Evidencia fotográfica:</b></label>
-              <input class="form-control" type="file" id="evidencia" accept="image/*">
-            </div>
-            <div class="col-md-3 mb-2 text-center d-flex flex-column align-items-center justify-content-center">
-              <label for="solicitudCiudadania" class="form-label w-100 text-center" style="white-space: normal;"><b>¿Responde a una solicitud de la ciudadanía?</b></label>
-              <select class="form-select text-center" id="solicitudCiudadania" style="max-width: 90%; margin: 0 auto;">
-                <option value="" class="text-center">Selecciona...</option>
-                <option value="si">Sí</option>
-                <option value="no">No</option>
-              </select>
-            </div>
-            <div class="col-md-3 mb-2 text-center d-flex flex-column align-items-center justify-content-center">
-              <label for="procedimientosArea" class="form-label w-100 text-center" style="white-space: normal;"><b>¿Pertenece la actividad a los procedimientos de su área?</b></label>
-              <select class="form-select text-center" id="procedimientosArea" style="max-width: 90%; margin: 0 auto;">
-                <option value="" class="text-center">Selecciona...</option>
-                <option value="si">Sí</option>
-                <option value="no">No</option>
-              </select>
-            </div>
-          </div>
-          <div class="mb-2">
-            <label for="descripcion" class="form-label"><b>Descripción de la actividad:</b></label>
-            <input type="text" class="form-control" id="descripcion">
-          </div>
+
+          <!-- Observaciones -->
           <div class="mb-2">
             <label for="observaciones" class="form-label"><b>Observaciones:</b></label>
-            <input type="text" class="form-control" id="observaciones">
+            <textarea class="form-control" id="observaciones" readonly style="min-height: 60px;"></textarea>
           </div>
-          <div class="mb-2 text-center">
-            <label for="comentarios" class="form-label" style="color: #a12424; width: 100%; display: block;"><b>Comentarios sobre el informe:</b></label>
-            <input type="text" class="form-control text-center" id="comentarios" style="color: #a12424; font-weight: bold;">
-          </div>
-          <div class="mb-2 d-flex gap-2 align-items-center">
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="evaluacion" id="rechazar">
-              <label class="form-check-label" for="rechazar"><b>Rechazar</b></label>
+
+          <!-- Evaluación del Admin (solo visible si está evaluado) -->
+          <div class="mb-2" id="evaluacionAdmin" style="display: none; border-top: 2px solid #a12424; padding-top: 15px; margin-top: 15px;">
+            <div class="row mb-2">
+              <div class="col-md-12 mb-2">
+                <label for="estadoEvaluacion" class="form-label"><b>Estado de Evaluación:</b></label>
+                <input type="text" class="form-control" id="estadoEvaluacion" readonly style="color: #28a745; font-weight: bold;">
+              </div>
             </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="evaluacion" id="aceptar">
-              <label class="form-check-label" for="aceptar"><b>Aprobar</b></label>
+            <div class="mb-2">
+              <label for="comentariosRevision" class="form-label"><b>Comentarios:</b></label>
+              <textarea class="form-control" id="comentariosRevision" readonly style="min-height: 80px;"></textarea>
             </div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-success" id="btnAceptarInforme" data-bs-dismiss="modal" onclick="mostrarInformeRevisado()">Aceptar</button>
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="mostrarCambiosCancelados()">Cancelar</button>
+        <!-- Botones para evaluar informe (solo visible si estado es 'enviado') -->
+        <div id="botonesEvaluacion" style="display: none; width: 100%; margin-right: auto;">
+          <textarea id="comentariosEvaluacion" class="form-control form-control-sm mb-2" placeholder="Comentarios de la evaluación..." rows="2" style="max-width: 400px;"></textarea>
+          <button type="button" class="btn btn-success btn-sm" id="btnAceptar" onclick="evaluarInforme('aceptar')">
+            <i class="bi bi-check-circle"></i> Aceptar
+          </button>
+          <button type="button" class="btn btn-danger btn-sm" id="btnRechazar" onclick="evaluarInforme('rechazar')">
+            <i class="bi bi-x-circle"></i> Rechazar
+          </button>
+        </div>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>

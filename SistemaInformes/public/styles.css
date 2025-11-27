@@ -4,8 +4,9 @@ html, body {
     margin: 0;
     padding: 0;
 }
+
 :root {
-    --color-principal: #7c2323;
+    --color-principal: #880d0d;
     --color-secundario: #5e0a1a;
     --color-fondo: #fafafa;
     --color-blanco: #fff;
@@ -31,6 +32,7 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow-x: hidden;
 }
 
 .login-card {
@@ -56,7 +58,7 @@ html, body {
     left: 50%;
     top: -40px;
     transform: translateX(-50%);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.678);
 }
 
 .login-avatar i {
@@ -64,13 +66,38 @@ html, body {
     font-size: 2.5rem;
 }
 
-/* Ensure input icons and toggle-eye in login use the primary color and a consistent size */
-.input-group-inside .input-icon-inside, .toggle-password-btn i {
+.input-group-inside .input-icon-inside,
+.toggle-password-btn i {
     color: var(--color-boton);
     font-size: 1.2rem;
 }
 
-.toggle-password-btn:hover i { color: var(--color-borde-boton); }
+.toggle-password-btn {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: #495057;
+    z-index: 3;
+}
+
+.toggle-password-btn:focus,
+.toggle-password-btn:active {
+    outline: none;
+    box-shadow: none;
+}
+
+.toggle-password-btn i {
+    font-size: 1.05rem;
+}
 
 .login-title {
     text-align: center;
@@ -91,13 +118,14 @@ html, body {
     left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--color-principal);
+    color: var(--color-boton);
     font-size: 1.2rem;
     z-index: 2;
 }
 
 .input-group-inside input {
     padding-left: 2.2rem;
+    padding-right: 44px;
     height: 44px;
     border-radius: 8px;
     border: 1px solid #d1d5db;
@@ -125,6 +153,7 @@ html, body {
     box-shadow: 0 2px 8px rgba(31,38,135,0.10);
     margin-top: 0.5rem;
     transition: background 0.2s;
+    padding: 0.5rem 1rem;
 }
 
 .btn-login:hover {
@@ -166,7 +195,18 @@ main.main-content {
     left: 230px;
     width: calc(100% - 230px);
     z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
+.footer > * {
+    max-width: 1400px;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
 .layout-row {
     display: flex;
     flex-direction: row;
@@ -186,7 +226,7 @@ main.main-content {
     position: relative;
 }
 
-/* IMAGEN DE FONDO PANTALLA COMPLETA PARA PÁGINAS DE INICIO */
+/* Layout & Background */
 .layout-section:not(.no-bg)::before {
     content: '';
     position: fixed;
@@ -204,12 +244,21 @@ main.main-content {
     background: transparent !important;
 }
 
-/* Solo la barra lateral es completamente blanca en páginas de inicio */
+.layout-section.no-bg {
+    background: var(--color-fondo) !important;
+    min-height: calc(100vh - 40px);
+    width: 100%;
+    padding-bottom: 40px;
+}
+
+.layout-section.no-bg::before {
+    display: none !important;
+}
+
 body:has(.layout-section:not(.no-bg)) .sidebar-logo {
     background: white !important;
 }
 
-/* Main content para página de inicio - sin imagen de fondo duplicada */
 .main-content.inicio-bg {
     background: transparent !important;
     width: 100% !important;
@@ -225,16 +274,6 @@ body:has(.layout-section:not(.no-bg)) .sidebar-logo {
     z-index: 1;
 }
 
-.layout-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.2);
-    z-index: 1;
-}
 .main-content {
     display: flex;
     flex-direction: column;
@@ -245,6 +284,11 @@ body:has(.layout-section:not(.no-bg)) .sidebar-logo {
     padding-bottom: 10px;
 }
 
+.layout-section::before {
+    content: none;
+}
+
+/* Welcome Box */
 .bienvenido-box {
     background: rgba(255,255,255,0.9);
     border-radius: var(--radio-bienvenida);
@@ -262,7 +306,6 @@ body:has(.layout-section:not(.no-bg)) .sidebar-logo {
     position: relative;
 }
 
-/* Contenedor para centrar el mensaje de bienvenida */
 .inicio-welcome-container {
     position: relative;
     z-index: 2;
@@ -272,6 +315,7 @@ body:has(.layout-section:not(.no-bg)) .sidebar-logo {
     align-items: center;
     justify-content: center;
 }
+
 body.inicio-bg .main-content {
     min-height: 80vh;
     display: flex;
@@ -279,6 +323,7 @@ body.inicio-bg .main-content {
     justify-content: center;
 }
 
+/* Sidebar & Navbar */
 .sidebar-logo {
     position: fixed;
     top: 56px;
@@ -302,7 +347,45 @@ body.inicio-bg .main-content {
     gap: 0.3rem !important;
 }
 
-.navbar {
+.sidebar-logo input[type="date"] {
+    max-width: 130px !important;
+    font-size: 0.88rem !important;
+    padding: 0.35rem 0.45rem !important;
+    height: auto !important;
+}
+
+.sidebar-logo .btn-buscar {
+    font-size: 0.93rem !important;
+    padding: 0.35rem 0.65rem !important;
+    white-space: nowrap !important;
+}
+
+/* Estilos para formularios pequeños en la barra lateral */
+.sidebar-logo .form-select-sm,
+.sidebar-logo .form-control-sm {
+    padding: 0.3rem 0.5rem !important;
+    font-size: 0.875rem !important;
+    height: auto !important;
+    min-height: 32px !important;
+}
+
+.sidebar-logo .form-select-sm {
+    padding-right: 1.75rem !important;
+}
+
+.sidebar-logo .d-flex.gap-1 {
+    gap: 0.6rem !important;
+}
+
+.sidebar-logo label {
+    font-size: 0.83rem !important;
+    margin-bottom: 0.25rem !important;
+}
+
+/* ==================== NAVBAR Y SIDEBAR ==================== */
+
+.navbar,
+.navbar-main {
     position: fixed;
     top: 0;
     left: 0;
@@ -317,19 +400,6 @@ body.inicio-bg .main-content {
 }
 
 /* Estilos específicos para navbar-main */
-.navbar-main {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 56px;
-    background-color: var(--color-principal);
-    z-index: 999;
-    display: flex;
-    align-items: center;
-    padding: 0 1rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
 .navbar-brand {
     font-size: 1.5em;
     font-weight: bold;
@@ -465,16 +535,31 @@ body.inicio-bg .main-content {
     background: linear-gradient(90deg, var(--color-rojo-boton-dark) 60%, var(--color-rojo-boton) 100%);
     color: #fff;
 }
-.btn-buscar, .btn-inicio, .btn-abrir, .btn-usuarios, .btn-anadir-usuario {
+.btn-buscar, .btn-inicio, .btn-abrir, .btn-usuarios, .btn-anadir-usuario, .btn-anadir-area {
     background-color: var(--color-boton);
     border-color: var(--color-borde-boton);
     color: var(--color-blanco);
 }
+/* Slight offset so add buttons don't stick to the sidebar */
+.btn-anadir-usuario,
+.btn-anadir-area {
+    margin-left: 5px;
+}
+.btn-min-70 { min-width: 70px; }
+.nowrap { white-space: nowrap; }
 .btn-nuevos, .btn-area, .btn-revisados {
     background: #685e04;
     color: #fff;
     border: 1px solid #eee;
-    font-size: 1.5em;
+    font-size: 0.93rem !important;
+    padding: 0.35rem 0.65rem !important;
+}
+
+/* Dropdown de búsqueda de informes más pequeño */
+.busqueda-informes .btn-area {
+    font-size: 0.875rem !important;
+    padding: 0.25rem 0.5rem !important;
+    white-space: nowrap !important;
 }
 .btn-logout {
     white-space: nowrap;
@@ -504,26 +589,20 @@ body.inicio-bg .main-content {
     outline: none !important;
 }
 
-/* Prevenir scroll automático en navbar */
 .navbar-collapse {
     scroll-behavior: auto !important;
 }
 
-.navbar-collapse.collapsing {
-    scroll-behavior: auto !important;
-}
-
+.navbar-collapse.collapsing,
 .navbar-collapse.show {
     scroll-behavior: auto !important;
 }
 
-/* Asegurar que el botón de logout no interfiera con el colapso */
 .navbar-collapse .btn-logout {
     margin-left: auto;
     flex-shrink: 0;
 }
 
-/* Prevenir scroll en todo el navbar cuando se hace clic en logout */
 .navbar-main {
     scroll-behavior: auto !important;
 }
@@ -531,6 +610,8 @@ body.inicio-bg .main-content {
 .navbar-main * {
     scroll-behavior: auto !important;
 }
+
+/* ==================== TABLAS Y CARDS ==================== */
 
 .titulo-tabla {
     margin-top: 2.5rem !important;
@@ -541,11 +622,13 @@ body.inicio-bg .main-content {
     text-align: center;
     padding-bottom: 0;
 }
+
 table.table-hover tbody tr:hover,
-table.usuarios-table tbody tr:hover {
+table.data-table tbody tr:hover {
     background-color: #f5f5c2 !important;
     transition: background 0.2s;
 }
+
 .table-responsive {
     width: auto;
     max-width: 1400px;
@@ -554,27 +637,49 @@ table.usuarios-table tbody tr:hover {
     margin: 0 40px 0 40px;
     box-sizing: border-box;
 }
-.table, .usuarios-table {
+
+.table,
+.data-table {
     width: 100%;
     border-collapse: collapse;
     table-layout: auto;
     font-size: 0.95rem;
     margin-top: 0;
 }
-.table th, .table td, .usuarios-table th, .usuarios-table td {
+
+.text-center.mb-4.mt-3 + .card {
+    margin-top: 0.25rem !important;
+}
+
+.text-center.mb-4.mt-3 h2 {
+    margin: 0.35rem 0 !important;
+}
+
+.text-center.mb-4.mt-3 + .card .card-body {
+    padding-top: 0.5rem !important;
+}
+
+.table th,
+.table td,
+.data-table th,
+.data-table td {
     vertical-align: middle;
     text-align: left;
     padding: 8px 12px;
     white-space: normal;
     font-size: 0.95rem;
 }
-.table td:last-child, .usuarios-table td:last-child {
+
+.table td:last-child,
+.data-table td:last-child {
     text-align: center;
     vertical-align: middle;
     padding-top: 0.3rem;
     padding-bottom: 0.3rem;
 }
-.table thead th, .usuarios-table thead th {
+
+.table thead th,
+.data-table thead th {
     position: sticky;
     top: 0;
     z-index: 101;
@@ -582,10 +687,30 @@ table.usuarios-table tbody tr:hover {
     font-weight: 700;
     font-size: 1rem;
 }
+
 .table-scroll {
-    max-height: 50vh;
+    max-height: calc(var(--table-row-height) * var(--table-max-rows) + 56px);
     overflow-y: auto;
+    overflow-x: hidden;
     width: 100%;
+}
+
+:root {
+    --table-row-height: 48px;
+    --table-max-rows:4;
+}
+
+.layout-section .card .table-responsive {
+    max-height: calc(var(--table-row-height) * var(--table-max-rows) + 56px);
+    overflow-y: auto;
+    overflow-x: auto;
+    box-sizing: border-box;
+    position: relative;
+}
+
+@media (max-width: 768px) {
+    :root { --table-row-height: 44px; }
+    .layout-section .card .table-responsive { max-height: calc(var(--table-row-height) * var(--table-max-rows) + 52px); }
 }
 
 .card-header.text-center {
@@ -596,6 +721,7 @@ table.usuarios-table tbody tr:hover {
     font-weight: bold;
     text-align: center;
 }
+
 .card {
     width: 100%;
     max-width: 1400px;
@@ -603,6 +729,7 @@ table.usuarios-table tbody tr:hover {
     border: none;
     margin-top: 0 !important;
 }
+
 .card-body {
     width: 100%;
     box-sizing: border-box;
@@ -611,6 +738,9 @@ table.usuarios-table tbody tr:hover {
     background: transparent !important;
     border: none;
 }
+
+/* ==================== MODALES Y NOTIFICACIONES ==================== */
+
 .modal-header {
     background: var(--color-modal-header);
     border-bottom: 2px solid #ddd;
@@ -648,7 +778,8 @@ table.usuarios-table tbody tr:hover {
     display: none !important;
 }
 
-/* Estilos específicos para página de estadísticas */
+/* ==================== PÁGINA DE ESTADÍSTICAS ==================== */
+
 .estadisticas-page {
     width: 100%;
     height: 100%;
@@ -749,9 +880,6 @@ table.usuarios-table tbody tr:hover {
     }
 }
 
-/* =================== ESTILOS ESPECÍFICOS PARA EL PERFIL DE USUARIO =================== */
-
-/* Prevenir scrolls extra en página de perfil */
 .form-scroll-container {
     position: relative;
     scroll-behavior: auto !important;
@@ -841,26 +969,13 @@ table.usuarios-table tbody tr:hover {
     box-shadow: 0 0 0 0.2rem rgba(124, 35, 35, 0.25);
 }
 
-/* Estilos para los botones de toggle de contraseña */
-.btn-editar {
-    background-color: #6c757d;
-    border-color: #6c757d;
-    color: white;
-}
-
-.btn-editar:hover {
-    background-color: #5a6268;
-    border-color: #545b62;
-}
-
-/* Estilos para la información de debug (temporal) */
 .form-text {
     font-size: 0.75em;
     background: #f8f9fa;
     padding: 10px;
     border-radius: 5px;
     margin-top: 10px;
-    border-left: 4px solid #007bff;
+    border-left: 4px solid var(--color-modal-header);
 }
 
 .form-text code {
@@ -886,6 +1001,18 @@ hr {
     border-radius: 50px;
 }
 
+/* Highlight the logged-in user's row */
+.mi-perfil-row {
+    background: linear-gradient(90deg, rgba(240,248,255,0.7), rgba(248,255,240,0.3));
+    font-weight: 600;
+}
+.badge-self {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    vertical-align: middle;
+}
+
+
 /* Estilo hover para los campos de formulario */
 .form-control:hover,
 .form-select:hover {
@@ -896,6 +1023,31 @@ hr {
 .form-control.is-invalid,
 .form-select.is-invalid {
     border-color: #dc3545;
+}
+
+/* Estilo para campos válidos (verde) */
+.form-control.is-valid,
+.form-select.is-valid {
+    border-color: #28a745;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    padding-right: calc(1.5em + 0.75rem);
+}
+
+/* Mostrar mensaje de error de validación */
+.invalid-feedback {
+    display: block !important;
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Mensajes de éxito (verde) en validación */
+.invalid-feedback[style*="color: rgb(40, 167, 69)"],
+.invalid-feedback[style*="color: #28a745"] {
+    color: #28a745 !important;
 }
 
 /* Mejorar la legibilidad del texto del perfil */
@@ -944,13 +1096,34 @@ h2, h5 {
     cursor: not-allowed;
 }
 
+/* Botón icon-only (ruedita) - circular y compacto, sin el cuadro cuadrado */
+.btn-icon {
+    padding: 0;
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50% !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+.btn-icon i {
+    font-size: 1.05rem;
+}
+.btn-icon:hover, .btn-icon:focus {
+    background: rgba(0,0,0,0.06) !important;
+    color: inherit !important;
+}
+
 /* Íconos de ayuda en form-text */
 .form-text .bi-check-circle {
     color: #28a745;
 }
 
 .form-text .bi-shield-check {
-    color: #007bff;
+    color: var(--color-boton);
 }
 
 /* Animación suave para campos inválidos */
@@ -1129,58 +1302,4 @@ input[type="file"]:focus {
     margin-top: 0.25rem;
 }
 
-/* Estilos específicos para inputs de fecha en la barra lateral */
-.sidebar-logo input[type="date"] {
-    max-width: 130px !important;
-    font-size: 0.88rem !important;
-    padding: 0.35rem 0.45rem !important;
-    height: auto !important;
-}
 
-.sidebar-logo .btn-buscar {
-    font-size: 0.93rem !important;
-    padding: 0.35rem 0.65rem !important;
-    white-space: nowrap !important;
-}
-
-/* Compactar contenedores de fecha */
-.sidebar-logo .d-flex.gap-1 {
-    gap: 0.6rem !important;
-}
-
-.sidebar-logo label {
-    font-size: 0.83rem !important;
-    margin-bottom: 0.25rem !important;
-}
-
-/* =================== LOGIN-SPECIFIC STYLES (merged from public/css/login.css) =================== */
-/* Ajustes para el toggle de contraseña */
-.input-group-inside.position-relative { position: relative; }
-.input-group-inside input.form-control { padding-right: 44px; }
-.toggle-password-btn {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    background: transparent;
-    border: none;
-    width: 34px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    color: #495057;
-}
-.toggle-password-btn:focus { outline: none; box-shadow: none; }
-.toggle-password-btn i { font-size: 1.05rem; }
-
-/* Small helpers for the login card (if not present in main styles) */
-.login-bg { display:flex; align-items:center; justify-content:center; min-height:100vh; }
-.login-card { max-width: 380px; width:100%; padding: 28px; border-radius:8px; background:#fff; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
-.login-avatar { width:72px; height:72px; border-radius:50%; background:#f1f1f1; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 12px; }
-.login-title { text-align:center; font-weight:600; margin-bottom:18px; }
-.input-icon-inside { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#6c757d; }
-.input-group-inside { position:relative; margin-bottom:12px; }
-.input-group-inside input.form-control { padding-left:36px; }
-.btn-login { width:100%; }

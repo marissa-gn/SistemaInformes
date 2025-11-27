@@ -1,10 +1,10 @@
--- ========================================
--- SISTEMA DE INFORMES - ESQUEMA DE BASE DE DATOS
--- ========================================
 
--- ========================================
+-- SISTEMA DE INFORMES - ESQUEMA DE BASE DE DATOS
+CREATE DATABASE IF NOT EXISTS sistema_informes;
+USE sistema_informes;
+
+
 -- TABLA DE ROLES
--- ========================================
 CREATE TABLE roles (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL UNIQUE,
@@ -14,9 +14,7 @@ CREATE TABLE roles (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- ========================================
 -- TABLA DE ÁREAS
--- ========================================
 CREATE TABLE areas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL UNIQUE,
@@ -31,7 +29,6 @@ CREATE TABLE areas (
 
 -- ========================================
 -- TABLA DE USUARIOS
--- ========================================
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -55,26 +52,24 @@ CREATE TABLE usuarios (
 
 -- ========================================
 -- TABLA DE INFORMES
--- ========================================
 CREATE TABLE informes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
     area_id INT NOT NULL,
-    titulo VARCHAR(200) NOT NULL,
-    sector_beneficia VARCHAR(200),
+    fecha_actividad DATE,
+    nombre_director VARCHAR(200),
     lugar_actividad VARCHAR(200),
+    colonia_comunidad VARCHAR(200),
     tipo_actividad VARCHAR(200),
+    cantidad INT,
+    descripcion_actividad TEXT,
+    sector_beneficia VARCHAR(200),
     numero_beneficiarios INT,
     monto_generado DECIMAL(12,2),
-    monto_invertido DECIMAL(12,2),
-    responde_solicitud_ciudadania BOOLEAN,
     pertenece_procedimientos_area BOOLEAN,
-    descripcion_actividad TEXT,
-    objetivos TEXT,
-    resultados TEXT,
-    observaciones TEXT,
+    responde_solicitud_ciudadania BOOLEAN,
     evidencia_fotografica VARCHAR(500), -- Ruta del archivo
-    fecha_actividad DATE,
+    observaciones TEXT,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     estado ENUM('borrador', 'enviado', 'en_revision', 'aprobado', 'rechazado') DEFAULT 'borrador',
     comentarios_revision TEXT,
@@ -87,8 +82,7 @@ CREATE TABLE informes (
 );
 
 -- ========================================
--- TABLA DE SESIONES (para manejo de sesiones)
--- ========================================
+-- TABLA DE SESIONES 
 CREATE TABLE sesiones (
     id VARCHAR(128) PRIMARY KEY,
     usuario_id INT NOT NULL,
@@ -102,7 +96,6 @@ CREATE TABLE sesiones (
 
 -- ========================================
 -- TABLA DE LOGS DE ACTIVIDAD
--- ========================================
 CREATE TABLE activity_logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT,

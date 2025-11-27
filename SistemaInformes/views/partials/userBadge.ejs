@@ -3,7 +3,9 @@
         <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
         <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
     </svg>
+    <% const _rawName = (typeof user !== 'undefined' && user && user.nombre) ? user.nombre : ((typeof session !== 'undefined' && session && session.user && session.user.nombre) ? session.user.nombre : 'Usuario'); %>
+    <% const _first = _rawName ? String(_rawName).split(' ')[0] : 'Usuario'; %>
     <span class="user-name" style="font-size: 1em; color: #624700; font-weight: 600; margin-bottom:0;">
-        <%= (typeof user !== 'undefined' && user) ? (user.nombre + ' ' + (user.apellido || '')) : (session?.user ? (session.user.nombre + ' ' + (session.user.apellido || '')) : 'Usuario') %>
+        <%= _first %>
     </span>
 </div>
