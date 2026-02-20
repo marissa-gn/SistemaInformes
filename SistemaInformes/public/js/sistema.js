@@ -741,22 +741,39 @@ async function eliminarInforme(informeId, tituloInforme) {
 
 // Buscar informes
 async function buscarInformes() {
-    console.log('🔍 Iniciando búsqueda de informes');
-    
     try {
-        const response = await makeRequest('/api/informes', 'GET');
+        // Recopilar parámetros de filtros (siguiendo el patrón de buscarUsuarios y buscarAreas)
+        const areaSelectInformes = document.getElementById('area-filter-informes');
+        const fechaDesdeInformes = document.getElementById('fecha-desde-informes');
+        const fechaHastaInformes = document.getElementById('fecha-hasta-informes');
         
-        if (response.success && response.data) {
-            console.log('✅ Informes encontrados:', response.data.length);
-            actualizarTablaInformes(response.data);
-            mostrarToast(`Se encontraron ${response.data.length} informes`, 'info');
+        const area_id = areaSelectInformes ? (areaSelectInformes.value || '') : '';
+        const fecha_desde = fechaDesdeInformes ? (fechaDesdeInformes.value || '') : '';
+        const fecha_hasta = fechaHastaInformes ? (fechaHastaInformes.value || '') : '';
+
+        const params = new URLSearchParams();
+        if (area_id) params.append('area_id', area_id);
+        if (fecha_desde) params.append('fecha_desde', fecha_desde);
+        if (fecha_hasta) params.append('fecha_hasta', fecha_hasta);
+
+        const url = `/api/informes${params.toString() ? '?' + params.toString() : ''}`;
+        console.log('🔍 Llamando a buscarInformes:', url);
+
+        const response = await makeRequest(url);
+        console.log('📋 Respuesta:', response);
+
+        if (response && response.success) {
+            const informes = (response.data && response.data.informes) ? response.data.informes : (Array.isArray(response.data) ? response.data : []);
+            console.log('✅ Informes encontrados:', informes);
+            actualizarTablaInformes(informes);
+            mostrarToast(`Se encontraron ${informes.length} informes`, 'info');
         } else {
-            console.log('❌ Error en búsqueda:', response.message);
-            mostrarToast('Error en la búsqueda', 'danger');
+            console.error('❌ Error:', response);
+            mostrarToast(response?.message || 'Error en la búsqueda', 'danger');
         }
     } catch (error) {
-        console.error('❌ Error:', error);
-        mostrarToast('Error en la búsqueda', 'danger');
+        console.error('❌ Exception en buscarInformes:', error);
+        mostrarToast('Error en la búsqueda: ' + error.message, 'danger');
     }
 }
 
@@ -823,7 +840,7 @@ function actualizarTablaHistorial(informes) {
                                     onclick="descargarInforme('${informe.id}')">
                                 <i class="bi bi-download me-1"></i>Descargar
                             </button>
-                            <button class="btn btn-info btn-sm btn-min-70" 
+                            <button class="btn btn-secondary btn-sm btn-min-70" 
                                     data-bs-toggle="modal" 
                                     data-bs-target="#modalInforme"
                                     data-informe-id="${informe.id}"
@@ -917,7 +934,7 @@ function actualizarTablaInformes(informes) {
                                 onclick="descargarInforme('${informe.id}')">
                             <i class="bi bi-download me-1"></i>Descargar
                         </button>
-                        <button type="button" class="btn btn-info btn-sm btn-min-70" 
+                        <button type="button" class="btn btn-secondary btn-sm btn-min-70" 
                                 data-informe-id="${informe.id}"
                                 data-bs-toggle="modal" 
                                 data-bs-target="#modalInforme"
@@ -1270,12 +1287,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const roles = resp.data.roles || [];
 
             // Poblar selects relacionados con áreas
-            const areaSelectIds = ['#area-filter', '#area', '#area_id'];
+            const areaSelectIds = ['#area-filter', '#area', '#area_id', '#area-filter-informes'];
             areaSelectIds.forEach(sel => {
                 document.querySelectorAll(sel).forEach(el => {
                     try {
                         // Limpiar opciones excepto la primera (placeholder)
-                        const placeholder = el.querySelector('option[value=""]') ? el.querySelector('option[value=""]').outerHTML : '<option value="">Selecciona...</option>';
+                        const placeholder = el.querySelector('option[value=""]') ? el.querySelector('option[value=""]').outerHTML : '<option value="">Todas las áreas</option>';
                         el.innerHTML = placeholder;
                         areas.forEach(a => {
                             const opt = document.createElement('option');
@@ -1367,6 +1384,28 @@ document.addEventListener('DOMContentLoaded', function() {
             if (document.getElementById('usuarios-tbody') && typeof buscarUsuarios === 'function') buscarUsuarios();
             else if (document.getElementById('areas-tbody') && typeof buscarAreas === 'function') buscarAreas();
             else if (document.getElementById('informes-tbody') && typeof buscarInformes === 'function') buscarInformes();
+        });
+
+        // Limpiar filtros de informes específicamente
+        bindAction('[data-action="limpiar-filtros-informes"]', () => {
+            const areaFilter = document.getElementById('area-filter-informes');
+            const fechaDesde = document.getElementById('fecha-desde-informes');
+            const fechaHasta = document.getElementById('fecha-hasta-informes');
+            
+            if (areaFilter) areaFilter.selectedIndex = 0;
+            if (fechaDesde) fechaDesde.value = '';
+            if (fechaHasta) fechaHasta.value = '';
+            
+            if (typeof buscarInformes === 'function') buscarInformes();
+        });
+
+        // Limpiar filtros de áreas específicamente
+        bindAction('[data-action="limpiar-filtros-areas"]', () => {
+            const nombreAreaFilter = document.getElementById('nombre-area-filter');
+            const areaSelectFilter = document.getElementById('area-select-filter');
+            if (nombreAreaFilter) nombreAreaFilter.value = '';
+            if (areaSelectFilter) areaSelectFilter.selectedIndex = 0;
+            if (typeof buscarAreas === 'function') buscarAreas();
         });
     } catch (e) { console.warn('Could not bind sidebar direct actions', e); }
     
@@ -1891,7 +1930,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         break;
                     case 'buscar-informes':
                         e.preventDefault();
-                        if (typeof buscarInformes === 'function') buscarInformes();
+                        console.log('🔍 Evento buscar-informes disparado');
+                        if (typeof buscarInformes === 'function') {
+                            console.log('✅ Llamando buscarInformes()');
+                            buscarInformes();
+                        } else {
+                            console.error('❌ buscarInformes no es una función');
+                        }
                         break;
                     case 'buscar-historial':
                         e.preventDefault();
@@ -1928,16 +1973,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     case 'limpiar-filtros-informes':
                         e.preventDefault();
                         // Limpiar específicamente los filtros de informes
-                        const dropdownBtn = document.getElementById('dropdownArea');
-                        const fechaDesde = document.getElementById('fecha-desde');
-                        const fechaHasta = document.getElementById('fecha-hasta');
+                        const areaFilterInformes = document.getElementById('area-filter-informes');
+                        const fechaDesdeInformes = document.getElementById('fecha-desde-informes');
+                        const fechaHastaInformes = document.getElementById('fecha-hasta-informes');
                         
-                        if (dropdownBtn) {
-                            dropdownBtn.removeAttribute('data-area-id');
-                            dropdownBtn.textContent = 'Área';
-                        }
-                        if (fechaDesde) fechaDesde.value = '';
-                        if (fechaHasta) fechaHasta.value = '';
+                        if (areaFilterInformes) areaFilterInformes.selectedIndex = 0;
+                        if (fechaDesdeInformes) fechaDesdeInformes.value = '';
+                        if (fechaHastaInformes) fechaHastaInformes.value = '';
                         
                         if (typeof buscarInformes === 'function') buscarInformes();
                         break;

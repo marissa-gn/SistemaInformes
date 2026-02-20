@@ -188,16 +188,21 @@ main.main-content {
     flex: 1 0 auto;
 }
 .footer {
-    flex-shrink: 0;
-    margin-top: auto;
     position: fixed;
     bottom: 0;
     left: 230px;
     width: calc(100% - 230px);
-    z-index: 999;
+    height: 40px;
+    background-color: var(--color-principal);
+    color: #000;
+    z-index: 99;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 0.9em;
+    user-select: none;
+    -webkit-user-select: none;
+    border-top: 1px solid rgba(0,0,0,0.1);
 }
 
 .footer > * {
@@ -205,6 +210,14 @@ main.main-content {
     width: 100%;
     padding: 0 20px;
     box-sizing: border-box;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .footer {
+        left: 0;
+        width: 100%;
+    }
 }
 
 .layout-row {
@@ -216,10 +229,11 @@ main.main-content {
 }
 .layout-section {
     margin-left: 230px;
+    margin-bottom: 40px;
     padding-top: 56px;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
     min-width: 0;
-    height: calc(100vh - 40px);
+    min-height: calc(100vh - 96px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -332,54 +346,65 @@ body.inicio-bg .main-content {
     height: calc(100vh - 56px);
     background: var(--color-blanco);
     box-sizing: border-box;
-    padding: 16px 2rem;
+    padding: 12px 1.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     border-right: 1px solid #eee;
     z-index: 100;
+    overflow-y: auto;
 }
-.logo { max-width: 140px; margin-bottom: 8px; }
-.user-name { font-size: 1em; margin: 0 0 8px 0; }
-.busqueda-informes { display: flex; flex-direction: column; margin-top: 0.2rem; }
-.busqueda-informes .d-flex.w-100.gap-2.mt-2.justify-content-center {
-    flex-direction: column !important;
-    gap: 0.3rem !important;
+.logo { max-width: 120px; margin-bottom: 6px; }
+.user-name { font-size: 0.95em; margin: 0 0 6px 0; }
+.busqueda-usuarios,
+.busqueda-informes { 
+    display: flex; 
+    flex-direction: column; 
+    margin-top: 0.8rem;
+    gap: 0.5rem !important;
 }
 
 .sidebar-logo input[type="date"] {
-    max-width: 130px !important;
-    font-size: 0.88rem !important;
-    padding: 0.35rem 0.45rem !important;
+    max-width: 100% !important;
+    font-size: 0.80rem !important;
+    padding: 0.30rem 0.40rem !important;
     height: auto !important;
+    min-height: 28px !important;
 }
 
-.sidebar-logo .btn-buscar {
-    font-size: 0.93rem !important;
-    padding: 0.35rem 0.65rem !important;
+.sidebar-logo .btn-buscar,
+.sidebar-logo .btn-secondary {
+    font-size: 0.85rem !important;
+    padding: 0.30rem 0.50rem !important;
     white-space: nowrap !important;
+    min-height: 32px !important;
 }
 
 /* Estilos para formularios pequeños en la barra lateral */
 .sidebar-logo .form-select-sm,
 .sidebar-logo .form-control-sm {
-    padding: 0.3rem 0.5rem !important;
-    font-size: 0.875rem !important;
+    padding: 0.25rem 0.40rem !important;
+    font-size: 0.80rem !important;
     height: auto !important;
-    min-height: 32px !important;
+    min-height: 28px !important;
 }
 
 .sidebar-logo .form-select-sm {
-    padding-right: 1.75rem !important;
+    padding-right: 1.5rem !important;
 }
 
 .sidebar-logo .d-flex.gap-1 {
-    gap: 0.6rem !important;
+    gap: 0.4rem !important;
+}
+
+.sidebar-logo h5 {
+    font-size: 0.90rem !important;
+    margin: 0 0 0.5rem 0 !important;
 }
 
 .sidebar-logo label {
-    font-size: 0.83rem !important;
-    margin-bottom: 0.25rem !important;
+    font-size: 0.78rem !important;
+    margin-bottom: 0.15rem !important;
 }
 
 /* ==================== NAVBAR Y SIDEBAR ==================== */
@@ -514,6 +539,19 @@ body.inicio-bg .main-content {
     background-color: #484a01 !important;
     color: #fff !important;
     outline: none;
+}
+.btn-secondary {
+    background-color: #6c757d !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(108,117,125,0.15);
+    font-weight: 600;
+}
+.btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active {
+    background-color: #5a6268 !important;
+    color: #fff !important;
+    outline: none !important;
+    box-shadow: 0 2px 8px rgba(90,98,104,0.15) !important;
 }
 .btn-success {
     background: linear-gradient(90deg, var(--color-verde-boton) 60%, var(--color-verde-boton-dark) 100%);

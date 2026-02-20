@@ -38,9 +38,11 @@
                                         <% } else if (informe.estado === 'rechazado') { %>
                                             <span class="badge bg-danger">Rechazado</span>
                                         <% } else if (informe.estado === 'enviado') { %>
-                                            <span class="badge bg-info">Enviado</span>
+                                            <span class="badge bg-secondary">Enviado</span>
+                                        <% } else if (informe.estado === 'borrador') { %>
+                                            <span class="badge bg-secondary">Borrador</span>
                                         <% } else { %>
-                                            <span class="badge bg-secondary"><%- informe.estado %></span>
+                                            <span class="badge bg-secondary"><%= informe.estado.charAt(0).toUpperCase() + informe.estado.slice(1) %></span>
                                         <% } %>
                                     </td>
                                     <td>
@@ -50,7 +52,7 @@
                                                     onclick="descargarInforme('<%= informe.id %>')">
                                                 <i class="bi bi-download me-1"></i>Descargar
                                             </button>
-                                            <button class="btn btn-info btn-sm btn-min-70" 
+                                            <button class="btn btn-secondary btn-sm btn-min-70" 
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#modalInforme"
                                                     data-informe-id="<%= informe.id %>"

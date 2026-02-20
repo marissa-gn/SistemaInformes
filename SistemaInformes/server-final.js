@@ -695,15 +695,39 @@ app.delete('/areas/:id', authenticateToken, authorizeRole('administrador'), asyn
 app.get('/informes', authenticateToken, authorizeRole('administrador'), async (req, res) => {
   try {
     let informes = [];
+    let areas = [];
+    let roles = [];
     
     if (dbConnected && informeQueries) {
       informes = await informeQueries.getAll();
+    }
+    
+    // Obtener áreas
+    if (dbConnected && areaQueries) {
+      try {
+        areas = await areaQueries.getAll();
+      } catch (areaError) {
+        console.error('Error obteniendo áreas:', areaError);
+        areas = [];
+      }
+    }
+    
+    // Obtener roles
+    if (dbConnected) {
+      try {
+        roles = await executeQuery('SELECT id, nombre FROM roles ORDER BY nombre');
+      } catch (roleError) {
+        console.error('Error obteniendo roles:', roleError);
+        roles = [];
+      }
     }
     
     res.render('VerInformes', { 
       title: 'Informes', 
       layout: 'layout',
       informes: informes,
+      areas: areas,
+      roles: roles,
       user: req.user
     });
   } catch (error) {
@@ -712,6 +736,8 @@ app.get('/informes', authenticateToken, authorizeRole('administrador'), async (r
       title: 'Todos los Informes', 
       layout: 'layout',
       informes: [],
+      areas: [],
+      roles: [],
       user: req.user,
       error: 'Error al cargar informes'
     });
@@ -1247,72 +1273,56 @@ app.get('/api/filtros', authenticateToken, async (req, res) => {
 
 // API para obtener historial del usuario actual
 // API para búsqueda de informes (ANTES de /:id para que no sea interceptada)
-app.get('/api/informes/buscar', authenticateToken, async (req, res) => {
-  try {
-    const { area_id, fecha_desde, fecha_hasta } = req.query;
-    console.log('🔍 API: Buscando informes con:', { area_id, fecha_desde, fecha_hasta });
-    
-    let query = `
-      SELECT i.*, 
-             u.nombre as usuario_nombre, 
-             u.apellido as usuario_apellido,
-             a.nombre as area_nombre
-      FROM informes i
-      INNER JOIN usuarios u ON i.usuario_id = u.id AND u.activo = true
-      INNER JOIN areas a ON i.area_id = a.id AND a.activa = true
-      WHERE i.estado != 'borrador'
-    `;
-    
-    const params = [];
-    
-    if (area_id) {
-      query += ` AND i.area_id = ?`;
-      params.push(area_id);
-    }
-    
-    if (fecha_desde) {
-      query += ` AND DATE(i.fecha_creacion) >= ?`;
-      params.push(fecha_desde);
-    }
-    
-    if (fecha_hasta) {
-      query += ` AND DATE(i.fecha_creacion) <= ?`;
-      params.push(fecha_hasta);
-    }
-    
-    query += ` ORDER BY i.fecha_creacion DESC`;
-    
-    const informes = await executeQuery(query, params);
-    console.log('✅ Encontrados:', informes.length, 'informes');
-    
-    res.json({
-      success: true,
-      data: { informes },
-      message: `Se encontraron ${informes.length} informes`
-    });
-    
-  } catch (error) {
-    console.error('❌ Error en búsqueda de informes:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error al buscar informes',
-      error: error.message
-    });
-  }
-});
-
-// API para obtener un informe específico
-// API para obtener todos los informes (admin)
+// API para obtener todos los informes (admin) - ENDPOINT ÚNICO
 app.get('/api/informes', authenticateToken, authorizeRole('administrador'), async (req, res) => {
   try {
-    console.log('🔍 API: Obteniendo todos los informes para admin');
+    console.log('🔍 API: Obteniendo informes');
+    console.log('📋 Parámetros completos:', JSON.stringify(req.query));
     
     if (!informeQueries) {
       return res.status(500).json({ success: false, message: 'Conexión a BD no disponible' });
     }
     
-    const informes = await informeQueries.getAll();
-    console.log(`✅ Se encontraron ${informes.length} informes`);
+    // Obtener parámetros de filtro
+    let { area_id, fecha_desde, fecha_hasta } = req.query;
+    
+    console.log('📌 area_id recibido:', area_id, 'tipo:', typeof area_id);
+    console.log('📌 fecha_desde recibido:', fecha_desde);
+    console.log('📌 fecha_hasta recibido:', fecha_hasta);
+    
+    // SIEMPRE hacer el JOIN para obtener nombres de usuario y área
+    let query = 'SELECT i.*, u.nombre as usuario_nombre, u.apellido as usuario_apellido, a.nombre as area_nombre FROM informes i JOIN usuarios u ON i.usuario_id = u.id JOIN areas a ON i.area_id = a.id WHERE 1=1';
+    const params = [];
+    
+    // Filtro por área
+    if (area_id && area_id !== '') {
+      query += ' AND i.area_id = ?';
+      const areaIdInt = parseInt(area_id);
+      params.push(areaIdInt);
+      console.log('✅ Filtro por área_id:', areaIdInt);
+    }
+    
+    // Filtro por fecha desde
+    if (fecha_desde && fecha_desde !== '') {
+      query += ' AND DATE(i.fecha_creacion) >= ?';
+      params.push(fecha_desde);
+      console.log('✅ Filtro desde:', fecha_desde);
+    }
+    
+    // Filtro por fecha hasta
+    if (fecha_hasta && fecha_hasta !== '') {
+      query += ' AND DATE(i.fecha_creacion) <= ?';
+      params.push(fecha_hasta);
+      console.log('✅ Filtro hasta:', fecha_hasta);
+    }
+    
+    query += ' ORDER BY i.fecha_creacion DESC';
+    
+    console.log('🔧 Query final:', query);
+    console.log('🔧 Parámetros:', params);
+    
+    const informes = await executeQuery(query, params);
+    console.log(`✅ Encontrados: ${informes.length} informes`);
     
     res.json({
       success: true,
