@@ -1,0 +1,8 @@
+{
+  "name": "sistema-informes-root",
+  "private": true,
+  "scripts": {
+    "start": "node ./SistemaInformes/server-final.js",
+    "dev": "node ./SistemaInformes/server-final.js"
+  }
+}

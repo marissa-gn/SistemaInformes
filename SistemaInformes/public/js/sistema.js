@@ -43,7 +43,7 @@ async function makeRequest(url, method = 'GET', data = null) {
             status: response.status
         };
     } catch (error) {
-        console.error('❌ Error en petición:', error);
+        console.error('Error en petición:', error);
         return { success: false, message: error.message };
     }
 }
@@ -56,10 +56,10 @@ window.mostrarToast = function(mensaje, tipo = 'success') {
     if (window && window.__DEBUG__) try { console.debug(`[toast:${tipo}] ${mensaje}`); } catch (e) {}
 
     const tiposConfig = {
-        'success': { bgClass: 'toast-success', icon: 'bi-check-circle-fill' },
-        'warning': { bgClass: 'toast-warning', icon: 'bi-exclamation-triangle-fill' },
-        'danger':  { bgClass: 'toast-danger', icon: 'bi-x-circle-fill' },
-        'info':    { bgClass: 'toast-info', icon: 'bi-info-circle-fill' }
+        'success': { accentClass: 'toast-success', icon: 'bi-check-circle-fill' },
+        'warning': { accentClass: 'toast-warning', icon: 'bi-exclamation-triangle-fill' },
+        'danger':  { accentClass: 'toast-danger', icon: 'bi-x-circle-fill' },
+        'info':    { accentClass: 'toast-info', icon: 'bi-info-circle-fill' }
     };
 
     const config = tiposConfig[tipo] || tiposConfig['success'];
@@ -77,11 +77,11 @@ window.mostrarToast = function(mensaje, tipo = 'success') {
 
     const toastId = 'toast-' + Date.now();
     const toastHtml = `
-        <div class="toast align-items-center text-white ${config.bgClass} border-0" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
+        <div class="toast toast-sistema ${config.accentClass} align-items-center border-0" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex align-items-center">
                 <div class="toast-body">
-                    <i class="bi ${config.icon} me-2"></i>
-                    ${mensaje}
+                    <span class="toast-icon-wrap me-2"><i class="bi ${config.icon}"></i></span>
+                    <span class="toast-message">${mensaje}</span>
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
@@ -117,6 +117,37 @@ async function crearUsuario(userData) {
     }
 }
 
+function toggleModalPassword(fieldId) {
+    const input = document.getElementById(fieldId);
+    const button = document.querySelector(`[data-toggle-password="${fieldId}"]`);
+    const icon = button ? button.querySelector('i') : null;
+
+    if (!input) return;
+
+    const showText = input.type === 'password';
+    input.type = showText ? 'text' : 'password';
+    if (icon) {
+        icon.classList.toggle('bi-eye', !showText);
+        icon.classList.toggle('bi-eye-slash', showText);
+    }
+}
+
+function normalizarTextoLetras(valor) {
+    return (valor || '').trim().replace(/\s+/g, ' ');
+}
+
+function esSoloLetras(valor) {
+    return /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s'\-]+$/.test(normalizarTextoLetras(valor));
+}
+
+function esTelefonoValido(valor) {
+    return /^\d{10}$/.test((valor || '').trim());
+}
+
+function esPasswordValida(valor) {
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,10}$/.test(valor || '');
+}
+
 let usuarioEditando = null; // Variable global para controlar si estamos editando
 
 // Función para abrir modal de crear usuario
@@ -139,12 +170,20 @@ function abrirModalCrearUsuario() {
 function editarUsuario(id, username, nombre, apellido, email, telefono, areaId, rolId) {
     usuarioEditando = id;
     document.getElementById('modal-titulo').textContent = 'Editar Usuario';
+
+    const apellidoTexto = (apellido || '').trim();
+    const partesApellido = apellidoTexto ? apellidoTexto.split(/\s+/) : [];
+    const apellidoPaterno = partesApellido.shift() || '';
+    const apellidoMaterno = partesApellido.join(' ') || '';
     
     // Cargar datos en el formulario
     document.getElementById('usuario-id').value = id;
     document.getElementById('username').value = username;
     document.getElementById('nombre').value = nombre;
-    document.getElementById('apellido').value = apellido;
+    const apellidoPaternoInput = document.getElementById('apellido_paterno');
+    const apellidoMaternoInput = document.getElementById('apellido_materno');
+    if (apellidoPaternoInput) apellidoPaternoInput.value = apellidoPaterno;
+    if (apellidoMaternoInput) apellidoMaternoInput.value = apellidoMaterno;
     document.getElementById('email').value = email;
     document.getElementById('telefono').value = telefono || '';
     document.getElementById('area_id').value = areaId || '';
@@ -190,6 +229,10 @@ function limpiarFormularioUsuario() {
     // Configurar campos de contraseña
     document.getElementById('password').value = '';
     document.getElementById('confirm-password').value = '';
+    const apellidoPaternoInput = document.getElementById('apellido_paterno');
+    const apellidoMaternoInput = document.getElementById('apellido_materno');
+    if (apellidoPaternoInput) apellidoPaternoInput.value = '';
+    if (apellidoMaternoInput) apellidoMaternoInput.value = '';
 }
 
 // Eliminar usuario
@@ -280,15 +323,15 @@ async function buscarUsuarios() {
         if (response && response.success) {
             // The API returns { data: { usuarios: [...] } } or sometimes data could be the array
             const usuarios = (response.data && response.data.usuarios) ? response.data.usuarios : (Array.isArray(response.data) ? response.data : []);
-            console.log('✅ Usuarios encontrados:', usuarios);
+            console.log('Usuarios encontrados:', usuarios);
             actualizarTablaUsuarios(usuarios);
             mostrarToast(`Se encontraron ${usuarios.length} usuarios`, 'info');
         } else {
-            console.error('❌ Error:', response);
+            console.error('Error:', response);
             mostrarToast(response?.message || 'Error en la búsqueda', 'danger');
         }
     } catch (error) {
-        console.error('❌ Exception en buscarUsuarios:', error);
+        console.error('Exception en buscarUsuarios:', error);
         mostrarToast('Error en la búsqueda: ' + error.message, 'danger');
     }
 }
@@ -404,15 +447,15 @@ async function buscarAreas() {
 
         if (response && response.success) {
             const areas = (response.data && response.data.areas) ? response.data.areas : (Array.isArray(response.data) ? response.data : []);
-            console.log('✅ Áreas encontradas:', areas);
+            console.log('Áreas encontradas:', areas);
             actualizarTablaAreas(areas);
             mostrarToast(`Se encontraron ${areas.length} áreas`, 'info');
         } else {
-            console.error('❌ Error:', response);
+            console.error('Error:', response);
             mostrarToast(response?.message || 'Error en la búsqueda', 'danger');
         }
     } catch (error) {
-        console.error('❌ Exception en buscarAreas:', error);
+        console.error('Exception en buscarAreas:', error);
         mostrarToast('Error en la búsqueda: ' + error.message, 'danger');
     }
 }
@@ -531,21 +574,21 @@ function actualizarTablaHistorial(informes) {
 // Cargar informe en modal del historial o admin
 async function cargarInformeEnModal(btn) {
     const informeId = btn.getAttribute('data-informe-id');
-    console.log('📋 Cargando informe ID:', informeId);
+    console.log('Cargando informe ID:', informeId);
     
     try {
         const response = await makeRequest(`/api/informes/${informeId}`, 'GET');
-        console.log('📊 Respuesta de API:', response);
+        console.log('Respuesta de API:', response);
         
         if (response.success && response.data) {
             const informe = response.data;
-            console.log('✅ Datos del informe:', informe);
+            console.log('Datos del informe:', informe);
             
             // Helper function más robusta para llenar campos
             const llenarCampo = (elementId, valor) => {
                 const elemento = document.getElementById(elementId);
                 if (!elemento) {
-                    console.warn('⚠️ Elemento no encontrado:', elementId);
+                    console.warn('Elemento no encontrado:', elementId);
                     return;
                 }
                 
@@ -577,7 +620,7 @@ async function cargarInformeEnModal(btn) {
             };
             
             // Modal 1: Modal de Admin (ModalInforme.ejs)
-            console.log('📋 Llenando modal admin...');
+            console.log('Llenando modal admin...');
             llenarCampo('fechaInforme', informe.fecha_creacion ? new Date(informe.fecha_creacion).toISOString().split('T')[0] : '');
             llenarCampo('areaInforme', informe.area_nombre || '');
             llenarCampo('nombreDirector', informe.nombre_director || '');
@@ -669,14 +712,14 @@ async function cargarInformeEnModal(btn) {
                 botonesEvaluacion.style.display = 'none';
             }
             
-            console.log('✅ Modal llenado exitosamente');
+            console.log('Modal llenado exitosamente');
             
         } else {
-            console.error('❌ Respuesta inválida:', response);
+            console.error('Respuesta inválida:', response);
             mostrarToast('Error al cargar el informe', 'danger');
         }
     } catch (error) {
-        console.error('❌ Error cargando informe:', error);
+        console.error('Error cargando informe:', error);
         mostrarToast('Error al cargar el informe', 'danger');
     }
 }
@@ -757,22 +800,22 @@ async function buscarInformes() {
         if (fecha_hasta) params.append('fecha_hasta', fecha_hasta);
 
         const url = `/api/informes${params.toString() ? '?' + params.toString() : ''}`;
-        console.log('🔍 Llamando a buscarInformes:', url);
+        console.log('Llamando a buscarInformes:', url);
 
         const response = await makeRequest(url);
-        console.log('📋 Respuesta:', response);
+        console.log('Respuesta:', response);
 
         if (response && response.success) {
             const informes = (response.data && response.data.informes) ? response.data.informes : (Array.isArray(response.data) ? response.data : []);
-            console.log('✅ Informes encontrados:', informes);
+            console.log('Informes encontrados:', informes);
             actualizarTablaInformes(informes);
             mostrarToast(`Se encontraron ${informes.length} informes`, 'info');
         } else {
-            console.error('❌ Error:', response);
+            console.error('Error:', response);
             mostrarToast(response?.message || 'Error en la búsqueda', 'danger');
         }
     } catch (error) {
-        console.error('❌ Exception en buscarInformes:', error);
+        console.error('Exception en buscarInformes:', error);
         mostrarToast('Error en la búsqueda: ' + error.message, 'danger');
     }
 }
@@ -785,14 +828,14 @@ async function cargarHistorial() {
         const response = await makeRequest('/api/historial', 'GET');
         
         if (response.success && response.data) {
-            console.log('✅ Historial cargado:', response.data.length);
+            console.log('Historial cargado:', response.data.length);
             actualizarTablaHistorial(response.data);
         } else {
-            console.log('❌ Error cargando historial:', response.message);
+            console.log('Error cargando historial:', response.message);
             mostrarToast('Error al cargar historial', 'danger');
         }
     } catch (error) {
-        console.error('❌ Error:', error);
+        console.error('Error:', error);
         mostrarToast('Error al cargar historial', 'danger');
     }
 }
@@ -1423,10 +1466,22 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const formData = new FormData(form);
             const userData = Object.fromEntries(formData);
+            userData.nombre = normalizarTextoLetras(userData.nombre);
+            userData.apellido_paterno = normalizarTextoLetras(userData.apellido_paterno);
+            userData.apellido_materno = normalizarTextoLetras(userData.apellido_materno);
+            userData.apellido = [userData.apellido_paterno, userData.apellido_materno].filter(Boolean).join(' ').trim();
+            userData.telefono = (userData.telefono || '').replace(/\D/g, '');
             
             // Limpiar errores previos
             document.getElementById('confirm-password').classList.remove('is-invalid');
             document.getElementById('numero_nomina').classList.remove('is-invalid');
+            document.getElementById('nombre').classList.remove('is-invalid');
+            const apellidoPaternoInput = document.getElementById('apellido_paterno');
+            const apellidoMaternoInput = document.getElementById('apellido_materno');
+            if (apellidoPaternoInput) apellidoPaternoInput.classList.remove('is-invalid');
+            if (apellidoMaternoInput) apellidoMaternoInput.classList.remove('is-invalid');
+            const telefonoInput = document.getElementById('telefono');
+            if (telefonoInput) telefonoInput.classList.remove('is-invalid');
             
             // Validaciones específicas
             let isValid = true;
@@ -1453,10 +1508,47 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (nomEl) nomEl.classList.add('is-invalid');
                 isValid = false;
             }
+
+            if (!esSoloLetras(userData.nombre)) {
+                mostrarToast('El nombre solo puede contener letras', 'error');
+                const nombreEl = document.getElementById('nombre');
+                if (nombreEl) nombreEl.classList.add('is-invalid');
+                isValid = false;
+            }
+
+            if (!esSoloLetras(userData.apellido_paterno)) {
+                mostrarToast('El apellido paterno solo puede contener letras', 'error');
+                if (apellidoPaternoInput) apellidoPaternoInput.classList.add('is-invalid');
+                isValid = false;
+            }
+
+            if (!esSoloLetras(userData.apellido_materno)) {
+                mostrarToast('El apellido materno solo puede contener letras', 'error');
+                if (apellidoMaternoInput) apellidoMaternoInput.classList.add('is-invalid');
+                isValid = false;
+            }
+
+            if (userData.telefono && !esTelefonoValido(userData.telefono)) {
+                mostrarToast('El teléfono debe tener exactamente 10 dígitos', 'error');
+                if (telefonoInput) telefonoInput.classList.add('is-invalid');
+                isValid = false;
+            }
+
+            const passwordRequired = !usuarioEditando;
+            if (passwordRequired || userData.password) {
+                if (!userData.password || !esPasswordValida(userData.password)) {
+                    mostrarToast('La contraseña debe incluir mayúscula, minúscula y número', 'error');
+                    const passwordInput = document.getElementById('password');
+                    if (passwordInput) passwordInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
             
             if (form.checkValidity() && isValid) {
                 // Remover confirm_password de los datos antes de enviar
                 delete userData.confirm_password;
+                delete userData.apellido_paterno;
+                delete userData.apellido_materno;
                 guardarUsuario(userData);
             } else {
                 form.classList.add('was-validated');
@@ -1572,6 +1664,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    document.querySelectorAll('[data-toggle-password]').forEach(button => {
+        button.addEventListener('click', function() {
+            const fieldId = this.getAttribute('data-toggle-password');
+            toggleModalPassword(fieldId);
+        });
+    });
+
     // ==================== VALIDACIÓN EN TIEMPO REAL DE CONTRASEÑA ====================
     // Función para validar contraseña
     function validarContraseña() {
@@ -1591,8 +1690,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (passwordInput.value === '') {
             passwordError = 'La contraseña es requerida.';
             passwordInput.classList.add('is-invalid');
-        } else if (passwordInput.value.length < 6) {
-            passwordError = 'La contraseña debe tener al menos 6 caracteres.';
+        } else if (!esPasswordValida(passwordInput.value)) {
+            passwordError = 'Debe tener al menos una mayúscula, una minúscula y un número.';
             passwordInput.classList.add('is-invalid');
         } else {
             passwordInput.classList.remove('is-invalid');
@@ -1603,7 +1702,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Actualizar mensaje de password
         if (passwordFeedback) {
             passwordFeedback.textContent = passwordError;
-            if (passwordInput.value && passwordInput.value.length >= 6) {
+            if (passwordInput.value && esPasswordValida(passwordInput.value)) {
                 passwordFeedback.style.color = '#28a745';
             } else {
                 passwordFeedback.style.color = '#dc3545';
@@ -1642,6 +1741,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const feedbackEl = input.nextElementSibling;
         let esValido = false;
         let mensaje = '';
+        const valorNormalizado = normalizarTextoLetras(input.value);
         
         if (!input.value || !input.value.trim()) {
             if (input.type === 'email') {
@@ -1652,8 +1752,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 mensaje = 'El usuario es requerido.';
             } else if (input.name === 'nombre') {
                 mensaje = 'El nombre es requerido.';
-            } else if (input.name === 'apellido') {
-                mensaje = 'El apellido es requerido.';
+            } else if (input.name === 'apellido_paterno') {
+                mensaje = 'El apellido paterno es requerido.';
+            } else if (input.name === 'apellido_materno') {
+                mensaje = 'El apellido materno es requerido.';
+            } else if (input.name === 'telefono') {
+                mensaje = '✓ Teléfono opcional.';
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                esValido = true;
+                return;
             } else {
                 mensaje = 'Este campo es requerido.';
             }
@@ -1667,6 +1775,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 input.classList.add('is-invalid');
             } else {
                 mensaje = '✓ Correo válido.';
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                esValido = true;
+            }
+        } else if (input.name === 'telefono') {
+            if (!esTelefonoValido(input.value)) {
+                mensaje = 'El teléfono debe tener exactamente 10 dígitos.';
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+            } else {
+                mensaje = '✓ Teléfono válido.';
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                esValido = true;
+            }
+        } else if (input.name === 'nombre' || input.name === 'apellido_paterno' || input.name === 'apellido_materno') {
+            if (!esSoloLetras(valorNormalizado)) {
+                mensaje = 'Solo se permiten letras.';
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+            } else {
+                mensaje = '✓ Campo válido.';
                 input.classList.remove('is-invalid');
                 input.classList.add('is-valid');
                 esValido = true;
@@ -1710,32 +1840,42 @@ document.addEventListener('DOMContentLoaded', function() {
             requisitosContainer.innerHTML = `
                 <div style="margin-top: 8px; font-size: 0.875rem;">
                     <strong>Requerimientos de contraseña:</strong><br>
-                    <span id="req-length" style="display: block; color: #dc3545;">• Mínimo 6 caracteres</span>
+                    <span id="req-length" style="display: block; color: #dc3545;">• Mínimo 6 caracteres, máximo 10</span>
+                    <span id="req-upper" style="display: block; color: #dc3545;">• Al menos una mayúscula</span>
+                    <span id="req-lower" style="display: block; color: #dc3545;">• Al menos una minúscula</span>
+                    <span id="req-number" style="display: block; color: #dc3545;">• Al menos un número</span>
                 </div>
             `;
             
-            // Insertar después del invalid-feedback
-            const invalidFeedback = passwordInput.parentElement.querySelector('.invalid-feedback');
-            if (invalidFeedback) {
-                invalidFeedback.parentElement.insertBefore(requisitosContainer, invalidFeedback.nextSibling);
-            } else {
-                passwordInput.parentElement.appendChild(requisitosContainer);
+            // Insertar debajo del campo de contraseña
+            const passwordColumn = passwordInput.closest('.col-md-6');
+
+            if (passwordColumn) {
+                const invalidFeedback = passwordColumn.querySelector('.invalid-feedback');
+
+                if (invalidFeedback) {
+                    invalidFeedback.insertAdjacentElement('afterend', requisitosContainer);
+                } else {
+                    passwordColumn.appendChild(requisitosContainer);
+                }
             }
             
             // Actualizar estado de requisitos mientras se escribe
             passwordInput.addEventListener('input', function() {
                 const reqLength = document.getElementById('req-length');
-                if (this.value.length >= 6) {
-                    reqLength.style.color = '#28a745';
-                } else {
-                    reqLength.style.color = '#dc3545';
-                }
+                const reqUpper = document.getElementById('req-upper');
+                const reqLower = document.getElementById('req-lower');
+                const reqNumber = document.getElementById('req-number');
+                if (reqLength) reqLength.style.color = this.value.length >= 6 ? '#28a745' : '#dc3545';
+                if (reqUpper) reqUpper.style.color = /[A-ZÁÉÍÓÚÜÑ]/.test(this.value) ? '#28a745' : '#dc3545';
+                if (reqLower) reqLower.style.color = /[a-záéíóúüñ]/.test(this.value) ? '#28a745' : '#dc3545';
+                if (reqNumber) reqNumber.style.color = /\d/.test(this.value) ? '#28a745' : '#dc3545';
             });
         }
     }
     
     // Agregar listeners para validación en tiempo real de todos los campos
-    const camposRequeridos = ['username', 'numero_nomina', 'nombre', 'apellido', 'email', 'telefono'];
+    const camposRequeridos = ['username', 'numero_nomina', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono'];
     camposRequeridos.forEach(campoId => {
         const input = document.getElementById(campoId);
         if (input) {

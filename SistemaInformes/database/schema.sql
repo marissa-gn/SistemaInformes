@@ -66,6 +66,7 @@ CREATE TABLE informes (
     sector_beneficia VARCHAR(200),
     numero_beneficiarios INT,
     monto_generado DECIMAL(12,2),
+    monto_invertido DECIMAL(12,2) DEFAULT 0.00,
     pertenece_procedimientos_area BOOLEAN,
     responde_solicitud_ciudadania BOOLEAN,
     evidencia_fotografica VARCHAR(500), -- Ruta del archivo

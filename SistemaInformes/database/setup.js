@@ -124,6 +124,19 @@ async function setupDatabase() {
       console.log('ℹ️ Usuarios ya existen — no se insertaron usuarios de ejemplo');
     }
 
+    const [mayteRows] = await connection.query("SELECT id FROM usuarios WHERE username = 'mayte.navor' LIMIT 1");
+    if (mayteRows.length === 0) {
+      const [capturistaRows] = await connection.query("SELECT id FROM roles WHERE nombre = 'capturista' LIMIT 1");
+      const [areaRows] = await connection.query('SELECT id FROM areas ORDER BY id LIMIT 1');
+      if (capturistaRows.length > 0 && areaRows.length > 0) {
+        await connection.query(
+          'INSERT INTO usuarios (username, email, password_hash, nombre, apellido, numero_nomina, telefono, area_id, rol_id, activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)',
+          ['mayte.navor', 'mayte.navor@atlacomulco.gob.mx', '$2a$10$BzvlRowxXlo4U5V3SSN0fel.OK2TpBeeMADGpaP9C1u.gtpWfQCB6', 'Mayte', 'Navor', 'CAP007', '722-555-0007', areaRows[0].id, capturistaRows[0].id]
+        );
+        console.log('✅ Usuario agregado: mayte.navor');
+      }
+    }
+
     console.log('\n🎉 ¡Base de datos configurada correctamente!\n');
     
     console.log('📊 INFORMACIÓN DE LA BASE DE DATOS:');
@@ -145,6 +158,7 @@ async function setupDatabase() {
     console.log('   Usuario: daniel.navarrete  | Contraseña: admin123');
     console.log('   Usuario: wayne.ramirez     | Contraseña: admin123');
     console.log('   Usuario: alan.guzman       | Contraseña: admin123');
+    console.log('   Usuario: mayte.navor       | Contraseña: PelussaGN2');
     console.log('');
     console.log('👁️ VISITANTE:');
     console.log('   Usuario: visitante         | Contraseña: admin123');

@@ -7,7 +7,7 @@ const PDFDocument = require('pdfkit');
 
 const app = express();
 
-console.log('🚀 Iniciando Sistema de Informes...');
+console.log('Iniciando Sistema de Informes...');
 
 // =================== CONFIGURACIÓN BÁSICA ===================
 app.set('view engine', 'ejs');
@@ -111,11 +111,11 @@ async function initializeDatabase() {
     executeQuery = dbConnection.executeQuery;
     
     dbConnected = true;
-    console.log('✅ Base de datos conectada correctamente');
+    console.log('Base de datos conectada correctamente');
     
     // Validar conexión con consulta simple
     const testUser = await userQueries.getByUsername('marissa.gomez');
-    console.log('✅ Consulta de prueba exitosa');
+    console.log('Consulta de prueba exitosa');
     // Comprobar existencia de tablas críticas
     try {
       const requiredTables = ['usuarios', 'areas', 'informes', 'roles'];
@@ -130,14 +130,14 @@ async function initializeDatabase() {
         process.exitCode = 1;
         throw new Error(msg);
       }
-      console.log('✅ Tablas críticas presentes en la BD');
+      console.log('Tablas críticas presentes en la BD');
     } catch (tblErr) {
-      console.error('❌ Error validando tablas:', tblErr.message);
+      console.error('Error validando tablas:', tblErr.message);
       throw tblErr;
     }
     
   } catch (error) {
-    console.error('❌ Error inicializando BD:', error.message);
+    console.error('Error inicializando BD:', error.message);
     dbConnected = false;
     throw error;
   }
@@ -275,18 +275,18 @@ app.post('/logout', (req, res) => {
   if (req.session) {
     req.session.destroy((err) => {
       if (err) {
-        console.error('❌ Error al cerrar sesión:', err);
+        console.error('Error al cerrar sesión:', err);
       }
       
       // Limpiar cookie de sesión
       res.clearCookie('connect.sid');
-      console.log('✅ Sesión cerrada exitosamente - Redirigiendo a login');
+      console.log('Sesión cerrada exitosamente - Redirigiendo a login');
       // Redirigir directamente al login
       res.redirect('/inicioSesion');
     });
   } else {
     // Si no hay sesión, redirigir al login
-    console.log('⚠️ No hay sesión activa - Redirigiendo a login');
+    console.log('No hay sesión activa - Redirigiendo a login');
     res.redirect('/inicioSesion');
   }
 });
@@ -297,10 +297,10 @@ app.get('/logout', (req, res) => {
   if (req.session) {
     req.session.destroy((err) => {
       if (err) {
-        console.error('❌ Error al cerrar sesión:', err);
+        console.error(' Error al cerrar sesión:', err);
       }
       res.clearCookie('connect.sid');
-      console.log('✅ Sesión cerrada exitosamente (GET)');
+      console.log('Sesión cerrada exitosamente (GET)');
       res.render('CierreSesion', { 
         title: 'Cierre de Sesión',
         message: 'Su sesión ha sido cerrada exitosamente',
@@ -308,7 +308,7 @@ app.get('/logout', (req, res) => {
       });
     });
   } else {
-    console.log('⚠️ No hay sesión activa (GET)');
+    console.log(' No hay sesión activa (GET)');
     res.render('CierreSesion', { 
       title: 'Cierre de Sesión',
       message: 'No había sesión activa',
@@ -416,12 +416,40 @@ app.get('/usuarios', authenticateToken, authorizeRole('administrador'), async (r
 });
 
 // Crear usuario
+const nombreTextoRegex = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s'\-]+$/;
+const telefonoRegex = /^\d{10}$/;
+const passwordComplejaRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+
+function normalizarTextoSeguridad(valor) {
+  return (valor || '').trim().replace(/\s+/g, ' ');
+}
+
 app.post('/usuarios/crear', authenticateToken, authorizeRole('administrador'), async (req, res) => {
   try {
     const { username, email, nombre, apellido, telefono, area_id, rol_id, password, numero_nomina } = req.body;
 
     if (!username || !email || !nombre || !apellido || !rol_id || !numero_nomina) {
       return res.status(400).json({ success: false, message: 'Campos requeridos faltantes' });
+    }
+
+    const nombreNormalizado = normalizarTextoSeguridad(nombre);
+    const apellidoNormalizado = normalizarTextoSeguridad(apellido);
+    const telefonoNormalizado = telefono ? telefono.trim() : '';
+
+    if (!nombreTextoRegex.test(nombreNormalizado)) {
+      return res.status(400).json({ success: false, message: 'El nombre solo puede contener letras' });
+    }
+
+    if (!nombreTextoRegex.test(apellidoNormalizado)) {
+      return res.status(400).json({ success: false, message: 'El apellido solo puede contener letras' });
+    }
+
+    if (telefonoNormalizado && !telefonoRegex.test(telefonoNormalizado)) {
+      return res.status(400).json({ success: false, message: 'El teléfono debe tener exactamente 10 dígitos' });
+    }
+
+    if (!password || !passwordComplejaRegex.test(password.trim())) {
+      return res.status(400).json({ success: false, message: 'La contraseña debe incluir mayúscula, minúscula y número' });
     }
 
     if (!dbConnected || !userQueries) {
@@ -435,16 +463,15 @@ app.post('/usuarios/crear', authenticateToken, authorizeRole('administrador'), a
     }
 
     // hash de contraseña
-    const pwd = password || 'admin123';
-    const passwordHash = await bcrypt.hash(pwd, 10);
+    const passwordHash = await bcrypt.hash(password.trim(), 10);
 
     const userId = await userQueries.create({
       username,
       email,
       password_hash: passwordHash,
-      nombre,
-      apellido,
-      telefono: telefono || null,
+      nombre: nombreNormalizado,
+      apellido: apellidoNormalizado,
+      telefono: telefonoNormalizado || null,
       numero_nomina,
       area_id: area_id || null,
       rol_id
@@ -471,6 +498,26 @@ app.put('/usuarios/:id', authenticateToken, authorizeRole('administrador'), asyn
       return res.status(400).json({ success: false, message: 'Campos requeridos faltantes' });
     }
 
+    const nombreNormalizado = normalizarTextoSeguridad(nombre);
+    const apellidoNormalizado = normalizarTextoSeguridad(apellido);
+    const telefonoNormalizado = telefono ? telefono.trim() : '';
+
+    if (!nombreTextoRegex.test(nombreNormalizado)) {
+      return res.status(400).json({ success: false, message: 'El nombre solo puede contener letras' });
+    }
+
+    if (!nombreTextoRegex.test(apellidoNormalizado)) {
+      return res.status(400).json({ success: false, message: 'El apellido solo puede contener letras' });
+    }
+
+    if (telefonoNormalizado && !telefonoRegex.test(telefonoNormalizado)) {
+      return res.status(400).json({ success: false, message: 'El teléfono debe tener exactamente 10 dígitos' });
+    }
+
+    if (password && password.trim() && !passwordComplejaRegex.test(password.trim())) {
+      return res.status(400).json({ success: false, message: 'La contraseña debe incluir mayúscula, minúscula y número' });
+    }
+
     if (!dbConnected || !userQueries) {
       return res.status(500).json({ success: false, message: 'Base de datos no disponible' });
     }
@@ -481,9 +528,9 @@ app.put('/usuarios/:id', authenticateToken, authorizeRole('administrador'), asyn
     }
 
     const updateData = {
-      nombre,
-      apellido,
-      telefono: telefono || null,
+      nombre: nombreNormalizado,
+      apellido: apellidoNormalizado,
+      telefono: telefonoNormalizado || null,
       area_id: area_id ? parseInt(area_id) : null,
       rol_id: rol_id ? parseInt(rol_id) : null,
       email,

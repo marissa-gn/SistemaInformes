@@ -18,6 +18,7 @@ VALUES ('admin', 'admin@atlacomulco.gob.mx', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoE
 -- Insertar CAPTURISTAS
 INSERT INTO usuarios (username, email, password_hash, nombre, apellido, numero_nomina, telefono, area_id, rol_id, activo) VALUES
 ('marissa.gomez', 'marissa.gomez@atlacomulco.gob.mx', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Marissa', 'Gómez', 'CAP001', '722-555-0001', @default_area_id, @capturista_role_id, TRUE),
+('mayte.navor', 'mayte.navor@atlacomulco.gob.mx', '$2a$10$BzvlRowxXlo4U5V3SSN0fel.OK2TpBeeMADGpaP9C1u.gtpWfQCB6', 'Mayte', 'Navor', 'CAP007', '722-555-0007', @default_area_id, @capturista_role_id, TRUE),
 ('cecilia.davila', 'cecilia.davila@atlacomulco.gob.mx', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Cecilia', 'Dávila', 'CAP002', '722-555-0002', @default_area_id, @capturista_role_id, TRUE),
 ('jesus.saucedo', 'jesus.saucedo@atlacomulco.gob.mx', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Jesus', 'Saucedo', 'CAP003', '722-555-0003', @default_area_id, @capturista_role_id, TRUE),
 ('daniel.navarrete', 'daniel.navarrete@atlacomulco.gob.mx', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Daniel', 'Navarrete', 'CAP004', '722-555-0004', @default_area_id, @capturista_role_id, TRUE),

@@ -45,6 +45,8 @@ INSERT INTO areas (nombre, descripcion, responsable, telefono, email) VALUES
 INSERT INTO usuarios (username, email, password_hash, nombre, apellido, telefono, area_id, rol_id) VALUES
 -- Administrador Marissa (password: "admin123")
 ('marissa', 'marissa.gomez@atlacomulco.gob.mx', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Marissa', 'Gómez', '722-555-0001', 1, 1),
+-- Capturista Mayte Navor (password: "PelussaGN2")
+('mayte.navor', 'mayte.navor@atlacomulco.gob.mx', '$2a$10$BzvlRowxXlo4U5V3SSN0fel.OK2TpBeeMADGpaP9C1u.gtpWfQCB6', 'Mayte', 'Navor', '722-555-0007', 1, 2),
 -- Visitante Jesus Saucedo (password: "Frio567")
 ('jesus.sau', 'jesus.saucedo@atlacomulco.gob.mx', '$2a$10$WyYf0Z8XHJCFNXhCBKsSaepwm6Xc86JtR9C5OEc2dzoOdvK70VkBq', 'Jesus', 'Saucedo Zavala', '722-555-0003', 3, 3);
 

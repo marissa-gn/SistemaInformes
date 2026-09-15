@@ -8,6 +8,7 @@
     "dev": "nodemon server-final.js",
     "debug": "node --inspect-brk server-final.js",
     "setup-db": "node database/setup.js",
+    "seed:full": "node database/seed_full_reset.js",
     "test": "echo \"No tests specified\" && exit 0",
     "lint": "echo \"No linting configured\" && exit 0"
   },

@@ -82,7 +82,6 @@
                   </select>
                 </div>
             </div>
-
             <!-- Separador visual -->
             <hr class="my-4">
             <h6 class="text-muted mb-3"><i class="bi bi-shield-lock me-2"></i>Gestión de Contraseña</h6>
@@ -107,32 +106,48 @@
                 </div>
               </div>
             </div>
-
             <!-- Nueva contraseña -->
             <div class="row mb-3">
-              <div class="col-md-6">
+              <div class="col-12">
                 <label for="contrasena" class="form-label fw-bold">Nueva Contraseña:</label>
                 <div class="input-group">
-                  <input type="password" class="form-control" id="contrasena" placeholder="Ingresa tu nueva contraseña">
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="contrasena"
+                    placeholder="Ingresa tu nueva contraseña"
+                    minlength="6"
+                    maxlength="10">
                   <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('contrasena')">
                     <i class="bi bi-eye" id="iconoContrasena"></i>
                   </button>
                 </div>
                 <div class="form-text">
-                  <i class="bi bi-check-circle text-success me-1"></i>Mínimo 6 caracteres
-                  <span class="text-muted">• Déjalo vacío para mantener la actual</span>
+                  <i class="bi bi-check-circle text-success me-1"></i>
+                  Mínimo 6 caracteres, máximo 10.
+                  <span class="text-muted">• Déjalo vacío para mantener la actual.</span>
                 </div>
               </div>
-              <div class="col-md-6">
+            </div>
+            <!-- Confirmar nueva contraseña -->
+            <div class="row mb-3">
+              <div class="col-12">
                 <label for="confirmar-contrasena" class="form-label fw-bold">Confirmar Nueva Contraseña:</label>
                 <div class="input-group">
-                  <input type="password" class="form-control" id="confirmar-contrasena" placeholder="Repite tu nueva contraseña">
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="confirmar-contrasena"
+                    placeholder="Repite tu nueva contraseña"
+                    minlength="6"
+                    maxlength="10">
                   <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirmar-contrasena')">
                     <i class="bi bi-eye" id="iconoConfirmarContrasena"></i>
                   </button>
                 </div>
                 <div class="form-text">
-                  <i class="bi bi-shield-check text-primary me-1"></i>Debe coincidir con la nueva contraseña
+                  <i class="bi bi-shield-check text-primary me-1"></i>
+                  Debe coincidir con la nueva contraseña.
                 </div>
               </div>
             </div>
