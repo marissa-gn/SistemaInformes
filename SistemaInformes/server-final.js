@@ -147,7 +147,7 @@ async function initializeDatabase() {
 const authenticateToken = (req, res, next) => {
   if (!req.session.user) {
     // Si la petición espera JSON (AJAX/fetch), devolver error 401 JSON en lugar de redirigir
-    const acceptsJson = req.xhr || req.headers['accept']?.includes('application/json') || req.headers['x-requested-with'] === 'XMLHttpRequest';
+    const acceptsJson = req.path.startsWith('/api/') || req.xhr || req.headers['accept']?.includes('application/json') || req.headers['x-requested-with'] === 'XMLHttpRequest';
     if (acceptsJson) {
       return res.status(401).json({ success: false, message: 'No autenticado' });
     }
@@ -161,7 +161,7 @@ const authorizeRole = (...allowedRoles) => {
   return (req, res, next) => {
     if (!req.user || !allowedRoles.includes(req.user.rol)) {
       // Detectar si la petición espera JSON (AJAX/fetch)
-      const acceptsJson = req.xhr || req.headers['accept']?.includes('application/json') || req.headers['x-requested-with'] === 'XMLHttpRequest';
+      const acceptsJson = req.path.startsWith('/api/') || req.xhr || req.headers['accept']?.includes('application/json') || req.headers['x-requested-with'] === 'XMLHttpRequest';
       if (acceptsJson) {
         return res.status(403).json({ success: false, message: 'No tienes permisos para acceder a esta sección' });
       }
@@ -2322,19 +2322,20 @@ app.use((err, req, res, next) => {
 // =================== INICIAR SERVIDOR ===================
 
 async function startServer() {
+  const PORT = process.env.PORT || 3000;
+
   try {
     await initializeDatabase();
-    
-    const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
-      console.log(`🌐 Servidor ejecutándose en http://localhost:${PORT}`);
-      console.log('✅ Sistema de Informes listo para usar');
-    });
-    
   } catch (error) {
-    console.error('❌ Error al iniciar el servidor:', error);
-    process.exit(1);
+    console.error('❌ Base de datos no disponible. El servidor iniciará en modo degradado:', error.message);
   }
+
+  app.listen(PORT, () => {
+    console.log(`🌐 Servidor ejecutándose en http://localhost:${PORT}`);
+    console.log(dbConnected
+      ? '✅ Sistema de Informes listo para usar'
+      : '⚠️ Sistema iniciado sin conexión a la base de datos');
+  });
 }
 
 // Iniciar el servidor
