@@ -48,6 +48,9 @@ npm run setup-db
 
 Esto crea la base de datos `sistema_informes`, las tablas necesarias y datos de ejemplo.
 
-Credenciales de ejemplo generadas por el script:
-- Administrador: usuario `admin` / contraseña `admin123`
-- Capturista: usuario `marissa.gomez` / contraseña `admin123`
+Credenciales de ejemplo generadas por `npm run setup-db`:
+- Administrador: usuario `marissa` / contraseña `admin123`
+- Capturista: usuario `mayte.navor` / contraseña `PelussaGN2`
+- Visitante: usuario `jesus.sau` / contraseña `Frio567`
+
+`npm run seed:full` reemplaza los datos con un conjunto amplio de usuarios; sus cuentas utilizan la contraseña `PelussaGN2`.

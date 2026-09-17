@@ -127,8 +127,7 @@ async function guardarCambios(event) {
       apellido,
       email: correo,
       telefono,
-      area_id: parseInt(area_id),
-      rol_id: parseInt(rol_id)
+      area_id: parseInt(area_id)
     };
 
     // Solo incluir contraseña si se proporciona

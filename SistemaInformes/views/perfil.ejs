@@ -68,7 +68,7 @@
             <div class="row mb-3">
               <div class="col-md-6">
                   <label for="rol" class="form-label fw-bold">Rol:</label>
-                  <select class="form-select" id="rol" required>
+                  <select class="form-select" id="rol" required disabled>
                     <option value="">Seleccionar rol...</option>
                     <% if (typeof roles !== 'undefined' && roles && roles.length > 0) { %>
                       <% roles.forEach(r => { %>

@@ -148,7 +148,7 @@ async function setupDatabase() {
     console.log('\n🔑 CREDENCIALES DE ACCESO AL SISTEMA:');
     console.log('═══════════════════════════════════════════');
     console.log('👑 ADMINISTRADOR:');
-    console.log('   Usuario: admin');
+    console.log('   Usuario: marissa');
     console.log('   Contraseña: admin123');
     console.log('');
     console.log('✏️ CAPTURISTAS:');

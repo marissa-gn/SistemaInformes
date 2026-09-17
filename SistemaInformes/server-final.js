@@ -69,6 +69,12 @@ if (multer) {
   upload = multer({ storage: storage, fileFilter: fileFilter, limits: { fileSize: 5 * 1024 * 1024 } });
 }
 
+function getEvidencePaths(files) {
+  return (files || [])
+    .map(file => `/uploads/${file.filename}`)
+    .join(',');
+}
+
 // Configuración de layouts
 app.use(expressLayouts);
 app.set('layout', 'layout');
@@ -243,6 +249,7 @@ app.post('/login', async (req, res) => {
       nombre: user.nombre,
       apellido: user.apellido,
       email: user.email,
+      rol_id: user.rol_id,
       rol: user.rol_nombre
     };
 
@@ -522,9 +529,12 @@ app.put('/usuarios/:id', authenticateToken, authorizeRole('administrador'), asyn
       return res.status(500).json({ success: false, message: 'Base de datos no disponible' });
     }
 
-    // No permitir que el usuario cambie su propio rol a través de este endpoint si aplica
-    if (parseInt(userId) === req.user.id && parseInt(rol_id) !== req.user.rol_id) {
-      return res.status(400).json({ success: false, message: 'No puedes cambiar tu propio rol' });
+    // No permitir que el usuario cambie su propio rol a través de este endpoint
+    if (parseInt(userId) === req.user.id) {
+      const currentUser = await userQueries.getById(req.user.id);
+      if (currentUser && parseInt(rol_id) !== currentUser.rol_id) {
+        return res.status(400).json({ success: false, message: 'No puedes cambiar tu propio rol' });
+      }
     }
 
     const updateData = {
@@ -1006,7 +1016,7 @@ app.put('/api/perfil', authenticateToken, async (req, res) => {
       });
     }
 
-    const { nombre, apellido, email, telefono, area_id, rol_id, password } = req.body;
+    const { nombre, apellido, email, telefono, area_id, password } = req.body;
     const userId = req.user.id;
 
     // Validaciones básicas
@@ -1045,8 +1055,7 @@ app.put('/api/perfil', authenticateToken, async (req, res) => {
       apellido: apellido.trim(),
       email: email.trim(),
       telefono: telefono?.trim() || null,
-      area_id: area_id ? parseInt(area_id) : null,
-      rol_id: rol_id ? parseInt(rol_id) : null
+      area_id: area_id ? parseInt(area_id) : null
     };
 
     // Hashear nueva contraseña si se proporciona
@@ -1196,7 +1205,7 @@ app.get('/estadisticas-visitante', authenticateToken, authorizeRole('visitante')
 // =================== API ROUTES ===================
 
 // API para búsqueda de usuarios
-app.get('/api/usuarios/buscar', authenticateToken, async (req, res) => {
+app.get('/api/usuarios/buscar', authenticateToken, authorizeRole('administrador'), async (req, res) => {
   try {
     const { nombre, area, rol } = req.query;
     console.log('🔍 API: Buscando usuarios con:', { nombre, area, rol });
@@ -1248,7 +1257,7 @@ app.get('/api/usuarios/buscar', authenticateToken, async (req, res) => {
 });
 
 // API para búsqueda de áreas
-app.get('/api/areas/buscar', authenticateToken, async (req, res) => {
+app.get('/api/areas/buscar', authenticateToken, authorizeRole('administrador'), async (req, res) => {
   try {
     const { nombre, area_id } = req.query;
     console.log('🔍 API: Buscando áreas con:', { nombre, area_id });
@@ -1294,7 +1303,7 @@ app.get('/api/areas/buscar', authenticateToken, async (req, res) => {
 });
 
 // API para obtener datos para filtros
-app.get('/api/filtros', authenticateToken, async (req, res) => {
+app.get('/api/filtros', authenticateToken, authorizeRole('administrador'), async (req, res) => {
   try {
     const areas = await areaQueries.getAll();
     const roles = await executeQuery('SELECT id, nombre FROM roles ORDER BY nombre');
@@ -1432,6 +1441,9 @@ app.get('/api/informes/:id', authenticateToken, async (req, res) => {
     const informe = await executeQuery(query, [id]);
     
     if (informe && informe.length > 0) {
+      if (req.user.rol === 'capturista' && informe[0].usuario_id !== req.user.id) {
+        return res.status(403).json({ success: false, message: 'No tienes permiso para ver este informe' });
+      }
       console.log('✅ Informe encontrado:', id);
       res.json({
         success: true,
@@ -1495,8 +1507,8 @@ app.post('/informes/crear',
       responde_solicitud_ciudadania: (req.body.responde_solicitud_ciudadania === '1' || String(req.body.responde_solicitud_ciudadania).toLowerCase() === 'si' || String(req.body.responde_solicitud_ciudadania).toLowerCase() === 'true') ? 1 : (req.body.responde_solicitud_ciudadania === '0' || String(req.body.responde_solicitud_ciudadania).toLowerCase() === 'no' || String(req.body.responde_solicitud_ciudadania).toLowerCase() === 'false' ? 0 : null),
       pertenece_procedimientos_area: (req.body.pertenece_procedimientos_area === '1' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'si' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'true') ? 1 : (req.body.pertenece_procedimientos_area === '0' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'no' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'false' ? 0 : null),
       observaciones: req.body.observaciones || null,
-      evidencia_fotografica: null,
-      estado: req.body.estado || 'borrador'
+      estado: 'borrador',
+      evidencia_fotografica: getEvidencePaths(req.files)
     };
 
     console.log('✅ Payload preparado:', JSON.stringify(payload, null, 2));
@@ -1578,6 +1590,9 @@ app.put('/informes/:id',
         pertenece_procedimientos_area: (req.body.pertenece_procedimientos_area === '1' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'si' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'true') ? 1 : (req.body.pertenece_procedimientos_area === '0' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'no' || String(req.body.pertenece_procedimientos_area).toLowerCase() === 'false' ? 0 : null),
         observaciones: req.body.observaciones || null
       };
+
+      const evidencePaths = getEvidencePaths(req.files);
+      if (evidencePaths) payload.evidencia_fotografica = evidencePaths;
 
       // Construir query de actualización dinámicamente
       const fields = [];
@@ -1784,6 +1799,10 @@ app.get('/api/informes/:id/descargar', authenticateToken, async (req, res) => {
     }
     
     const informe = results[0];
+
+    if (req.user.rol === 'capturista' && informe.usuario_id !== req.user.id) {
+      return res.status(403).json({ success: false, message: 'No tienes permiso para descargar este informe' });
+    }
     
     // Crear documento PDF
     const doc = new PDFDocument({ 
@@ -1844,15 +1863,14 @@ app.get('/api/informes/:id/descargar', authenticateToken, async (req, res) => {
     // Agregar todos los campos de datos
     addField('Nombre del Director', informe.nombre_director);
     addField('Número de Beneficiarios', informe.numero_beneficiarios);
-    addField('Montos Generados', `$${parseFloat(informe.montos_generados || 0).toFixed(2)}`);
-    addField('Montos Invertidos', `$${parseFloat(informe.montos_invertidos || 0).toFixed(2)}`);
-    addField('Sector Externo', informe.sector_externo);
-    addField('Colonia', informe.colonia);
-    addField('Lugar de Reunión', informe.lugar_reunion);
+    addField('Monto Generado', `$${parseFloat(informe.monto_generado || 0).toFixed(2)}`);
+    addField('Monto Invertido', `$${parseFloat(informe.monto_invertido || 0).toFixed(2)}`);
+    addField('Sector que beneficia', informe.sector_beneficia);
+    addField('Colonia o Comunidad', informe.colonia_comunidad);
+    addField('Lugar de Actividad', informe.lugar_actividad);
     addField('Tipo de Actividad', informe.tipo_actividad);
-    addField('Solicitudes Recibidas', informe.numero_solicitudes);
-    addField('Solicitudes Resueltas', informe.numero_solicitudes_resueltas);
-    addField('Procedimientos Iniciados', informe.numero_procedimientos);
+    addField('Responde a solicitud ciudadana', informe.responde_solicitud_ciudadania ? 'Sí' : 'No');
+    addField('Pertenece a procedimientos del área', informe.pertenece_procedimientos_area ? 'Sí' : 'No');
     
     doc.moveDown(0.5);
     
@@ -1868,9 +1886,9 @@ app.get('/api/informes/:id/descargar', authenticateToken, async (req, res) => {
     }
     
     // Sección de Observaciones
-    if (informe.observaciones_generales) {
+    if (informe.observaciones) {
       doc.fontSize(11).font('Helvetica-Bold').text('Observaciones Generales');
-      doc.fontSize(10).font('Helvetica').text(informe.observaciones_generales, {
+      doc.fontSize(10).font('Helvetica').text(informe.observaciones, {
         align: 'justify',
         width: 445,
         height: 100

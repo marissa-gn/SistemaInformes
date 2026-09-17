@@ -5,7 +5,7 @@
 -- ========================================
 -- INSERTAR ROLES
 -- ========================================
-INSERT INTO roles (nombre, descripcion, permisos) VALUES
+INSERT IGNORE INTO roles (nombre, descripcion, permisos) VALUES
 ('administrador', 'Administrador del sistema con acceso completo', 
  '{"usuarios": {"ver": true, "crear": true, "editar": true, "eliminar": true}, 
    "areas": {"ver": true, "crear": true, "editar": true, "eliminar": true}, 
@@ -30,7 +30,7 @@ INSERT INTO roles (nombre, descripcion, permisos) VALUES
 -- ========================================
 -- INSERTAR ÁREAS
 -- ========================================
-INSERT INTO areas (nombre, descripcion, responsable, telefono, email) VALUES
+INSERT IGNORE INTO areas (nombre, descripcion, responsable, telefono, email) VALUES
 ('Finanzas y Contabilidad', 'Área encargada de la gestión financiera y contable del ayuntamiento', 'Carlos Mendoza', '722-123-4567', 'finanzas@atlacomulco.gob.mx'),
 ('Recursos Humanos', 'Gestión del personal y desarrollo humano', 'María González', '722-123-4568', 'rh@atlacomulco.gob.mx'),
 ('Tecnologías de la Información', 'Desarrollo y mantenimiento de sistemas informáticos', 'Jesus Saucedo', '722-123-4569', 'ti@atlacomulco.gob.mx'),
@@ -42,47 +42,41 @@ INSERT INTO areas (nombre, descripcion, responsable, telefono, email) VALUES
 -- INSERTAR USUARIOS DE EJEMPLO
 -- ========================================
 -- Nota: Las contraseñas están hasheadas con bcrypt
-INSERT INTO usuarios (username, email, password_hash, nombre, apellido, telefono, area_id, rol_id) VALUES
+INSERT INTO usuarios (username, email, password_hash, nombre, apellido, telefono, numero_nomina, area_id, rol_id) VALUES
 -- Administrador Marissa (password: "admin123")
-('marissa', 'marissa.gomez@atlacomulco.gob.mx', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Marissa', 'Gómez', '722-555-0001', 1, 1),
+('marissa', 'marissa.gomez@atlacomulco.gob.mx', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Marissa', 'Gómez', '722-555-0001', 'ADM001', 1, 1),
 -- Capturista Mayte Navor (password: "PelussaGN2")
-('mayte.navor', 'mayte.navor@atlacomulco.gob.mx', '$2a$10$BzvlRowxXlo4U5V3SSN0fel.OK2TpBeeMADGpaP9C1u.gtpWfQCB6', 'Mayte', 'Navor', '722-555-0007', 1, 2),
+('mayte.navor', 'mayte.navor@atlacomulco.gob.mx', '$2a$10$BzvlRowxXlo4U5V3SSN0fel.OK2TpBeeMADGpaP9C1u.gtpWfQCB6', 'Mayte', 'Navor', '722-555-0007', 'CAP001', 1, 2),
 -- Visitante Jesus Saucedo (password: "Frio567")
-('jesus.sau', 'jesus.saucedo@atlacomulco.gob.mx', '$2a$10$WyYf0Z8XHJCFNXhCBKsSaepwm6Xc86JtR9C5OEc2dzoOdvK70VkBq', 'Jesus', 'Saucedo Zavala', '722-555-0003', 3, 3);
+('jesus.sau', 'jesus.saucedo@atlacomulco.gob.mx', '$2a$10$WyYf0Z8XHJCFNXhCBKsSaepwm6Xc86JtR9C5OEc2dzoOdvK70VkBq', 'Jesus', 'Saucedo Zavala', '722-555-0003', 'VIS001', 3, 3);
 
 -- ========================================
 -- INSERTAR INFORMES DE EJEMPLO
 -- ========================================
 INSERT INTO informes (
-    usuario_id, area_id, titulo, sector_beneficia, lugar_actividad, tipo_actividad, 
+  usuario_id, area_id, sector_beneficia, lugar_actividad, tipo_actividad,
     numero_beneficiarios, monto_generado, monto_invertido, responde_solicitud_ciudadania, 
-    pertenece_procedimientos_area, descripcion_actividad, objetivos, resultados, 
+  pertenece_procedimientos_area, descripcion_actividad,
     observaciones, fecha_actividad, estado, aprobado_por, fecha_aprobacion
 ) VALUES
 -- Informe 1 - Finanzas
-(2, 1, 'Capacitación en Gestión Financiera Municipal', 'Empleados del Ayuntamiento', 'Palacio Municipal', 'Capacitación', 
+(2, 1, 'Empleados del Ayuntamiento', 'Palacio Municipal', 'Capacitación',
  25, 0.00, 15000.00, false, true, 
  'Capacitación integral para el personal del área financiera en nuevas normativas contables y presupuestarias.',
- 'Mejorar las competencias del personal en gestión financiera municipal y implementar mejores prácticas.',
- 'Personal capacitado con conocimientos actualizados. Mejora en los procesos de registro contable.',
  'Excelente participación del personal. Se recomienda dar seguimiento con capacitaciones periódicas.',
  '2024-09-15', 'aprobado', 1, '2024-09-16 10:30:00'),
 
 -- Informe 2 - Recursos Humanos  
-(3, 2, 'Programa de Bienestar Laboral', 'Empleados municipales y sus familias', 'Centro Recreativo Municipal', 'Evento recreativo',
+(2, 2, 'Empleados municipales y sus familias', 'Centro Recreativo Municipal', 'Evento recreativo',
  150, 0.00, 25000.00, false, true,
  'Evento recreativo familiar para promover el bienestar laboral y fortalecer el ambiente de trabajo.',
- 'Mejorar el clima organizacional y promover la integración entre empleados y sus familias.',
- 'Alta participación del personal. Mejora notable en el ambiente laboral según encuestas posteriores.',
  'Evento muy exitoso. Se sugiere realizar eventos similares trimestralmente.',
  '2024-09-20', 'aprobado', 1, '2024-09-21 09:15:00'),
 
 -- Informe 3 - Tecnologías (en revisión)
-(4, 3, 'Actualización de Infraestructura de Red', 'Empleados del Ayuntamiento', 'Instalaciones municipales', 'Mantenimiento tecnológico',
+(2, 3, 'Empleados del Ayuntamiento', 'Instalaciones municipales', 'Mantenimiento tecnológico',
  200, 0.00, 80000.00, true, true,
  'Actualización completa de la infraestructura de red para mejorar la conectividad y seguridad.',
- 'Modernizar la infraestructura tecnológica y mejorar la eficiencia operativa.',
- 'Red actualizada con mayor velocidad y seguridad. Reducción del 70% en incidencias de conectividad.',
  'Proyecto ejecutado exitosamente. Se recomienda mantenimiento preventivo semestral.',
  '2024-09-25', 'en_revision', NULL, NULL);
 
@@ -117,7 +111,7 @@ JOIN roles r ON u.rol_id = r.id;
 
 -- Verificar informes creados
 SELECT 'INFORMES CREADOS:' as info;
-SELECT i.id, i.titulo, u.nombre as creador, a.nombre as area, i.estado 
+SELECT i.id, i.nombre_director, u.nombre as creador, a.nombre as area, i.estado
 FROM informes i 
 JOIN usuarios u ON i.usuario_id = u.id 
 JOIN areas a ON i.area_id = a.id;

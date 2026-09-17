@@ -291,8 +291,8 @@ const informeQueries = {
         colonia_comunidad, tipo_actividad, cantidad, descripcion_actividad, 
         sector_beneficia, numero_beneficiarios, monto_generado, 
         pertenece_procedimientos_area, responde_solicitud_ciudadania, 
-        evidencia_fotografica, observaciones, estado, objetivos, resultados
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        evidencia_fotografica, observaciones, estado
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const params = [
       informeData.usuario_id, 
@@ -311,9 +311,7 @@ const informeQueries = {
       informeData.responde_solicitud_ciudadania !== undefined ? informeData.responde_solicitud_ciudadania : null,
       informeData.evidencia_fotografica || null,
       informeData.observaciones || null,
-      informeData.estado || 'borrador',
-      informeData.objetivos || null,
-      informeData.resultados || null
+      informeData.estado || 'borrador'
     ];
     return await insertAndGetId(query, params);
   },

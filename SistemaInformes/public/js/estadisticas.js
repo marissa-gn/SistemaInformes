@@ -812,13 +812,7 @@ function createUsuariosChart(data) {
 
 // =================== EVENT LISTENERS ===================
 
-// Inicializar gráficas cuando el DOM está completamente cargado
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('📄 DOM Cargado - Iniciando gráficas...');
-  initializeCharts();
-});
-
-// Alternative: si Chart.js no está cargado aún, esperar
+// Inicializar gráficas una sola vez cuando Chart.js y el DOM estén disponibles
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initializeCharts);
 } else {
