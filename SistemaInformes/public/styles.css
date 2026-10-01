@@ -39,16 +39,16 @@ html, body {
     background: rgba(255,255,255,0.92);
     border-radius: 22px;
     box-shadow: 0 8px 32px 0 rgba(31,38,135,0.18);
-    padding: 2.5rem 2.5rem 2rem 2.5rem;
-    max-width: 350px;
+    padding: 2rem 2rem 1.5rem 2rem;
+    max-width: 320px;
     width: 100%;
     margin: auto;
     position: relative;
 }
 
 .login-avatar {
-    width: 80px;
-    height: 80px;
+    width: 64px;
+    height: 64px;
     background: var(--color-principal);
     border-radius: 50%;
     display: flex;
@@ -56,14 +56,14 @@ html, body {
     justify-content: center;
     position: absolute;
     left: 50%;
-    top: -40px;
+    top: -32px;
     transform: translateX(-50%);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.678);
 }
 
 .login-avatar i {
     color: #fff;
-    font-size: 2.5rem;
+    font-size: 2rem;
 }
 
 .input-group-inside .input-icon-inside,
@@ -101,11 +101,11 @@ html, body {
 
 .login-title {
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 600;
     color: var(--color-principal);
-    margin-top: 2.5rem;
-    margin-bottom: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1.2rem;
 }
 
 .input-group-inside {
@@ -126,11 +126,11 @@ html, body {
 .input-group-inside input {
     padding-left: 2.2rem;
     padding-right: 44px;
-    height: 44px;
+    height: 40px;
     border-radius: 8px;
     border: 1px solid #d1d5db;
     background: #f7f7fa;
-    font-size: 1rem;
+    font-size: 0.95rem;
 }
 
 .login-options {
@@ -148,8 +148,8 @@ html, body {
     font-weight: 600;
     border: none;
     border-radius: 8px;
-    height: 44px;
-    font-size: 1.1rem;
+    height: 40px;
+    font-size: 1rem;
     box-shadow: 0 2px 8px rgba(31,38,135,0.10);
     margin-top: 0.5rem;
     transition: background 0.2s;
@@ -792,6 +792,8 @@ body.inicio-bg .main-content {
 }
 .btn-logout {
     white-space: nowrap;
+    padding: 0.45rem 0.9rem !important;
+    font-size: 0.95rem !important;
     position: relative;
     z-index: 1000;
     outline: none !important;
@@ -830,6 +832,12 @@ body.inicio-bg .main-content {
 .navbar-collapse .btn-logout {
     margin-left: auto;
     flex-shrink: 0;
+}
+
+.btn-cerrar-modal {
+    min-width: 82px;
+    padding: 0.45rem 1rem !important;
+    font-size: 0.95rem !important;
 }
 
 .navbar-main {
@@ -1618,6 +1626,25 @@ input[type="file"]:focus {
     font-size: 0.875rem;
     color: #6c757d;
     margin-top: 0.25rem;
+}
+
+/* Tamaño compacto y consistente para botones */
+.btn {
+    --bs-btn-padding-y: 0.35rem;
+    --bs-btn-padding-x: 0.75rem;
+    --bs-btn-font-size: 0.9rem;
+}
+
+.btn-lg {
+    --bs-btn-padding-y: 0.45rem;
+    --bs-btn-padding-x: 0.9rem;
+    --bs-btn-font-size: 1rem;
+}
+
+.form-scroll-container .btn {
+    min-width: 120px !important;
+    padding: 0.45rem 0.8rem !important;
+    font-size: 0.9rem;
 }
 
 

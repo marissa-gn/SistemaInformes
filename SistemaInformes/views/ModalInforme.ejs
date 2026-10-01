@@ -125,16 +125,20 @@
       </div>
       <div class="modal-footer">
         <!-- Botones para evaluar informe (solo visible si estado es 'enviado') -->
-        <div id="botonesEvaluacion" style="display: none; width: 100%; margin-right: auto;">
-          <textarea id="comentariosEvaluacion" class="form-control form-control-sm mb-2" placeholder="Comentarios de la evaluación..." rows="2" style="max-width: 400px;"></textarea>
-          <button type="button" class="btn btn-success btn-sm" id="btnAceptar" onclick="evaluarInforme('aceptar')">
-            <i class="bi bi-check-circle"></i> Aceptar
-          </button>
-          <button type="button" class="btn btn-danger btn-sm" id="btnRechazar" onclick="evaluarInforme('rechazar')">
-            <i class="bi bi-x-circle"></i> Rechazar
-          </button>
+        <% if (user && user.rol === 'administrador') { %>
+        <div id="botonesEvaluacion" style="display: none; width: 100%; margin-right: auto; flex-direction: row; align-items: stretch; gap: 10px;">
+          <textarea id="comentariosEvaluacion" class="form-control form-control-sm" placeholder="Comentarios de la evaluación..." rows="2" style="flex: 1; min-width: 0; height: 76px; resize: vertical;"></textarea>
+          <div style="display: flex; flex-direction: column; gap: 8px; width: 180px;">
+            <button type="button" class="btn btn-success btn-sm" id="btnAceptar" style="width: 100%; flex: 1;" onclick="evaluarInforme('aceptar')">
+              <i class="bi bi-check-circle"></i> Aceptar informe
+            </button>
+            <button type="button" class="btn btn-danger btn-sm" id="btnRechazar" style="width: 100%; flex: 1;" onclick="evaluarInforme('rechazar')">
+              <i class="bi bi-x-circle"></i> Rechazar informe
+            </button>
+          </div>
         </div>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <% } %>
+        <button type="button" class="btn btn-secondary btn-cerrar-modal" data-bs-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>

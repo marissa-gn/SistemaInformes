@@ -1,18 +1,20 @@
+<% const informeActual = typeof informe !== 'undefined' ? informe : null; %>
 <!-- Encabezado del generar informe -->
 <div class="text-center mb-4 mt-4" style="padding: 0 20px;">
   <h2 style="color: #a12424; font-weight: bold; margin: 1.5rem 0;">
-    <i class="bi bi-file-earmark-plus me-2"></i>Creando nuevo informe
+    <i class="bi bi-file-earmark-plus me-2"></i><%= informeActual ? 'Editando informe' : 'Creando nuevo informe' %>
   </h2>
 </div>
 
 <div class="form-scroll-container w-100" style="padding: 0 30px; margin-bottom: 120px; min-height: calc(100vh - 200px);">
   <form style="color: #111;" id="formularioInforme" enctype="multipart/form-data" method="post" action="/informes/crear">
+    <input type="hidden" id="informeIdEdicion" value="<%= informeActual ? informeActual.id : '' %>">
     
     <!-- Fecha -->
     <div class="row mb-4">
       <div class="col-md-6">
         <label for="fechaActividad" class="form-label"><b>Fecha:</b></label>
-        <input type="date" class="form-control" id="fechaActividad" name="fecha_actividad" required>
+        <input type="date" class="form-control" id="fechaActividad" name="fecha_actividad" value="<%= informeActual && informeActual.fecha_actividad ? new Date(informeActual.fecha_actividad).toISOString().split('T')[0] : '' %>" required>
       </div>
     </div>
 
@@ -24,7 +26,7 @@
           <option value="">Selecciona...</option>
           <% if (areas && areas.length > 0) { %>
               <% areas.forEach(area => { %>
-                  <option value="<%= area.id %>"><%= area.nombre %></option>
+                  <option value="<%= area.id %>" <%= informeActual && informeActual.area_id === area.id ? 'selected' : '' %>><%= area.nombre %></option>
               <% }) %>
           <% } %>
         </select>
@@ -35,7 +37,7 @@
     <div class="row mb-4">
       <div class="col-12">
         <label for="nombreDirector" class="form-label"><b>Nombre de Director / Coordinador / Jefe de Área:</b></label>
-        <input type="text" class="form-control" id="nombreDirector" name="nombre_director" placeholder="Nombre del responsable" required>
+        <input type="text" class="form-control" id="nombreDirector" name="nombre_director" value="<%= informeActual ? informeActual.nombre_director || '' : '' %>" placeholder="Nombre del responsable" required>
       </div>
     </div>
 
@@ -43,11 +45,11 @@
     <div class="row mb-4">
       <div class="col-md-6">
         <label for="lugar" class="form-label"><b>Lugar de Actividad: <span style="color: red;">*</span></b></label>
-        <input type="text" class="form-control" id="lugar" name="lugar_actividad" placeholder="Ubicación donde se realizó la actividad" required>
+        <input type="text" class="form-control" id="lugar" name="lugar_actividad" value="<%= informeActual ? informeActual.lugar_actividad || '' : '' %>" placeholder="Ubicación donde se realizó la actividad" required>
       </div>
       <div class="col-md-6">
         <label for="colonia" class="form-label"><b>Colonia o Comunidad:</b></label>
-        <input type="text" class="form-control" id="colonia" name="colonia_comunidad" placeholder="Colonia o comunidad">
+        <input type="text" class="form-control" id="colonia" name="colonia_comunidad" value="<%= informeActual ? informeActual.colonia_comunidad || '' : '' %>" placeholder="Colonia o comunidad">
       </div>
     </div>
 
@@ -55,11 +57,11 @@
     <div class="row mb-4">
       <div class="col-md-6">
         <label for="tipoActividad" class="form-label"><b>Tipo de Actividad / Unidad de Medida: <span style="color: red;">*</span></b></label>
-        <input type="text" class="form-control" id="tipoActividad" name="tipo_actividad" placeholder="Ej: Capacitación, Reunión, Evento" required>
+        <input type="text" class="form-control" id="tipoActividad" name="tipo_actividad" value="<%= informeActual ? informeActual.tipo_actividad || '' : '' %>" placeholder="Ej: Capacitación, Reunión, Evento" required>
       </div>
       <div class="col-md-6">
         <label for="cantidad" class="form-label"><b>Cantidad:</b></label>
-        <input type="number" class="form-control" id="cantidad" name="cantidad" min="0" placeholder="0">
+        <input type="number" class="form-control" id="cantidad" name="cantidad" value="<%= informeActual && informeActual.cantidad != null ? informeActual.cantidad : '' %>" min="0" placeholder="0">
       </div>
     </div>
 
@@ -68,7 +70,7 @@
       <div class="col-12">
         <label for="descripcion" class="form-label"><b>Descripción de la Actividad: <span style="color: red;">*</span></b></label>
         <textarea class="form-control" id="descripcion" name="descripcion_actividad" rows="4" 
-                  placeholder="Describe detalladamente la actividad realizada..." required style="resize: vertical;"></textarea>
+                  placeholder="Describe detalladamente la actividad realizada..." required style="resize: vertical;"><%= informeActual ? informeActual.descripcion_actividad || '' : '' %></textarea>
       </div>
     </div>
 
@@ -76,7 +78,7 @@
     <div class="row mb-4">
       <div class="col-12">
         <label for="sector" class="form-label"><b>Sector al que Beneficia:</b></label>
-        <input type="text" class="form-control" id="sector" name="sector_beneficia" placeholder="Ej: Educación, Salud, Infraestructura">
+        <input type="text" class="form-control" id="sector" name="sector_beneficia" value="<%= informeActual ? informeActual.sector_beneficia || '' : '' %>" placeholder="Ej: Educación, Salud, Infraestructura">
       </div>
     </div>
 
@@ -84,13 +86,13 @@
     <div class="row mb-4">
       <div class="col-md-6">
         <label for="beneficiarios" class="form-label"><b>Número de Beneficiarios:</b></label>
-        <input type="number" class="form-control" id="beneficiarios" name="numero_beneficiarios" min="0" placeholder="0">
+        <input type="number" class="form-control" id="beneficiarios" name="numero_beneficiarios" value="<%= informeActual && informeActual.numero_beneficiarios != null ? informeActual.numero_beneficiarios : '' %>" min="0" placeholder="0">
       </div>
       <div class="col-md-6">
         <label for="monto" class="form-label"><b>Si la Actividad Genera un Ingreso Colocar Monto:</b></label>
         <div class="input-group">
           <span class="input-group-text">$</span>
-          <input type="number" class="form-control" id="monto" name="monto_generado" min="0" step="0.01" placeholder="0.00">
+          <input type="number" class="form-control" id="monto" name="monto_generado" value="<%= informeActual && informeActual.monto_generado != null ? informeActual.monto_generado : '' %>" min="0" step="0.01" placeholder="0.00">
         </div>
       </div>
     </div>
@@ -101,16 +103,16 @@
         <label for="procedimientosArea" class="form-label"><b>¿Pertenece la Actividad a los Procedimientos de su Área?</b></label>
         <select class="form-select" id="procedimientosArea" name="pertenece_procedimientos_area">
           <option value="">Selecciona...</option>
-          <option value="1">Sí</option>
-          <option value="0">No</option>
+          <option value="1" <%= informeActual && informeActual.pertenece_procedimientos_area === 1 ? 'selected' : '' %>>Sí</option>
+          <option value="0" <%= informeActual && informeActual.pertenece_procedimientos_area === 0 ? 'selected' : '' %>>No</option>
         </select>
       </div>
       <div class="col-md-6">
         <label for="solicitudCiudadania" class="form-label"><b>¿La Actividad Responde a una Solicitud de la Ciudadanía?</b></label>
         <select class="form-select" id="solicitudCiudadania" name="responde_solicitud_ciudadania">
           <option value="">Selecciona...</option>
-          <option value="1">Sí</option>
-          <option value="0">No</option>
+          <option value="1" <%= informeActual && informeActual.responde_solicitud_ciudadania === 1 ? 'selected' : '' %>>Sí</option>
+          <option value="0" <%= informeActual && informeActual.responde_solicitud_ciudadania === 0 ? 'selected' : '' %>>No</option>
         </select>
       </div>
     </div>
@@ -129,7 +131,7 @@
       <div class="col-12">
         <label for="observaciones" class="form-label"><b>Observaciones:</b></label>
         <textarea class="form-control" id="observaciones" name="observaciones" rows="3" 
-                  placeholder="Observaciones adicionales..." style="resize: vertical;"></textarea>
+                  placeholder="Observaciones adicionales..." style="resize: vertical;"><%= informeActual ? informeActual.observaciones || '' : '' %></textarea>
       </div>
     </div>
 
@@ -159,8 +161,15 @@
   document.addEventListener('DOMContentLoaded', function() {
     const fechaInput = document.getElementById('fechaActividad');
     const today = new Date().toISOString().split('T')[0];
-    fechaInput.value = today;
+    if (!fechaInput.value) fechaInput.value = today;
   });
+
+  function obtenerConfiguracionInforme() {
+    const informeId = document.getElementById('informeIdEdicion')?.value;
+    return informeId
+      ? { url: `/informes/${informeId}`, method: 'PUT' }
+      : { url: '/informes/crear', method: 'POST' };
+  }
 
   // Función para guardar informe como borrador
   function guardarInforme() {
@@ -187,44 +196,45 @@
     try {
       // Recopilar datos del formulario
       const formData = new FormData(document.getElementById('formularioInforme'));
-      formData.append('estado', 'borrador');
+      const configuracion = obtenerConfiguracionInforme();
+      if (configuracion.method === 'POST') formData.append('estado', 'borrador');
 
       console.log('✅ FormData preparado, enviando al servidor...');
 
       // Enviar al servidor usando fetch (multipart/form-data)
-      fetch('/informes/crear', {
-        method: 'POST',
+      fetch(configuracion.url, {
+        method: configuracion.method,
         body: formData,
         credentials: 'same-origin'
       })
       .then(res => {
-        console.log('📨 Respuesta recibida - Status:', res.status);
+        console.log('Respuesta recibida - Status:', res.status);
         return res.text().then(text => ({ status: res.status, text: text }));
       })
       .then(({ status, text }) => {
-        console.log('📄 Texto de respuesta:', text.substring(0, 200));
+        console.log('Texto de respuesta:', text.substring(0, 200));
         try {
           const json = JSON.parse(text);
           if (json.success) {
-            alert('✅ Informe guardado como borrador exitosamente');
-            console.log('✅ Respuesta exitosa:', json);
+            alert(configuracion.method === 'PUT' ? 'Informe actualizado exitosamente' : 'Informe guardado como borrador exitosamente');
+            console.log('Respuesta exitosa:', json);
             setTimeout(() => window.location.href = '/historial', 1000);
           } else {
-            alert('❌ No se pudo guardar el informe: ' + (json.message || 'Error desconocido'));
-            console.error('❌ Error en respuesta:', json);
+            alert('No se pudo guardar el informe: ' + (json.message || 'Error desconocido'));
+            console.error('Error en respuesta:', json);
           }
         } catch (parseErr) {
-          console.error('❌ No se pudo parsear JSON:', parseErr);
-          alert('❌ Error del servidor: ' + text.substring(0, 100));
+          console.error('No se pudo parsear JSON:', parseErr);
+          alert('Error del servidor: ' + text.substring(0, 100));
         }
       })
       .catch(err => {
-        console.error('❌ Error de red:', err);
-        alert('❌ No se pudo conectar con el servidor: ' + err.message);
+        console.error('Error de red:', err);
+        alert('No se pudo conectar con el servidor: ' + err.message);
       });
     } catch (err) {
-      console.error('❌ Error en guardarInforme:', err);
-      alert('❌ Error: ' + err.message);
+      console.error('Error en guardarInforme:', err);
+      alert('Error: ' + err.message);
     }
   }
 
@@ -254,12 +264,13 @@
       if (!confirmed) return;
 
       try {
-        // Primero, guardar el informe como borrador (si no tiene ID)
+        // Guardar los cambios o crear el informe antes de enviarlo.
         const formData = new FormData(document.getElementById('formularioInforme'));
-        formData.append('estado', 'borrador');
+        const configuracion = obtenerConfiguracionInforme();
+        if (configuracion.method === 'POST') formData.append('estado', 'borrador');
 
-        const saveRes = await fetch('/informes/crear', {
-          method: 'POST',
+        const saveRes = await fetch(configuracion.url, {
+          method: configuracion.method,
           body: formData,
           credentials: 'same-origin'
         });
@@ -272,7 +283,9 @@
         }
 
         // Ahora enviar el informe (cambiar estado a "enviado")
-        const informeId = saveJson.informeId;
+        const informeId = configuracion.method === 'PUT'
+          ? document.getElementById('informeIdEdicion').value
+          : saveJson.informeId;
         const enviarRes = await fetch(`/api/informes/${informeId}/enviar`, {
           method: 'PUT',
           headers: {
@@ -284,16 +297,16 @@
         const enviarJson = await enviarRes.json();
         
         if (enviarJson.success) {
-          alert('Informe enviado exitosamente para revisión');
+          window.mostrarToast('Informe enviado', 'success');
           console.log('Informe enviado:', enviarJson);
           setTimeout(() => { window.location.href = '/historial'; }, 1500);
         } else {
-          alert('No se pudo enviar el informe: ' + (enviarJson.message || 'Error del servidor'));
+          window.mostrarToast(enviarJson.message || 'No se pudo enviar el informe', 'danger');
           console.error('Error enviando:', enviarJson);
         }
       } catch (err) {
         console.error('Error:', err);
-        alert('Error: ' + err.message);
+        window.mostrarToast('Error al enviar el informe', 'danger');
       }
     });
   }
@@ -313,9 +326,4 @@
     });
   }
 
-  // Función auxiliar para mostrar mensajes (si existe el sistema de toasts)
-  function mostrarToast(mensaje, tipo = 'info') {
-    console.log(`${tipo.toUpperCase()}: ${mensaje}`);
-    // Aquí se integraría con el sistema de toasts si existe
-  }
 </script>

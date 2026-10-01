@@ -460,6 +460,32 @@ async function buscarAreas() {
     }
 }
 
+window.limpiarFiltrosAdmin = function(tipo) {
+    if (tipo === 'areas') {
+        const nombre = document.getElementById('nombre-area-filter');
+        const area = document.getElementById('area-select-filter');
+        if (nombre) nombre.value = '';
+        if (area) area.selectedIndex = 0;
+        if (typeof buscarAreas === 'function') buscarAreas();
+    } else if (tipo === 'informes') {
+        const area = document.getElementById('area-filter-informes');
+        const desde = document.getElementById('fecha-desde-informes');
+        const hasta = document.getElementById('fecha-hasta-informes');
+        if (area) area.selectedIndex = 0;
+        if (desde) desde.value = '';
+        if (hasta) hasta.value = '';
+        if (typeof buscarInformes === 'function') buscarInformes();
+    } else if (tipo === 'usuarios') {
+        const area = document.getElementById('area-filter');
+        const rol = document.getElementById('rol-filter');
+        const nombre = document.getElementById('nombre-filter');
+        if (area) area.selectedIndex = 0;
+        if (rol) rol.selectedIndex = 0;
+        if (nombre) nombre.value = '';
+        if (typeof buscarUsuarios === 'function') buscarUsuarios();
+    }
+};
+
 // ============================================
 // GESTIÓN DE INFORMES
 // ============================================
@@ -560,6 +586,7 @@ function actualizarTablaHistorial(informes) {
                                     data-bs-target="#modalHistorialInforme"
                                     data-informe-id="${informe.id}"
                                     onclick="cargarInformeEnModal(this)">Ver</button>
+                                ${(informe.estado === 'borrador' || informe.estado === 'rechazado') ? `<a class="btn btn-outline-primary btn-sm" href="/generar-informe?id=${informe.id}">Editar</a><button class="btn btn-primary btn-sm" type="button" onclick="enviarInformeExistente('${informe.id}')"><i class="bi bi-send me-1"></i>Enviar</button>` : ''}
                             <button class="btn btn-outline-danger btn-sm btn-eliminar-informe" 
                                     data-informe-id="${informe.id}"
                                     onclick="eliminarInforme('${informe.id}', '${informe.titulo || 'Informe'}')">Eliminar</button>
@@ -697,9 +724,9 @@ async function cargarInformeEnModal(btn) {
             // Guardar ID del informe en la ventana para usarlo en evaluarInforme
             window.informeActualId = informeId;
             
-            // Mostrar botones de evaluación solo si está en estado 'enviado' Y el usuario es administrador
+            // Mostrar botones de evaluación para informes enviados/en revisión del administrador
             const botonesEvaluacion = document.getElementById('botonesEvaluacion');
-            if (botonesEvaluacion && informe.estado === 'enviado' && window.currentUserRole === 'administrador') {
+            if (botonesEvaluacion && ['enviado', 'en_revision'].includes(informe.estado) && window.currentUserRole === 'administrador') {
                 console.log('👤 Usuario rol:', window.currentUserRole, '- Mostrando botones de evaluación');
                 botonesEvaluacion.style.display = 'flex';
                 botonesEvaluacion.style.justifyContent = 'flex-start';
@@ -726,6 +753,11 @@ async function cargarInformeEnModal(btn) {
 
 // Función para evaluar informe (aceptar o rechazar)
 async function evaluarInforme(accion) {
+    if (window.currentUserRole !== 'administrador') {
+        mostrarToast('Solo un administrador puede evaluar informes', 'danger');
+        return;
+    }
+
     if (!window.informeActualId) {
         mostrarToast('Error: No se encontró el ID del informe', 'danger');
         return;
@@ -765,7 +797,7 @@ async function evaluarInforme(accion) {
     }
 }
 
-async function eliminarInforme(informeId, tituloInforme) {
+window.eliminarInforme = async function eliminarInforme(informeId, tituloInforme = 'Informe') {
     const confirmInforme = await confirmModal(`¿Estás seguro de eliminar el informe "${tituloInforme}"?`);
     if (!confirmInforme) return;
     
@@ -778,7 +810,20 @@ async function eliminarInforme(informeId, tituloInforme) {
             informeRow.remove();
         }
     } else {
-        mostrarToast(response.data.message || 'Error al eliminar informe', 'danger');
+        mostrarToast(response.message || response.data?.message || 'Error al eliminar informe', 'danger');
+    }
+};
+
+async function enviarInformeExistente(informeId) {
+    const confirmado = await confirmModal('¿Estás seguro de enviar este informe para revisión?');
+    if (!confirmado) return;
+
+    const response = await makeRequest(`/api/informes/${informeId}/enviar`, 'PUT');
+    if (response.success) {
+        mostrarToast('Informe enviado para revisión', 'success');
+        setTimeout(() => window.location.reload(), 800);
+    } else {
+        mostrarToast(response.message || response.data?.message || 'No se pudo enviar el informe', 'danger');
     }
 }
 
@@ -1320,6 +1365,20 @@ function confirmModal(message) {
 // Ejecutar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
     if (window && window.__DEBUG__) console.debug('🚀 Sistema de Informes - JavaScript cargado correctamente');
+
+    function limpiarEstadoDeModales() {
+        if (document.querySelector('.modal.show, .offcanvas.show')) return;
+
+        document.querySelectorAll('.modal-backdrop, .offcanvas-backdrop').forEach(backdrop => backdrop.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.removeProperty('padding-right');
+        document.body.style.removeProperty('overflow');
+    }
+
+    document.querySelectorAll('.modal, .offcanvas').forEach(elemento => {
+        elemento.addEventListener('hidden.bs.modal', limpiarEstadoDeModales);
+        elemento.addEventListener('hidden.bs.offcanvas', limpiarEstadoDeModales);
+    });
 
     // Cargar datos de filtros (áreas y roles) desde la API y poblar los selects/dropdowns
     (async function populateFilters() {
@@ -2025,19 +2084,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Fallback helper expuesto en window para diagnóstico rápido desde el HTML
-    window.__fallbackGuardarArea = function(btn) {
-        try {
-            if (window && window.__DEBUG__) console.debug('DEBUG: __fallbackGuardarArea called', { btn });
-            const form = document.getElementById('form-area');
-            if (!form) return console.error('form-area not found in fallback');
-            // trigger submit programmatically
-            form.dispatchEvent(new Event('submit', { cancelable: true }));
-        } catch (err) {
-            console.warn('DEBUG: fallback error', err);
-        }
-    };
-    
     const formCrearInforme = document.getElementById('form-crear-informe') || document.getElementById('formularioInforme');
     if (formCrearInforme) {
         formCrearInforme.addEventListener('submit', function(e) {
@@ -2226,28 +2272,47 @@ window.mostrarInformeEliminado = function(){ window.mostrarElementoEliminado('In
  * Descargar un informe como PDF
  * @param {string} informeId - ID del informe a descargar
  */
-window.descargarInforme = function(informeId) {
+window.descargarInforme = async function(informeId) {
   if (!informeId) {
     mostrarToast('ID de informe no válido', 'error');
     return;
   }
 
-  // Mostrar toast de carga
   mostrarToast('Generando PDF...', 'info');
-  
-  // Crear un formulario temporal para descargar el PDF
-  const form = document.createElement('form');
-  form.method = 'GET';
-  form.action = `/api/informes/${informeId}/descargar`;
-  
-  document.body.appendChild(form);
-  form.submit();
-  document.body.removeChild(form);
-  
-  // Mostrar toast de éxito después de un segundo
-  setTimeout(() => {
-    mostrarToast('Descarga iniciada', 'success');
-  }, 1000);
+
+    try {
+        const response = await fetch(`/api/informes/${informeId}/descargar`, {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: { Accept: 'application/pdf, application/json' }
+        });
+
+        if (!response.ok) {
+            let message = 'No se pudo descargar el informe';
+            try {
+                const error = await response.json();
+                message = error.message || message;
+            } catch (error) {
+                // La respuesta puede no ser JSON cuando falla el servidor.
+            }
+            mostrarToast(message, 'danger');
+            return;
+        }
+
+        const pdfBlob = await response.blob();
+        const downloadUrl = URL.createObjectURL(pdfBlob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = `Informe_${informeId}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(downloadUrl);
+        mostrarToast('Descarga iniciada', 'success');
+    } catch (error) {
+        console.error('Error descargando informe:', error);
+        mostrarToast('Error de conexión al descargar el informe', 'danger');
+    }
 };
 
 // Backward compatibility alias

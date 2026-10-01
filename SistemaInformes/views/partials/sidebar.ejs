@@ -30,7 +30,7 @@ const firstName = _rawName ? String(_rawName).split(' ')[0] : '';
                     </select>
                     <input class="form-control form-control-sm" type="text" id="nombre-filter" placeholder="Buscar por nombre" />
                     <button class="btn btn-buscar btn-sm w-100" type="button" data-action="buscar-usuarios"><i class="bi bi-search"></i> Buscar</button>
-                    <button class="btn btn-secondary btn-sm w-100" type="button" data-action="limpiar-filtros"><i class="bi bi-arrow-clockwise"></i> Limpiar</button>
+                    <button class="btn btn-secondary btn-sm w-100" type="button" data-action="limpiar-filtros" onclick="limpiarFiltrosAdmin('usuarios'); return false;"><i class="bi bi-arrow-clockwise"></i> Limpiar</button>
                 </div>
             </div>
         <% } %>
@@ -49,7 +49,7 @@ const firstName = _rawName ? String(_rawName).split(' ')[0] : '';
                     </select>
                     <input class="form-control form-control-sm" type="text" id="nombre-area-filter" placeholder="Buscar por nombre" />
                     <button class="btn btn-buscar btn-sm w-100" type="button" data-action="buscar-areas"><i class="bi bi-search"></i> Buscar</button>
-                    <button class="btn btn-secondary btn-sm w-100" type="button" data-action="limpiar-filtros-areas"><i class="bi bi-arrow-clockwise"></i> Limpiar</button>
+                    <button class="btn btn-secondary btn-sm w-100" type="button" data-action="limpiar-filtros-areas" onclick="limpiarFiltrosAdmin('areas'); return false;"><i class="bi bi-arrow-clockwise"></i> Limpiar</button>
                 </div>
             </div>
         <% } %>
@@ -71,7 +71,7 @@ const firstName = _rawName ? String(_rawName).split(' ')[0] : '';
                     <label for="fecha-hasta-informes" class="small mb-1 text-dark"><b>Hasta</b></label>
                     <input type="date" id="fecha-hasta-informes" class="form-control form-control-sm mb-1" />
                     <button class="btn btn-buscar btn-sm w-100" type="button" data-action="buscar-informes"><i class="bi bi-search"></i> Buscar</button>
-                    <button class="btn btn-secondary btn-sm w-100" type="button" data-action="limpiar-filtros-informes"><i class="bi bi-arrow-clockwise"></i> Limpiar</button>
+                    <button class="btn btn-secondary btn-sm w-100" type="button" data-action="limpiar-filtros-informes" onclick="limpiarFiltrosAdmin('informes'); return false;"><i class="bi bi-arrow-clockwise"></i> Limpiar</button>
                 </div>
             </div>
         <% } %>

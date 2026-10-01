@@ -814,15 +814,27 @@ app.get('/inicio-usuario', authenticateToken, authorizeRole('capturista'), (req,
 app.get('/generar-informe', authenticateToken, authorizeRole('capturista'), async (req, res) => {
   try {
     let areas = [];
+    let informe = null;
     
     if (dbConnected && areaQueries) {
       areas = await areaQueries.getAll();
     }
+
+    if (req.query.id && dbConnected) {
+      const resultado = await executeQuery(
+        'SELECT * FROM informes WHERE id = ? AND usuario_id = ?',
+        [parseInt(req.query.id), req.user.id]
+      );
+      if (resultado.length > 0 && ['borrador', 'rechazado'].includes(resultado[0].estado)) {
+        informe = resultado[0];
+      }
+    }
     
     res.render('GenerarInforme', { 
-      title: 'Generar Informe', 
+      title: informe ? 'Editar Informe' : 'Generar Informe',
       layout: 'layoutUsuario',
       areas: areas,
+      informe: informe,
       user: req.user
     });
   } catch (error) {
@@ -831,6 +843,7 @@ app.get('/generar-informe', authenticateToken, authorizeRole('capturista'), asyn
       title: 'Generar Informe', 
       layout: 'layoutUsuario',
       areas: [],
+      informe: null,
       user: req.user,
       error: 'Error al cargar áreas'
     });
@@ -1347,7 +1360,7 @@ app.get('/api/informes', authenticateToken, authorizeRole('administrador'), asyn
     console.log('📌 fecha_hasta recibido:', fecha_hasta);
     
     // SIEMPRE hacer el JOIN para obtener nombres de usuario y área
-    let query = 'SELECT i.*, u.nombre as usuario_nombre, u.apellido as usuario_apellido, a.nombre as area_nombre FROM informes i JOIN usuarios u ON i.usuario_id = u.id JOIN areas a ON i.area_id = a.id WHERE 1=1';
+    let query = "SELECT i.*, u.nombre as usuario_nombre, u.apellido as usuario_apellido, a.nombre as area_nombre FROM informes i JOIN usuarios u ON i.usuario_id = u.id JOIN areas a ON i.area_id = a.id WHERE i.estado IN ('enviado', 'aprobado', 'rechazado')";
     const params = [];
     
     // Filtro por área
@@ -1441,6 +1454,9 @@ app.get('/api/informes/:id', authenticateToken, async (req, res) => {
     const informe = await executeQuery(query, [id]);
     
     if (informe && informe.length > 0) {
+      if (req.user.rol === 'administrador' && informe[0].estado === 'borrador') {
+        return res.status(404).json({ success: false, message: 'Informe no encontrado' });
+      }
       if (req.user.rol === 'capturista' && informe[0].usuario_id !== req.user.id) {
         return res.status(403).json({ success: false, message: 'No tienes permiso para ver este informe' });
       }
@@ -1569,8 +1585,8 @@ app.put('/informes/:id',
         return res.status(404).json({ success: false, message: 'Informe no encontrado' });
       }
 
-      if (informe[0].estado !== 'borrador') {
-        return res.status(400).json({ success: false, message: 'Solo se pueden editar informes en borrador' });
+      if (!['borrador', 'rechazado'].includes(informe[0].estado)) {
+        return res.status(400).json({ success: false, message: 'Solo se pueden editar informes en borrador o rechazados' });
       }
 
       // Preparar payload para actualización
@@ -1644,6 +1660,11 @@ app.put('/api/informes/:id/evaluar', authenticateToken, authorizeRole('administr
     if (!['aprobado', 'rechazado'].includes(estado)) {
       return res.status(400).json({ success: false, message: 'Estado inválido. Debe ser aprobado o rechazado' });
     }
+
+    const existente = await executeQuery('SELECT estado FROM informes WHERE id = ?', [informeId]);
+    if (existente.length === 0 || !['enviado', 'en_revision'].includes(existente[0].estado)) {
+      return res.status(400).json({ success: false, message: 'Solo se pueden evaluar informes enviados' });
+    }
     
     // Actualizar estado y comentarios de evaluación
     const query = `
@@ -1694,13 +1715,13 @@ app.put('/api/informes/:id/enviar', authenticateToken, authorizeRole('capturista
     const query = `
       UPDATE informes 
       SET estado = 'enviado', updated_at = NOW()
-      WHERE id = ? AND usuario_id = ?
+      WHERE id = ? AND usuario_id = ? AND estado IN ('borrador', 'rechazado')
     `;
     
     const result = await executeQuery(query, [informeId, req.user.id]);
     
     if (result.affectedRows === 0) {
-      return res.status(404).json({ success: false, message: 'Informe no encontrado o no tienes permiso para actualizarlo' });
+      return res.status(404).json({ success: false, message: 'El informe no existe, no te pertenece o no se puede enviar en su estado actual' });
     }
     
     res.json({ 
@@ -1737,11 +1758,6 @@ app.delete('/informes/:id', authenticateToken, authorizeRole('capturista'), asyn
     
     if (!informe || informe.length === 0) {
       return res.status(403).json({ success: false, message: 'No tienes permiso para eliminar este informe' });
-    }
-
-    // Permitir eliminar solo si está en borrador o enviado
-    if (!['borrador', 'enviado'].includes(informe[0].estado)) {
-      return res.status(400).json({ success: false, message: 'Solo se pueden eliminar informes en borrador o enviado' });
     }
 
     // Eliminar el informe (eliminación física)

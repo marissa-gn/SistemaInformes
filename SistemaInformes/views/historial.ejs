@@ -57,6 +57,12 @@
                                                     data-bs-target="#modalInforme"
                                                     data-informe-id="<%= informe.id %>"
                                                     onclick="cargarInformeEnModal(this)">Ver</button>
+                                            <% if (informe.estado === 'borrador' || informe.estado === 'rechazado') { %>
+                                                <a class="btn btn-outline-primary btn-sm btn-min-70" href="/generar-informe?id=<%= informe.id %>">Editar</a>
+                                                <button class="btn btn-primary btn-sm btn-min-70" type="button" onclick="enviarInformeExistente('<%= informe.id %>')">
+                                                    <i class="bi bi-send me-1"></i>Enviar
+                                                </button>
+                                            <% } %>
                                             <button class="btn btn-outline-danger btn-sm btn-eliminar-informe btn-min-70" 
                                                     data-informe-id="<%= informe.id %>"
                                                     onclick="eliminarInforme('<%= informe.id %>')">Eliminar</button>
